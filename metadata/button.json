@@ -1,0 +1,128 @@
+{
+  "component": {
+    "name": "Button",
+    "category": "atom",
+    "type": "interactive",
+    "description": "Triggers an action or navigation; the primary lever for user intent in editorial workflows.",
+    "variants": ["primary", "neutral", "text", "danger"],
+    "sizes": ["default (32px)", "small (24px)"]
+  },
+
+  "tokens": {
+    "background": [
+      "colors.background.primary.default",
+      "colors.background.neutral.default",
+      "transparent",
+      "colors.background.danger.default"
+    ],
+    "text": [
+      "colors.text.neutral.inverse",
+      "colors.text.neutral.default",
+      "colors.text.danger.default"
+    ],
+    "border": ["colors.border.neutral.default"],
+    "icon": [],
+    "radius": "radius.none",
+    "spacing": ["spacing.xs (vertical)", "spacing.sm (horizontal)"],
+    "typography": ["typography.textStyles.body-m"],
+    "shadow": ""
+  },
+
+  "usage": {
+    "useCases": [
+      "Submit a form (primary)",
+      "Cancel or secondary action alongside primary (neutral)",
+      "Inline low-emphasis control where a filled button is too heavy (text)",
+      "Destructive actions — delete, remove, revoke (danger)"
+    ],
+    "frequency": "once-per-view",
+    "requiredProps": ["variant", "label"],
+    "commonPatterns": [
+      {
+        "name": "Page header primary action",
+        "description": "Single primary button pinned to the right of the 726px header, paired with a neutral or text button for Cancel.",
+        "jsx": "<Button variant='primary' size='default'>Save changes</Button>"
+      },
+      {
+        "name": "Destructive confirm",
+        "description": "Danger button inside a confirmation modal. Always requires a neutral Cancel alongside it.",
+        "jsx": "<Button variant='danger' size='default'>Delete article</Button>"
+      },
+      {
+        "name": "Inline row action",
+        "description": "Text variant inside a table row — no fill, no border, minimal visual weight.",
+        "jsx": "<Button variant='text' size='small'>Edit</Button>"
+      }
+    ],
+    "antiPatterns": [
+      {
+        "scenario": "Two primary buttons on the same view",
+        "reason": "Breaks the one forest.500 moment per view rule — both compete for the primary action.",
+        "alternative": "Keep one primary; demote secondary actions to neutral or text variant."
+      },
+      {
+        "scenario": "Using primary for navigation (e.g. 'Go to article')",
+        "reason": "Navigation is not a primary action — it doesn't commit or mutate state.",
+        "alternative": "Use a text button or a link component."
+      },
+      {
+        "scenario": "Danger button without a confirmation step",
+        "reason": "Destructive actions are irreversible — users must confirm intent.",
+        "alternative": "Open a confirmation modal or inline confirm/cancel pair before executing."
+      }
+    ]
+  },
+
+  "composition": {
+    "slots": {
+      "iconLeft": "Optional — 16px icon before label",
+      "label": "Required — sentence-case text",
+      "iconRight": "Optional — 16px icon after label (e.g. chevron for split button)"
+    },
+    "nestedComponents": [],
+    "commonPartners": ["Button (neutral or text)", "Modal", "FormSection"],
+    "parentConstraints": ["Page header", "Modal footer", "Table row (text variant only)"]
+  },
+
+  "behavior": {
+    "states": ["default", "hover", "focused", "active", "disabled", "loading"],
+    "interactions": {
+      "hover": "Background steps one shade darker along the scale",
+      "focused": "2px forest.500 outline, 2px offset",
+      "active": "Background steps two shades darker",
+      "disabled": "neutral.100 background, neutral.400 text, cursor not-allowed",
+      "loading": "Label replaced by spinner; button width locked to prevent layout shift"
+    },
+    "sizes": {
+      "default": "32px height, body-m, spacing.xs + spacing.sm padding",
+      "small": "24px height, body-s, spacing.2xs + spacing.xs padding"
+    }
+  },
+
+  "accessibility": {
+    "role": "button",
+    "minTargetHeight": "32px",
+    "focusRing": "2px forest.500 outline, 2px offset",
+    "keyboardSupport": "Enter and Space activate; Tab moves focus in/out",
+    "screenReader": "Icon-only buttons must carry aria-label; loading state must announce via aria-live",
+    "wcag": "AA"
+  },
+
+  "athenaConstraints": {
+    "forestMoment": true,
+    "borderRadius": "radius.none",
+    "textCase": "sentence-case",
+    "contentWidth": "726px"
+  },
+
+  "aiHints": {
+    "priority": "high",
+    "keywords": ["CTA", "action", "submit", "confirm", "delete", "save", "cancel", "primary"],
+    "context": "Reach for Button whenever the user needs to trigger an action. Default to neutral variant when a primary already exists on the view. Use text variant inside list rows or anywhere a full button would dominate.",
+    "neverUseWhen": [
+      "The action is navigation-only — use a link or text button styled as a link",
+      "The surface already has a primary button — use neutral or text instead",
+      "The label would exceed ~4 words — rethink the label before widening the button"
+    ]
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "component": {
+    "name": "ComponentName",
+    "category": "atom | molecule | organism",
+    "type": "interactive | display | container | input | navigation",
+    "description": "One sentence: what it is and its primary purpose in editorial workflows.",
+    "variants": [],
+    "sizes": []
+  },
+
+  "tokens": {
+    "background": [],
+    "text": [],
+    "border": [],
+    "icon": [],
+    "radius": "",
+    "spacing": [],
+    "typography": [],
+    "shadow": ""
+  },
+
+  "usage": {
+    "useCases": [],
+    "frequency": "once-per-view | multiple-per-view | once-per-page",
+    "requiredProps": [],
+    "commonPatterns": [
+      {
+        "name": "",
+        "description": "",
+        "jsx": ""
+      }
+    ],
+    "antiPatterns": [
+      {
+        "scenario": "",
+        "reason": "",
+        "alternative": ""
+      }
+    ]
+  },
+
+  "composition": {
+    "slots": {},
+    "nestedComponents": [],
+    "commonPartners": [],
+    "parentConstraints": []
+  },
+
+  "behavior": {
+    "states": ["default", "hover", "focused", "active", "disabled"],
+    "interactions": {},
+    "sizes": {}
+  },
+
+  "accessibility": {
+    "role": "",
+    "minTargetHeight": "32px",
+    "focusRing": "2px forest.500 outline, 2px offset",
+    "keyboardSupport": "",
+    "screenReader": "",
+    "wcag": "AA"
+  },
+
+  "athenaConstraints": {
+    "forestMoment": false,
+    "borderRadius": "radius.none",
+    "textCase": "sentence-case",
+    "contentWidth": "726px"
+  },
+
+  "aiHints": {
+    "priority": "high | medium | low",
+    "keywords": [],
+    "context": "When the AI should reach for this component.",
+    "neverUseWhen": []
+  }
+}
