@@ -540,7 +540,7 @@ The system runs **Inter** for everything — display, body, navigation, captions
 ## Components
 
 ### Button
-Two sizes: **default** (32px) and **small** (24px).
+Two sizes: **default** (40px) and **small** (32px). Both use body-m (14px); only the height differs.
 - `{button-primary}` — The main CTA. Use once per view.
 - `{button-neutral}` — Secondary actions alongside a primary, or standalone low-emphasis actions.
 - `{button-text}` — Tertiary actions and inline controls where a filled button would be too heavy.

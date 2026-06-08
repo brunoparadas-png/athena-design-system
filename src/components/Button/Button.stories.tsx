@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
 import { Button } from './Button';
+import { Icon } from '../Icon';
 
 const meta = {
   title: 'Atoms/Button',
@@ -79,25 +80,13 @@ export const Sizes: Story = {
   ),
 };
 
-const DiamondIcon = (
-  <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect x="8" y="1.34" width="9.42" height="9.42" rx="1" transform="rotate(45 8 1.34)" fill="currentColor" />
-  </svg>
-);
-
-const ChevronDownIcon = (
-  <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
 /** Matches the Figma demo: a leading icon and a trailing chevron around the label. */
 export const WithIcons: Story = {
   args: {
     variant: 'neutral',
     children: 'Button',
-    iconLeft: DiamondIcon,
-    iconRight: ChevronDownIcon,
+    iconLeft: <Icon name="diamond" />,
+    iconRight: <Icon name="chevron-down" />,
   },
 };
 
