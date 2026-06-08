@@ -512,7 +512,7 @@ The shape language is **sharp**. Buttons, input fields, text areas, and section 
 
 ### Semantic
 - **Error** : `{colors.danger.600}` - `#e52f22` - Validation errors and destructive actions.
-- **Success**: `{colors.danger.600}` - `#e52f22` - Validation errors and destructive actions.
+- **Success**: `{colors.teal.700}` - `#008069` - Successful saves, confirmations, and positive status. Teal — not forest, which is reserved for brand/interactive use.
 
 ### Rules
 
