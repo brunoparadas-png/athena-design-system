@@ -70,6 +70,13 @@
   --bg-danger-strong: var(--danger-600);
   --bg-danger-pressed: var(--danger-700);
 
+  /* Danger fill behind WHITE text (e.g. danger Button). danger-500 fails AA
+     with white (3.54:1); danger-700 passes (5.81:1). Keep --bg-danger-default
+     for non-text uses (borders, icons, tints). */
+  --bg-danger-button: var(--danger-700);
+  --bg-danger-button-hovered: var(--danger-800);
+  --bg-danger-button-pressed: var(--danger-900);
+
   /* ── Semantic: text ── */
   --text-primary-strong: var(--forest-700);
   --text-neutral-default: var(--neutral-600);

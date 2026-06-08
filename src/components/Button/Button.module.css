@@ -99,14 +99,14 @@
 
 /* ── Variant: danger ── */
 .danger {
-  background-color: var(--bg-danger-default);
+  background-color: var(--bg-danger-button);
   color: var(--text-neutral-inverse);
 }
 .danger:hover:not(:disabled) {
-  background-color: var(--bg-danger-strong);
+  background-color: var(--bg-danger-button-hovered);
 }
 .danger:active:not(:disabled) {
-  background-color: var(--bg-danger-pressed);
+  background-color: var(--bg-danger-button-pressed);
 }
 
 /* ── Focus (all variants) ── */
@@ -127,8 +127,10 @@
 }
 
 /* ── Loading ── */
+/* opacity (not visibility/display) keeps the label in the accessibility tree,
+   so the button retains a discernible name while the spinner overlays it. */
 .loading .content {
-  visibility: hidden;
+  opacity: 0;
 }
 .spinner {
   position: absolute;

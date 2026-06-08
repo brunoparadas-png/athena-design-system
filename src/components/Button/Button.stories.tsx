@@ -1,9 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect } from 'storybook/test';
 import { Button } from './Button';
 
 const meta = {
   title: 'Atoms/Button',
   component: Button,
+  tags: ['autodocs', 'ai-generated'],
   parameters: {
     layout: 'centered',
     docs: {
@@ -15,7 +17,6 @@ const meta = {
       },
     },
   },
-  tags: ['autodocs'],
   argTypes: {
     variant: {
       control: 'inline-radio',
@@ -78,12 +79,27 @@ export const Sizes: Story = {
   ),
 };
 
+/**
+ * Loading locks the button and swaps the label for a spinner — but the label
+ * stays in the accessibility tree (opacity, not visibility) so the button keeps
+ * a discernible name. Proven here via aria-busy + retained accessible name.
+ */
 export const Loading: Story = {
   args: { variant: 'primary', loading: true, children: 'Saving' },
+  play: async ({ canvas }) => {
+    const button = canvas.getByRole('button', { name: /saving/i });
+    await expect(button).toHaveAttribute('aria-busy', 'true');
+    await expect(button).toBeDisabled();
+  },
 };
 
 export const Disabled: Story = {
   args: { variant: 'primary', disabled: true, children: 'Save changes' },
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByRole('button', { name: /save changes/i }),
+    ).toBeDisabled();
+  },
 };
 
 /**
@@ -97,4 +113,17 @@ export const ActionPair: Story = {
       <Button variant="primary">Publish</Button>
     </div>
   ),
+};
+
+/**
+ * The single project-wide CSS proof. Asserts the resolved background of the
+ * primary button is forest.500 (#2e7061 = rgb(46, 112, 97)). If tokens.css
+ * failed to load in the preview, this resolves to a default and the test fails.
+ */
+export const CssCheck: Story = {
+  args: { variant: 'primary', children: 'Submit' },
+  play: async ({ canvas }) => {
+    const button = canvas.getByRole('button', { name: /submit/i });
+    await expect(getComputedStyle(button).backgroundColor).toBe('rgb(46, 112, 97)');
+  },
 };
