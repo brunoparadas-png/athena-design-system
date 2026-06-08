@@ -123,6 +123,9 @@ colors:
       default: danger.500          
       medium: danger.700
       strong: danger.900
+      button: danger.700           # fill behind WHITE text — danger.500 is only 3.54:1 (fails AA); danger.700 is 5.81:1
+      button.hovered: danger.800
+      button.pressed: danger.900
     input:
       default: neutral.0
       hovered: teal.25
@@ -381,7 +384,7 @@ components:
     borderRadius: "{radius.none}"
     padding: "{spacing.xs} {spacing.sm}"
   button-danger:
-    backgroundColor: "{colors.background.danger.default}"
+    backgroundColor: "{colors.background.danger.button}"
     textColor: "{colors.text.neutral.inverse}"
     typography: "{typography.textStyles.body-m}"
     fontWeight: "{typography.fontWeight.semibold}"
@@ -541,7 +544,7 @@ Two sizes: **default** (32px) and **small** (24px).
 - `{button-primary}` — The main CTA. Use once per view.
 - `{button-neutral}` — Secondary actions alongside a primary, or standalone low-emphasis actions.
 - `{button-text}` — Tertiary actions and inline controls where a filled button would be too heavy.
-- `{button-danger}` — Destructive actions (delete, remove, revoke). Always pair with a confirmation step.
+- `{button-danger}` — Destructive actions (delete, remove, revoke). Always pair with a confirmation step. Filled with `{colors.background.danger.button}` (danger.700, not danger.500) so white label text meets AA contrast.
 
 ### Text Field
 Two sizes: **default** and **compact**.
