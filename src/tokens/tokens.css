@@ -1,0 +1,142 @@
+/**
+ * Athena Design System — design tokens
+ * Generated from DESIGN.md. Primitive scales + semantic aliases.
+ * Consume the semantic layer (--bg-*, --text-*, --border-*) in components,
+ * not the raw primitives.
+ */
+
+:root {
+  /* ── Primitive: forest (brand / single accent) ── */
+  --forest-25: #f4faf9;
+  --forest-50: #e9f7f3;
+  --forest-100: #ceeee6;
+  --forest-200: #a1ded0;
+  --forest-300: #6bc7b1;
+  --forest-400: #40a08a;
+  --forest-500: #2e7061;
+  --forest-600: #255b4e;
+  --forest-700: #1d443b;
+  --forest-800: #152e28;
+  --forest-900: #0d1c18;
+
+  /* ── Primitive: neutral ── */
+  --neutral-0: #ffffff;
+  --neutral-25: #fafafa;
+  --neutral-50: #f5f5f5;
+  --neutral-100: #e8e8e8;
+  --neutral-200: #d4d4d4;
+  --neutral-300: #b8b8b8;
+  --neutral-400: #a1a1a1;
+  --neutral-500: #737373;
+  --neutral-600: #525252;
+  --neutral-700: #3b3b3b;
+  --neutral-800: #252525;
+  --neutral-900: #141414;
+
+  /* ── Primitive: danger ── */
+  --danger-25: #fff7f6;
+  --danger-50: #ffece9;
+  --danger-100: #ffd2cd;
+  --danger-200: #ffa89f;
+  --danger-300: #ff7e73;
+  --danger-400: #ff5c4e;
+  --danger-500: #fe3d2e;
+  --danger-600: #e52f22;
+  --danger-700: #c42419;
+  --danger-800: #921a12;
+  --danger-900: #5e100a;
+
+  /* ── Primitive: blue (links / secondary semantic) ── */
+  --blue-500: #2f68ff;
+  --blue-700: #214bb3;
+  --blue-800: #1a3b8c;
+
+  /* ── Semantic: background ── */
+  --bg-primary-weak: var(--forest-50);
+  --bg-primary-weak-hovered: var(--forest-100);
+  --bg-primary-weak-pressed: var(--forest-200);
+  --bg-primary-default: var(--forest-500);
+  --bg-primary-strong: var(--forest-700);
+  --bg-primary-strong-hovered: var(--forest-600);
+  --bg-primary-strong-pressed: var(--forest-700);
+
+  --bg-neutral-default: var(--neutral-0);
+  --bg-neutral-weak: var(--neutral-50);
+  --bg-neutral-weak-hovered: var(--neutral-100);
+  --bg-neutral-weak-pressed: var(--neutral-200);
+  --bg-neutral-disabled: var(--neutral-100);
+
+  --bg-danger-default: var(--danger-500);
+  --bg-danger-strong: var(--danger-600);
+  --bg-danger-pressed: var(--danger-700);
+
+  /* ── Semantic: text ── */
+  --text-primary-strong: var(--forest-700);
+  --text-neutral-default: var(--neutral-600);
+  --text-neutral-strong: var(--neutral-800);
+  --text-neutral-inverse: var(--neutral-0);
+  --text-neutral-disabled: var(--neutral-400);
+  --text-danger-default: var(--danger-500);
+  --text-link-default: var(--blue-500);
+
+  /* ── Semantic: border ── */
+  --border-primary-strong: var(--forest-700);
+  --border-neutral-weak: var(--neutral-200);
+  --border-neutral-default: var(--neutral-300);
+  --border-neutral-disabled: var(--neutral-300);
+  --border-danger-default: var(--danger-500);
+
+  /* ── Focus ── */
+  --focus-ring-color: var(--forest-500);
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+
+  /* ── Typography ── */
+  --font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-code: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  --font-size-2xs: 12px;
+  --font-size-xs: 14px;
+  --font-size-sm: 16px;
+  --font-size-md: 18px;
+  --font-size-lg: 20px;
+  --font-size-xl: 24px;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --line-height-xxs: 16px;
+  --line-height-xs: 20px;
+  --line-height-sm: 24px;
+  --line-height-md: 28px;
+
+  /* ── Spacing (4px-ish grid) ── */
+  --spacing-none: 0px;
+  --spacing-3xs: 2px;
+  --spacing-2xs: 4px;
+  --spacing-xs: 6px;
+  --spacing-base: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 20px;
+  --spacing-xl: 24px;
+  --spacing-3xl: 32px;
+
+  /* ── Radius (sharp by default; pill for toggles only) ── */
+  --radius-none: 0px;
+  --radius-sm: 4px;
+  --radius-pill: 9999px;
+
+  /* ── Icon sizes ── */
+  --icon-size-2xs: 12px;
+  --icon-size-xs: 16px;
+  --icon-size-sm: 20px;
+  --icon-size-md: 24px;
+
+  /* ── Shadows ── */
+  --shadow-card: 0 1px 1px rgba(9, 30, 66, 0.25), 0 0 0 1px rgba(9, 30, 66, 0.08);
+  --shadow-elevated: 0 4px 8px -2px rgba(9, 30, 66, 0.25), 0 0 0 1px rgba(9, 30, 66, 0.08);
+  --shadow-overlay: 0 8px 16px -4px rgba(9, 30, 66, 0.25), 0 0 0 1px rgba(9, 30, 66, 0.06);
+}
