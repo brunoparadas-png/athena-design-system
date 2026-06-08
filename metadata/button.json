@@ -53,27 +53,27 @@
       {
         "name": "Page header primary action",
         "description": "Single primary button pinned to the right of the 726px header, paired with a neutral or text button for Cancel.",
-        "jsx": "<Button variant='primary' size='default'>Save changes</Button>"
+        "jsx": "<Button variant='primary' size='default' label='Save changes' />"
       },
       {
         "name": "Destructive confirm",
         "description": "Danger button inside a confirmation modal. Always requires a neutral Cancel alongside it.",
-        "jsx": "<Button variant='danger' size='default'>Delete article</Button>"
+        "jsx": "<Button variant='danger' size='default' label='Delete article' />"
       },
       {
         "name": "Inline row action",
         "description": "Text variant inside a table row — no fill, no border, minimal visual weight until hover.",
-        "jsx": "<Button variant='text' size='small'>Edit</Button>"
+        "jsx": "<Button variant='text' size='small' label='Edit' />"
       },
       {
         "name": "Dropdown / menu trigger",
         "description": "Label with a trailing chevron (iconRight) signals an expandable menu.",
-        "jsx": "<Button variant='neutral' iconRight={<ChevronDown />}>Filter</Button>"
+        "jsx": "<Button variant='neutral' label='Filter' iconRight={<Icon name='chevron-down' />} />"
       },
       {
         "name": "Toggle in a segmented control",
         "description": "selected renders the forest tint and exposes aria-pressed; pair with onClick to flip state.",
-        "jsx": "<Button variant='neutral' selected aria-pressed>List</Button>"
+        "jsx": "<Button variant='neutral' selected label='List' />"
       }
     ],
     "antiPatterns": [

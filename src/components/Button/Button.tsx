@@ -14,7 +14,7 @@ export interface ButtonProps
   /** `default` is 40px tall, `small` is 32px. Both use body-m (14px). */
   size?: ButtonSize;
   /** Sentence-case label. Required unless the button is icon-only (then set `aria-label`). */
-  children?: ReactNode;
+  label?: ReactNode;
   /** Optional 16px icon before the label (Figma: iconBefore). */
   iconLeft?: ReactNode;
   /** Optional 16px icon after the label (Figma: iconAfter — often a chevron). */
@@ -31,7 +31,7 @@ export interface ButtonProps
 export function Button({
   variant = 'neutral',
   size = 'default',
-  children,
+  label,
   iconLeft,
   iconRight,
   selected = false,
@@ -66,7 +66,7 @@ export function Button({
             {iconLeft}
           </span>
         )}
-        {children}
+        {label}
         {iconRight && (
           <span className={styles.icon} aria-hidden="true">
             {iconRight}
