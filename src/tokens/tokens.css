@@ -59,6 +59,7 @@
   --bg-primary-strong: var(--forest-700);
   --bg-primary-strong-hovered: var(--forest-600);
   --bg-primary-strong-pressed: var(--forest-700);
+  --bg-primary-strongest: var(--forest-900);
 
   --bg-neutral-default: var(--neutral-0);
   --bg-neutral-weak: var(--neutral-50);
@@ -87,6 +88,7 @@
   --text-link-default: var(--blue-500);
 
   /* ── Semantic: border ── */
+  --border-primary-default: var(--forest-500);
   --border-primary-strong: var(--forest-700);
   --border-neutral-weak: var(--neutral-200);
   --border-neutral-default: var(--neutral-300);

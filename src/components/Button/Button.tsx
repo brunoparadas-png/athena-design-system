@@ -11,14 +11,19 @@ export interface ButtonProps
    * never render two `primary` buttons on the same view.
    */
   variant?: ButtonVariant;
-  /** `default` is 32px tall, `small` is 24px. */
+  /** `default` is 40px tall, `small` is 32px. Both use body-m (14px). */
   size?: ButtonSize;
   /** Sentence-case label. Required unless the button is icon-only (then set `aria-label`). */
   children?: ReactNode;
-  /** Optional 16px icon before the label. */
+  /** Optional 16px icon before the label (Figma: iconBefore). */
   iconLeft?: ReactNode;
-  /** Optional 16px icon after the label. */
+  /** Optional 16px icon after the label (Figma: iconAfter — often a chevron). */
   iconRight?: ReactNode;
+  /**
+   * Toggle-on state. Renders the forest tint (forest.50 fill + forest.700
+   * border/text) across all appearances and exposes `aria-pressed`.
+   */
+  selected?: boolean;
   /** Locks width and swaps the label for a spinner; announced via aria-live. */
   loading?: boolean;
 }
@@ -29,6 +34,7 @@ export function Button({
   children,
   iconLeft,
   iconRight,
+  selected = false,
   loading = false,
   disabled,
   type = 'button',
@@ -38,6 +44,7 @@ export function Button({
     styles.button,
     styles[variant],
     styles[size],
+    selected ? styles.selected : '',
     loading ? styles.loading : '',
   ]
     .filter(Boolean)
@@ -49,6 +56,7 @@ export function Button({
       className={className}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
+      aria-pressed={selected || undefined}
       {...rest}
     >
       {loading && <span className={styles.spinner} aria-hidden="true" />}

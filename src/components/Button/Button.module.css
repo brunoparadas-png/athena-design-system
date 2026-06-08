@@ -1,4 +1,9 @@
-/* Athena Button — sharp rectangle, sentence-case, single forest moment for `primary`. */
+/* Athena Button — synced to Figma "❖ Button" (node 31:2137).
+   Sharp rectangle, sentence-case, single forest moment for `primary`.
+   Sizes: default 40px / small 32px — both body-m (14px). Only height differs.
+   Neutral & text hover go forest-tinted (not gray); selected = forest tint
+   + forest.700 border/text across all appearances. Danger fill kept at
+   danger.700 (AA 5.81:1) rather than Figma's danger.500 (3.54:1, fails AA). */
 
 .button {
   /* Reset */
@@ -20,7 +25,13 @@
   /* Type */
   font-family: var(--font-main);
   font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-xs); /* body-m, 14px — both sizes */
+  line-height: var(--line-height-xs); /* 20px */
   white-space: nowrap;
+
+  /* Spacing — 12px horizontal, both sizes */
+  padding-inline: var(--spacing-sm);
+  padding-block: 0;
 
   transition:
     background-color 0.12s ease,
@@ -31,12 +42,12 @@
 .content {
   display: inline-flex;
   align-items: center;
-  gap: var(--spacing-xs);
+  gap: var(--spacing-xs); /* 6px */
 }
 
 .icon {
   display: inline-flex;
-  width: var(--icon-size-xs);
+  width: var(--icon-size-xs); /* 16px */
   height: var(--icon-size-xs);
 }
 
@@ -45,59 +56,59 @@
   height: 100%;
 }
 
-/* ── Sizes ── */
+/* ── Sizes — only min-height differs ── */
 .default {
-  min-height: 32px;
-  padding: var(--spacing-xs) var(--spacing-sm);
-  font-size: var(--font-size-xs); /* body-m, 14px */
-  line-height: var(--line-height-xs);
+  min-height: 40px;
 }
 
 .small {
-  min-height: 24px;
-  padding: var(--spacing-2xs) var(--spacing-xs);
-  font-size: var(--font-size-2xs); /* body-s, 12px */
-  line-height: var(--line-height-xxs);
+  min-height: 32px;
 }
 
-/* ── Variant: primary (forest moment) ── */
+/* ── Variant: primary (forest moment, filled) ── */
 .primary {
   background-color: var(--bg-primary-default);
   color: var(--text-neutral-inverse);
 }
 .primary:hover:not(:disabled) {
-  background-color: var(--bg-primary-strong-hovered);
+  background-color: var(--bg-primary-strong);
 }
 .primary:active:not(:disabled) {
-  background-color: var(--bg-primary-strong-pressed);
+  background-color: var(--bg-primary-strongest);
 }
 
-/* ── Variant: neutral ── */
+/* ── Variant: neutral (outlined; forest-tinted on hover) ── */
 .neutral {
   background-color: var(--bg-neutral-default);
-  color: var(--text-neutral-strong);
+  color: var(--text-neutral-default);
   border-color: var(--border-neutral-default);
 }
 .neutral:hover:not(:disabled) {
-  background-color: var(--bg-neutral-weak-hovered);
+  background-color: var(--bg-primary-weak-hovered);
+  border-color: var(--border-primary-default);
+  color: var(--text-primary-strong);
 }
 .neutral:active:not(:disabled) {
-  background-color: var(--bg-neutral-weak-pressed);
+  background-color: var(--bg-primary-weak-pressed);
+  border-color: var(--border-primary-default);
+  color: var(--text-primary-strong);
 }
 
-/* ── Variant: text ── */
+/* ── Variant: text (forest-tinted on hover) ── */
 .text {
   background-color: transparent;
-  color: var(--text-neutral-strong);
+  color: var(--text-neutral-default);
 }
 .text:hover:not(:disabled) {
-  background-color: var(--bg-neutral-weak);
+  background-color: var(--bg-primary-weak-hovered);
+  color: var(--text-primary-strong);
 }
 .text:active:not(:disabled) {
-  background-color: var(--bg-neutral-weak-pressed);
+  background-color: var(--bg-primary-weak-pressed);
+  color: var(--text-primary-strong);
 }
 
-/* ── Variant: danger ── */
+/* ── Variant: danger (filled; danger.700 for AA) ── */
 .danger {
   background-color: var(--bg-danger-button);
   color: var(--text-neutral-inverse);
@@ -109,9 +120,18 @@
   background-color: var(--bg-danger-button-pressed);
 }
 
-/* ── Focus (all variants) ── */
+/* ── Selected (toggle on) — forest tint across all appearances ── */
+.selected:not(:disabled),
+.selected:hover:not(:disabled),
+.selected:active:not(:disabled) {
+  background-color: var(--bg-primary-weak);
+  border-color: var(--border-primary-strong);
+  color: var(--text-primary-strong);
+}
+
+/* ── Focus (all variants) — 2px forest.700 ring, 2px offset ── */
 .button:focus-visible {
-  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline: var(--focus-ring-width) solid var(--border-primary-strong);
   outline-offset: var(--focus-ring-offset);
 }
 

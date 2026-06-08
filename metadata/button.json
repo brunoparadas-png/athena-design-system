@@ -4,27 +4,38 @@
     "category": "atom",
     "type": "interactive",
     "description": "Triggers an action or navigation; the primary lever for user intent in editorial workflows.",
+    "figmaNode": "31:2137",
     "variants": ["primary", "neutral", "text", "danger"],
-    "sizes": ["default (32px)", "small (24px)"]
+    "sizes": ["default (40px)", "small (32px)"],
+    "note": "Both sizes use body-m (14px/20px); only min-height differs. Synced to Figma '❖ Button'."
   },
 
   "tokens": {
-    "background": [
-      "colors.background.primary.default",
-      "colors.background.neutral.default",
-      "transparent",
-      "colors.background.danger.default"
-    ],
-    "text": [
-      "colors.text.neutral.inverse",
-      "colors.text.neutral.default",
-      "colors.text.danger.default"
-    ],
-    "border": ["colors.border.neutral.default"],
-    "icon": [],
+    "background": {
+      "primary": "colors.background.primary.default → .strong (hover) → .strongest (press)",
+      "neutral": "colors.background.neutral.default; hover/press → colors.background.primary.weak.hovered/.pressed (forest tint)",
+      "text": "transparent; hover/press → colors.background.primary.weak.hovered/.pressed (forest tint)",
+      "danger": "colors.background.danger.button (danger.700, AA-safe) → .button.hovered → .button.pressed",
+      "selected": "colors.background.primary.weak (forest.50)",
+      "disabled": "colors.background.neutral.disabled (neutral.100)"
+    },
+    "text": {
+      "primary": "colors.text.neutral.inverse",
+      "neutral": "colors.text.neutral.default; hover → colors.text.primary.strong (forest.700)",
+      "text": "colors.text.neutral.default; hover → colors.text.primary.strong",
+      "danger": "colors.text.neutral.inverse",
+      "selected": "colors.text.primary.strong (forest.700)",
+      "disabled": "colors.text.neutral.disabled (neutral.400)"
+    },
+    "border": {
+      "neutral": "colors.border.neutral.default; hover/press → colors.border.primary.default (forest.500)",
+      "selected": "colors.border.primary.strong (forest.700)"
+    },
+    "icon": ["16px, inherits currentColor"],
     "radius": "radius.none",
-    "spacing": ["spacing.xs (vertical)", "spacing.sm (horizontal)"],
+    "spacing": ["spacing.sm (12px horizontal)", "spacing.xs (6px icon/label gap)"],
     "typography": ["typography.textStyles.body-m"],
+    "focusRing": "2px colors.border.primary.strong (forest.700), offset 2px",
     "shadow": ""
   },
 
@@ -33,7 +44,8 @@
       "Submit a form (primary)",
       "Cancel or secondary action alongside primary (neutral)",
       "Inline low-emphasis control where a filled button is too heavy (text)",
-      "Destructive actions — delete, remove, revoke (danger)"
+      "Destructive actions — delete, remove, revoke (danger)",
+      "Toggle / segmented control where one option stays active (selected)"
     ],
     "frequency": "once-per-view",
     "requiredProps": ["variant", "label"],
@@ -50,8 +62,18 @@
       },
       {
         "name": "Inline row action",
-        "description": "Text variant inside a table row — no fill, no border, minimal visual weight.",
+        "description": "Text variant inside a table row — no fill, no border, minimal visual weight until hover.",
         "jsx": "<Button variant='text' size='small'>Edit</Button>"
+      },
+      {
+        "name": "Dropdown / menu trigger",
+        "description": "Label with a trailing chevron (iconRight) signals an expandable menu.",
+        "jsx": "<Button variant='neutral' iconRight={<ChevronDown />}>Filter</Button>"
+      },
+      {
+        "name": "Toggle in a segmented control",
+        "description": "selected renders the forest tint and exposes aria-pressed; pair with onClick to flip state.",
+        "jsx": "<Button variant='neutral' selected aria-pressed>List</Button>"
       }
     ],
     "antiPatterns": [
@@ -69,43 +91,51 @@
         "scenario": "Danger button without a confirmation step",
         "reason": "Destructive actions are irreversible — users must confirm intent.",
         "alternative": "Open a confirmation modal or inline confirm/cancel pair before executing."
+      },
+      {
+        "scenario": "Using selected for a one-shot action button",
+        "reason": "selected (aria-pressed) communicates a persistent toggle state, not a momentary click.",
+        "alternative": "Leave selected off; only use it for toggle/segmented controls that retain state."
       }
     ]
   },
 
   "composition": {
     "slots": {
-      "iconLeft": "Optional — 16px icon before label",
-      "label": "Required — sentence-case text",
-      "iconRight": "Optional — 16px icon after label (e.g. chevron for split button)"
+      "iconLeft": "Optional — 16px icon before label (Figma: iconBefore)",
+      "label": "Required — sentence-case text (omit only for icon-only, then set aria-label)",
+      "iconRight": "Optional — 16px icon after label (Figma: iconAfter; commonly a chevron)"
     },
-    "nestedComponents": [],
-    "commonPartners": ["Button (neutral or text)", "Modal", "FormSection"],
-    "parentConstraints": ["Page header", "Modal footer", "Table row (text variant only)"]
+    "nestedComponents": ["Icon (16px)"],
+    "commonPartners": ["Button (neutral or text)", "Modal", "FormSection", "Menu"],
+    "parentConstraints": ["Page header", "Modal footer", "Table row (text variant only)", "Segmented control (selected)"]
   },
 
   "behavior": {
-    "states": ["default", "hover", "focused", "active", "disabled", "loading"],
+    "states": ["default", "hover", "press", "focus", "selected", "disabled", "loading"],
     "interactions": {
-      "hover": "Background steps one shade darker along the scale",
-      "focused": "2px forest.500 outline, 2px offset",
-      "active": "Background steps two shades darker",
-      "disabled": "neutral.100 background, neutral.400 text, cursor not-allowed",
-      "loading": "Label replaced by spinner; button width locked to prevent layout shift"
+      "hover": "primary → forest.700 fill; neutral/text → forest.100 tint + forest.500 border + forest.700 text; danger → danger.800",
+      "press": "primary → forest.900; neutral/text → forest.200 tint; danger → danger.900",
+      "focus": "2px forest.700 outline, 2px offset",
+      "selected": "forest.50 fill + forest.700 border + forest.700 text across all appearances; sets aria-pressed",
+      "disabled": "neutral.100 fill (transparent for text), neutral.400 text, cursor not-allowed",
+      "loading": "Label hidden via opacity (stays in a11y tree); spinner overlays; aria-busy set"
     },
     "sizes": {
-      "default": "32px height, body-m, spacing.xs + spacing.sm padding",
-      "small": "24px height, body-s, spacing.2xs + spacing.xs padding"
+      "default": "40px min-height, body-m, 12px horizontal padding",
+      "small": "32px min-height, body-m, 12px horizontal padding"
     }
   },
 
   "accessibility": {
     "role": "button",
-    "minTargetHeight": "32px",
-    "focusRing": "2px forest.500 outline, 2px offset",
+    "minTargetHeight": "32px (small) / 40px (default)",
+    "focusRing": "2px forest.700 outline, 2px offset",
+    "selectedState": "aria-pressed reflects the selected prop",
     "keyboardSupport": "Enter and Space activate; Tab moves focus in/out",
-    "screenReader": "Icon-only buttons must carry aria-label; loading state must announce via aria-live",
-    "wcag": "AA"
+    "screenReader": "Icon-only buttons must carry aria-label; loading announces via aria-busy; selected announces via aria-pressed",
+    "wcag": "AA",
+    "contrastNote": "Danger fill uses danger.700 (white text 5.81:1) rather than Figma's danger.500 (3.54:1, fails AA)."
   },
 
   "athenaConstraints": {
@@ -115,14 +145,24 @@
     "contentWidth": "726px"
   },
 
+  "figmaDivergences": [
+    {
+      "property": "danger fill",
+      "figma": "colors.background.danger.default (danger.500, #fe3d2e)",
+      "implementation": "colors.background.danger.button (danger.700, #c42419)",
+      "reason": "Figma's danger.500 + white text is 3.54:1, failing WCAG AA. danger.700 is 5.81:1."
+    }
+  ],
+
   "aiHints": {
     "priority": "high",
-    "keywords": ["CTA", "action", "submit", "confirm", "delete", "save", "cancel", "primary"],
-    "context": "Reach for Button whenever the user needs to trigger an action. Default to neutral variant when a primary already exists on the view. Use text variant inside list rows or anywhere a full button would dominate.",
+    "keywords": ["CTA", "action", "submit", "confirm", "delete", "save", "cancel", "primary", "toggle", "selected", "dropdown", "chevron"],
+    "context": "Reach for Button whenever the user needs to trigger an action. Default to neutral variant when a primary already exists on the view. Use text variant inside list rows. Use selected only for toggle/segmented controls that retain state.",
     "neverUseWhen": [
       "The action is navigation-only — use a link or text button styled as a link",
       "The surface already has a primary button — use neutral or text instead",
-      "The label would exceed ~4 words — rethink the label before widening the button"
+      "The label would exceed ~4 words — rethink the label before widening the button",
+      "You need a momentary click — don't set selected, which implies persistent toggle state"
     ]
   }
 }

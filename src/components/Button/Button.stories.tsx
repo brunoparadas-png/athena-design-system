@@ -69,7 +69,7 @@ export const Variants: Story = {
   ),
 };
 
-/** Default (32px) and small (24px). */
+/** Default (40px) and small (32px). Both use body-m (14px); only height differs. */
 export const Sizes: Story = {
   render: (args) => (
     <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
@@ -77,6 +77,41 @@ export const Sizes: Story = {
       <Button {...args} variant="primary" size="small">Small</Button>
     </div>
   ),
+};
+
+const DiamondIcon = (
+  <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="8" y="1.34" width="9.42" height="9.42" rx="1" transform="rotate(45 8 1.34)" fill="currentColor" />
+  </svg>
+);
+
+const ChevronDownIcon = (
+  <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+/** Matches the Figma demo: a leading icon and a trailing chevron around the label. */
+export const WithIcons: Story = {
+  args: {
+    variant: 'neutral',
+    children: 'Button',
+    iconLeft: DiamondIcon,
+    iconRight: ChevronDownIcon,
+  },
+};
+
+/**
+ * Toggle-on state (`selected`). Forest tint + forest.700 border/text across all
+ * appearances, exposed as aria-pressed. Used for segmented / toggle controls.
+ */
+export const Selected: Story = {
+  args: { variant: 'neutral', selected: true, children: 'Button' },
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByRole('button', { name: /button/i }),
+    ).toHaveAttribute('aria-pressed', 'true');
+  },
 };
 
 /**
