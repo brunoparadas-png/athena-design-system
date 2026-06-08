@@ -53,29 +53,29 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {
-  args: { appearance: 'primary', label: 'Save changes' },
+  args: { appearance: 'primary' },
 };
 
 export const Neutral: Story = {
-  args: { appearance: 'neutral', label: 'Cancel' },
+  args: { appearance: 'neutral' },
 };
 
 export const Text: Story = {
-  args: { appearance: 'text', label: 'Edit' },
+  args: { appearance: 'text' },
 };
 
 export const Danger: Story = {
-  args: { appearance: 'danger', label: 'Delete article' },
+  args: { appearance: 'danger' },
 };
 
 /** All four appearances side by side. Note: in a real view, only one `primary` may appear. */
 export const Appearances: Story = {
   render: (args) => (
     <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-      <Button {...args} appearance="primary" label="Save changes" />
-      <Button {...args} appearance="neutral" label="Cancel" />
-      <Button {...args} appearance="text" label="Edit" />
-      <Button {...args} appearance="danger" label="Delete" />
+      <Button {...args} appearance="primary" />
+      <Button {...args} appearance="neutral" />
+      <Button {...args} appearance="text" />
+      <Button {...args} appearance="danger" />
     </div>
   ),
 };
@@ -84,8 +84,8 @@ export const Appearances: Story = {
 export const Sizes: Story = {
   render: (args) => (
     <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-      <Button {...args} appearance="primary" size="default" label="Default" />
-      <Button {...args} appearance="primary" size="small" label="Small" />
+      <Button {...args} appearance="primary" size="default" />
+      <Button {...args} appearance="primary" size="small" />
     </div>
   ),
 };
@@ -97,7 +97,6 @@ export const Sizes: Story = {
 export const WithIcons: Story = {
   args: {
     appearance: 'neutral',
-    label: 'Button',
     iconBefore: 'diamond',
     iconAfter: 'chevron-down',
   },
@@ -108,10 +107,10 @@ export const WithIcons: Story = {
  * appearances, exposed as aria-pressed. Used for segmented / toggle controls.
  */
 export const Selected: Story = {
-  args: { appearance: 'neutral', isSelected: true, label: 'Button' },
+  args: { appearance: 'neutral', isSelected: true },
   play: async ({ canvas }) => {
     await expect(
-      canvas.getByRole('button', { name: /button/i }),
+      canvas.getByRole('button', { name: /button text/i }),
     ).toHaveAttribute('aria-pressed', 'true');
   },
 };
@@ -122,32 +121,32 @@ export const Selected: Story = {
  * a discernible name. Proven here via aria-busy + retained accessible name.
  */
 export const Loading: Story = {
-  args: { appearance: 'primary', loading: true, label: 'Saving' },
+  args: { appearance: 'primary', loading: true },
   play: async ({ canvas }) => {
-    const button = canvas.getByRole('button', { name: /saving/i });
+    const button = canvas.getByRole('button', { name: /button text/i });
     await expect(button).toHaveAttribute('aria-busy', 'true');
     await expect(button).toBeDisabled();
   },
 };
 
 export const Disabled: Story = {
-  args: { appearance: 'primary', isDisabled: true, label: 'Save changes' },
+  args: { appearance: 'primary', isDisabled: true },
   play: async ({ canvas }) => {
     await expect(
-      canvas.getByRole('button', { name: /save changes/i }),
+      canvas.getByRole('button', { name: /button text/i }),
     ).toBeDisabled();
   },
 };
 
 /**
- * Canonical pattern: one primary action pinned right, paired with a neutral Cancel.
- * This is the page-header / modal-footer shape.
+ * Canonical pattern: one primary action pinned right, paired with a neutral
+ * secondary. This is the page-header / modal-footer shape.
  */
 export const ActionPair: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: 8 }}>
-      <Button appearance="neutral" label="Cancel" />
-      <Button appearance="primary" label="Publish" />
+      <Button appearance="neutral" label="Button text" />
+      <Button appearance="primary" label="Button text" />
     </div>
   ),
 };
@@ -158,9 +157,9 @@ export const ActionPair: Story = {
  * failed to load in the preview, this resolves to a default and the test fails.
  */
 export const CssCheck: Story = {
-  args: { appearance: 'primary', label: 'Submit' },
+  args: { appearance: 'primary' },
   play: async ({ canvas }) => {
-    const button = canvas.getByRole('button', { name: /submit/i });
+    const button = canvas.getByRole('button', { name: /button text/i });
     await expect(getComputedStyle(button).backgroundColor).toBe('rgb(46, 112, 97)');
   },
 };
