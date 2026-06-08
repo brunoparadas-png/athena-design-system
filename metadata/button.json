@@ -48,32 +48,32 @@
       "Toggle / segmented control where one option stays active (selected)"
     ],
     "frequency": "once-per-view",
-    "requiredProps": ["variant", "label"],
+    "requiredProps": ["appearance", "label"],
     "commonPatterns": [
       {
         "name": "Page header primary action",
         "description": "Single primary button pinned to the right of the 726px header, paired with a neutral or text button for Cancel.",
-        "jsx": "<Button variant='primary' size='default' label='Save changes' />"
+        "jsx": "<Button appearance='primary' size='default' label='Save changes' />"
       },
       {
         "name": "Destructive confirm",
         "description": "Danger button inside a confirmation modal. Always requires a neutral Cancel alongside it.",
-        "jsx": "<Button variant='danger' size='default' label='Delete article' />"
+        "jsx": "<Button appearance='danger' size='default' label='Delete article' />"
       },
       {
         "name": "Inline row action",
         "description": "Text variant inside a table row — no fill, no border, minimal visual weight until hover.",
-        "jsx": "<Button variant='text' size='small' label='Edit' />"
+        "jsx": "<Button appearance='text' size='small' label='Edit' />"
       },
       {
         "name": "Dropdown / menu trigger",
         "description": "Label with a trailing chevron (iconRight) signals an expandable menu.",
-        "jsx": "<Button variant='neutral' label='Filter' iconRight={<Icon name='chevron-down' />} />"
+        "jsx": "<Button appearance='neutral' label='Filter' iconAfter='chevron-down' />"
       },
       {
         "name": "Toggle in a segmented control",
         "description": "selected renders the forest tint and exposes aria-pressed; pair with onClick to flip state.",
-        "jsx": "<Button variant='neutral' selected label='List' />"
+        "jsx": "<Button appearance='neutral' isSelected label='List' />"
       }
     ],
     "antiPatterns": [
@@ -102,9 +102,9 @@
 
   "composition": {
     "slots": {
-      "iconLeft": "Optional — 16px icon before label (Figma: iconBefore)",
+      "iconBefore": "Optional — leading 16px icon, by IconName (Figma: iconBefore)",
       "label": "Required — sentence-case text (omit only for icon-only, then set aria-label)",
-      "iconRight": "Optional — 16px icon after label (Figma: iconAfter; commonly a chevron)"
+      "iconAfter": "Optional — trailing 16px icon, by IconName; commonly a chevron (Figma: iconAfter)"
     },
     "nestedComponents": ["Icon (16px)"],
     "commonPartners": ["Button (neutral or text)", "Modal", "FormSection", "Menu"],

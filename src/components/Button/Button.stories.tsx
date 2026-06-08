@@ -1,7 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
 import { Button } from './Button';
-import { Icon } from '../Icon';
+import { iconNames } from '../Icon';
+
+const iconOptions = ['none', ...iconNames];
+const iconControl = {
+  control: 'select' as const,
+  options: iconOptions,
+  mapping: { none: undefined },
+};
 
 const meta = {
   title: 'Atoms/Button',
@@ -12,29 +19,33 @@ const meta = {
     docs: {
       description: {
         component:
-          'Triggers an action or navigation. The `primary` variant carries the single ' +
+          'Triggers an action or navigation. The `primary` appearance carries the single ' +
           'forest.500 moment per view — never render two primary buttons on one view.',
       },
     },
   },
   argTypes: {
-    variant: {
+    appearance: {
       control: 'inline-radio',
       options: ['primary', 'neutral', 'text', 'danger'],
-      description: 'Visual weight. `primary` = the forest moment.',
+      description: 'Visual style',
     },
     size: {
       control: 'inline-radio',
       options: ['default', 'small'],
+      description: 'Height',
     },
-    loading: { control: 'boolean' },
-    disabled: { control: 'boolean' },
-    label: { control: 'text' },
+    iconBefore: { ...iconControl, description: 'Leading icon' },
+    iconAfter: { ...iconControl, description: 'Trailing icon' },
+    isSelected: { control: 'boolean', description: 'Toggle-on state' },
+    isDisabled: { control: 'boolean', description: 'Disabled state' },
+    loading: { control: 'boolean', description: 'Loading state' },
+    label: { control: 'text', description: 'Button text' },
   },
   args: {
-    variant: 'neutral',
+    appearance: 'neutral',
     size: 'default',
-    label: 'Button',
+    label: 'Button text',
   },
 } satisfies Meta<typeof Button>;
 
@@ -42,29 +53,29 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {
-  args: { variant: 'primary', label: 'Save changes' },
+  args: { appearance: 'primary', label: 'Save changes' },
 };
 
 export const Neutral: Story = {
-  args: { variant: 'neutral', label: 'Cancel' },
+  args: { appearance: 'neutral', label: 'Cancel' },
 };
 
 export const Text: Story = {
-  args: { variant: 'text', label: 'Edit' },
+  args: { appearance: 'text', label: 'Edit' },
 };
 
 export const Danger: Story = {
-  args: { variant: 'danger', label: 'Delete article' },
+  args: { appearance: 'danger', label: 'Delete article' },
 };
 
-/** All four variants side by side. Note: in a real view, only one `primary` may appear. */
-export const Variants: Story = {
+/** All four appearances side by side. Note: in a real view, only one `primary` may appear. */
+export const Appearances: Story = {
   render: (args) => (
     <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-      <Button {...args} variant="primary" label="Save changes" />
-      <Button {...args} variant="neutral" label="Cancel" />
-      <Button {...args} variant="text" label="Edit" />
-      <Button {...args} variant="danger" label="Delete" />
+      <Button {...args} appearance="primary" label="Save changes" />
+      <Button {...args} appearance="neutral" label="Cancel" />
+      <Button {...args} appearance="text" label="Edit" />
+      <Button {...args} appearance="danger" label="Delete" />
     </div>
   ),
 };
@@ -73,28 +84,31 @@ export const Variants: Story = {
 export const Sizes: Story = {
   render: (args) => (
     <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-      <Button {...args} variant="primary" size="default" label="Default" />
-      <Button {...args} variant="primary" size="small" label="Small" />
+      <Button {...args} appearance="primary" size="default" label="Default" />
+      <Button {...args} appearance="primary" size="small" label="Small" />
     </div>
   ),
 };
 
-/** Matches the Figma demo: a leading icon and a trailing chevron around the label. */
+/**
+ * Leading icon + trailing chevron, matching the Figma demo. Pick icons from the
+ * `iconBefore` / `iconAfter` dropdowns in the Controls panel.
+ */
 export const WithIcons: Story = {
   args: {
-    variant: 'neutral',
+    appearance: 'neutral',
     label: 'Button',
-    iconLeft: <Icon name="diamond" />,
-    iconRight: <Icon name="chevron-down" />,
+    iconBefore: 'diamond',
+    iconAfter: 'chevron-down',
   },
 };
 
 /**
- * Toggle-on state (`selected`). Forest tint + forest.700 border/text across all
+ * Toggle-on state (`isSelected`). Forest tint + forest.700 border/text across all
  * appearances, exposed as aria-pressed. Used for segmented / toggle controls.
  */
 export const Selected: Story = {
-  args: { variant: 'neutral', selected: true, label: 'Button' },
+  args: { appearance: 'neutral', isSelected: true, label: 'Button' },
   play: async ({ canvas }) => {
     await expect(
       canvas.getByRole('button', { name: /button/i }),
@@ -108,7 +122,7 @@ export const Selected: Story = {
  * a discernible name. Proven here via aria-busy + retained accessible name.
  */
 export const Loading: Story = {
-  args: { variant: 'primary', loading: true, label: 'Saving' },
+  args: { appearance: 'primary', loading: true, label: 'Saving' },
   play: async ({ canvas }) => {
     const button = canvas.getByRole('button', { name: /saving/i });
     await expect(button).toHaveAttribute('aria-busy', 'true');
@@ -117,7 +131,7 @@ export const Loading: Story = {
 };
 
 export const Disabled: Story = {
-  args: { variant: 'primary', disabled: true, label: 'Save changes' },
+  args: { appearance: 'primary', isDisabled: true, label: 'Save changes' },
   play: async ({ canvas }) => {
     await expect(
       canvas.getByRole('button', { name: /save changes/i }),
@@ -132,8 +146,8 @@ export const Disabled: Story = {
 export const ActionPair: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: 8 }}>
-      <Button variant="neutral" label="Cancel" />
-      <Button variant="primary" label="Publish" />
+      <Button appearance="neutral" label="Cancel" />
+      <Button appearance="primary" label="Publish" />
     </div>
   ),
 };
@@ -144,7 +158,7 @@ export const ActionPair: Story = {
  * failed to load in the preview, this resolves to a default and the test fails.
  */
 export const CssCheck: Story = {
-  args: { variant: 'primary', label: 'Submit' },
+  args: { appearance: 'primary', label: 'Submit' },
   play: async ({ canvas }) => {
     const button = canvas.getByRole('button', { name: /submit/i });
     await expect(getComputedStyle(button).backgroundColor).toBe('rgb(46, 112, 97)');
