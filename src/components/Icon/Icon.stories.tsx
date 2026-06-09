@@ -4,17 +4,14 @@ import { Icon } from './Icon';
 import { iconNames } from './icons';
 
 const meta = {
-  title: 'Atoms/Icon',
+  title: 'Components/Icon',
   component: Icon,
   tags: ['autodocs', 'ai-generated'],
   parameters: {
     layout: 'centered',
     docs: {
       description: {
-        component:
-          'Normalized 24×24 icons in the Figma icon style (2px stroke, round caps). ' +
-          'Recolor via `currentColor` (inherits text color) and size via the `size` prop. ' +
-          'Omit `title` for decorative use (auto aria-hidden); set it for standalone icons.',
+        component: 'A small visual glyph that reinforces meaning or labels an action where space is limited.',
       },
     },
   },

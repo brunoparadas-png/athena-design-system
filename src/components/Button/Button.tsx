@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import type { ButtonHTMLAttributes } from 'react';
 import styles from './Button.module.css';
 import { Icon, type IconName } from '../Icon';
 
@@ -7,7 +7,7 @@ export type ButtonSize = 'default' | 'small';
 
 /**
  * Prop names mirror the Figma "❖ Button" component properties:
- * appearance, size, label, iconBefore, iconAfter, isSelected, isDisabled.
+ * appearance, size, iconBefore, iconAfter, isSelected, isDisabled.
  * (`loading` is an implementation extra, not a Figma property.)
  */
 export interface ButtonProps
@@ -19,8 +19,6 @@ export interface ButtonProps
   appearance?: ButtonAppearance;
   /** `default` is 40px tall, `small` is 32px. Both use body-m (14px). */
   size?: ButtonSize;
-  /** Sentence-case label. Required unless the button is icon-only (then set `aria-label`). */
-  label?: ReactNode;
   /** Leading icon, by name from the Athena set. (Figma: iconBefore) */
   iconBefore?: IconName;
   /** Trailing icon, by name — often a chevron. (Figma: iconAfter) */
@@ -39,7 +37,7 @@ export interface ButtonProps
 export function Button({
   appearance = 'neutral',
   size = 'default',
-  label,
+  children,
   iconBefore,
   iconAfter,
   isSelected = false,
@@ -74,7 +72,7 @@ export function Button({
             <Icon name={iconBefore} size={16} />
           </span>
         )}
-        {label}
+        {children}
         {iconAfter && (
           <span className={styles.icon} aria-hidden="true">
             <Icon name={iconAfter} size={16} />

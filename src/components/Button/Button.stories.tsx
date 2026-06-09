@@ -11,16 +11,14 @@ const iconControl = {
 };
 
 const meta = {
-  title: 'Atoms/Button',
+  title: 'Components/Button',
   component: Button,
   tags: ['autodocs', 'ai-generated'],
   parameters: {
     layout: 'centered',
     docs: {
       description: {
-        component:
-          'Triggers an action or navigation. The `primary` appearance carries the single ' +
-          'forest.500 moment per view — never render two primary buttons on one view.',
+        component: 'Triggers an action or navigation. Use the primary appearance for the single most important action in a view.',
       },
     },
   },
@@ -40,12 +38,12 @@ const meta = {
     isSelected: { control: 'boolean', description: 'Toggle-on state' },
     isDisabled: { control: 'boolean', description: 'Disabled state' },
     loading: { control: 'boolean', description: 'Loading state' },
-    label: { control: 'text', description: 'Button text' },
+    children: { control: 'text', description: 'Button text' },
   },
   args: {
     appearance: 'neutral',
     size: 'default',
-    label: 'Button text',
+    children: 'Button text',
   },
 } satisfies Meta<typeof Button>;
 
@@ -145,8 +143,8 @@ export const Disabled: Story = {
 export const ActionPair: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: 8 }}>
-      <Button appearance="neutral" label="Button text" />
-      <Button appearance="primary" label="Button text" />
+      <Button appearance="neutral">Button text</Button>
+      <Button appearance="primary">Button text</Button>
     </div>
   ),
 };

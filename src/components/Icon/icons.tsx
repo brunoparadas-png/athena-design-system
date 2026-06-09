@@ -45,6 +45,12 @@ export const icons = {
   // status
   info: <><circle cx="12" cy="12" r="9" {...stroke} /><path d="M12 11v5" {...stroke} /><path d="M12 8h.01" {...stroke} /></>,
   warning: <><path d="M12 4l9 16H3z" {...stroke} /><path d="M12 10v4" {...stroke} /><path d="M12 17h.01" {...stroke} /></>,
+  'check-circle': <><circle cx="12" cy="12" r="9" {...stroke} /><path d="M8.5 12l2.5 2.5 4.5-5" {...stroke} /></>,
+
+  // files / media
+  file: <><path d="M14 3H7a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V7z" {...stroke} /><path d="M14 3v4h4" {...stroke} /></>,
+  image: <><rect x="3" y="5" width="18" height="14" rx="1" {...stroke} /><circle cx="8.5" cy="10" r="1.5" {...stroke} /><path d="M21 16l-5-5L5 19" {...stroke} /></>,
+  'cloud-upload': <><path d="M7 18a4 4 0 0 1 0-8 5 5 0 0 1 9.6-1.3A3.5 3.5 0 0 1 17.5 18" {...stroke} /><path d="M12 21v-8" {...stroke} /><path d="M9 16l3-3 3 3" {...stroke} /></>,
 
   // misc
   'more-horizontal': <><circle cx="5" cy="12" r="1.6" {...fill} /><circle cx="12" cy="12" r="1.6" {...fill} /><circle cx="19" cy="12" r="1.6" {...fill} /></>,

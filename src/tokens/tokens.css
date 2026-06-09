@@ -47,9 +47,37 @@
   --danger-900: #5e100a;
 
   /* ── Primitive: blue (links / secondary semantic) ── */
+  --blue-50: #eaf0ff;
+  --blue-100: #d5e1ff;
+  --blue-200: #b0c7ff;
+  --blue-400: #5989ff;
   --blue-500: #2f68ff;
   --blue-700: #214bb3;
   --blue-800: #1a3b8c;
+
+  /* ── Primitive: teal (the "green" tag appearance) ── */
+  --teal-100: #ccf1ea;
+  --teal-200: #9ee4d7;
+  --teal-300: #68d5c2;
+  --teal-500: #00b796;
+  --teal-700: #008069;
+  /* teal.700 on teal.100 is 4.03:1 (fails AA for 12px text). teal.800 is 4.9:1
+     and is used for the green Tag's text. */
+  --teal-800: #00705c;
+
+  /* ── Primitive: purple ── */
+  --purple-50: #f4eafc;
+  --purple-100: #e8d5f9;
+  --purple-200: #d4aff4;
+  --purple-400: #a557e8;
+  --purple-700: #63209e;
+
+  /* ── Primitive: orange ── */
+  --orange-50: #fef0eb;
+  --orange-100: #fce1d8;
+  --orange-200: #fac7b5;
+  --orange-400: #f48962;
+  --orange-700: #a94b29;
 
   /* ── Semantic: background ── */
   --bg-primary-weak: var(--forest-50);
@@ -66,6 +94,9 @@
   --bg-neutral-weak-hovered: var(--neutral-100);
   --bg-neutral-weak-pressed: var(--neutral-200);
   --bg-neutral-disabled: var(--neutral-100);
+  /* "strongest" neutral fill — e.g. the off-state Toggle track. */
+  --bg-neutral-strongest: var(--neutral-500);
+  --bg-neutral-strongest-hovered: var(--neutral-600);
 
   --bg-danger-default: var(--danger-500);
   --bg-danger-strong: var(--danger-600);
@@ -79,12 +110,18 @@
   --bg-danger-button-pressed: var(--danger-900);
 
   /* ── Semantic: text ── */
+  --text-primary-default: var(--forest-500);
   --text-primary-strong: var(--forest-700);
   --text-neutral-default: var(--neutral-600);
+  --text-neutral-weak: var(--neutral-500);
   --text-neutral-strong: var(--neutral-800);
   --text-neutral-inverse: var(--neutral-0);
   --text-neutral-disabled: var(--neutral-400);
   --text-danger-default: var(--danger-500);
+  /* danger.500 fails AA as text on white (3.54:1). Use danger.700 (5.81:1) for
+     danger TEXT — e.g. form error messages. Keep --text-danger-default for icons
+     and large/non-text uses. */
+  --text-danger-strong: var(--danger-700);
   --text-link-default: var(--blue-500);
 
   /* ── Semantic: border ── */
