@@ -1,0 +1,128 @@
+{
+  "component": {
+    "name": "Breadcrumbs",
+    "category": "molecule",
+    "type": "navigation",
+    "description": "A navigation trail that shows the user's location in a hierarchy and lets them jump back to ancestor pages. Root → current, separated by '/'.",
+    "figmaNode": "515:9126",
+    "variants": ["default", "truncated"],
+    "note": "nav > ol > li with item links; the last item is the current page (aria-current, non-link). Items neutral.600 → neutral.800 + underline on hover. Inter 14/20, 8px gaps. Synced to Figma '❖ Breadcrumbs'."
+  },
+
+  "tokens": {
+    "typography": "Inter regular, font-size.xs (14px) / line-height.xs (20px)",
+    "gap": "spacing.base (8px) between items and separators",
+    "minItemHeight": "24px",
+    "colors": {
+      "linkDefault": "colors.text.neutral.default (neutral.600)",
+      "linkHover": "colors.text.neutral.strong (neutral.800) + underline",
+      "current": "colors.text.neutral.strong (neutral.800)",
+      "separator": "colors.text.neutral.weak (neutral.500)"
+    },
+    "focusRing": "2px colors.border.primary.strong (forest.700), offset 2px",
+    "shadow": ""
+  },
+
+  "usage": {
+    "useCases": [
+      "Show location within a multi-level hierarchy (Home / Section / Page)",
+      "Provide quick navigation back to ancestor pages",
+      "Sit at the top of a detail page or inside a Page Header"
+    ],
+    "frequency": "repeatable",
+    "requiredProps": ["items"],
+    "commonPatterns": [
+      {
+        "name": "Standard trail",
+        "description": "Ancestors are links; the current page is the last item.",
+        "jsx": "<Breadcrumbs items={[{label:'Home',href:'/'},{label:'Articles',href:'/articles'},{label:'Editorial standards'}]} />"
+      },
+      {
+        "name": "Truncated labels",
+        "description": "Cap long labels with an ellipsis so the trail stays on one line.",
+        "jsx": "<Breadcrumbs maxItemWidth={120} items={items} />"
+      },
+      {
+        "name": "Custom separator",
+        "description": "Swap the '/' for a chevron or other glyph.",
+        "jsx": "<Breadcrumbs separator='›' items={items} />"
+      }
+    ],
+    "antiPatterns": [
+      {
+        "scenario": "Making the current (last) page a link",
+        "reason": "Linking to the current page is redundant and confuses orientation.",
+        "alternative": "Leave the last item without href; it renders as the current page (aria-current)."
+      },
+      {
+        "scenario": "Using breadcrumbs as primary navigation",
+        "reason": "Breadcrumbs are a secondary wayfinding aid, not the main nav.",
+        "alternative": "Use the app's primary nav (Menu / Page Layout side nav)."
+      },
+      {
+        "scenario": "Deep trails with many long labels on one line",
+        "reason": "Overflows and is hard to scan.",
+        "alternative": "Truncate with maxItemWidth, or collapse middle items."
+      },
+      {
+        "scenario": "A single-item breadcrumb",
+        "reason": "A trail of one conveys no hierarchy.",
+        "alternative": "Omit breadcrumbs on top-level pages."
+      }
+    ]
+  },
+
+  "composition": {
+    "slots": {
+      "items": "Required — ordered array of { label, href? }; last item is the current page",
+      "separator": "Optional — defaults to '/'"
+    },
+    "nestedComponents": [],
+    "commonPartners": ["Page Header", "Page Layout", "Tabs"],
+    "parentConstraints": ["Top of a detail page", "Page Header", "Above page title"]
+  },
+
+  "behavior": {
+    "states": ["default", "hover", "press", "focus"],
+    "interactions": {
+      "hover": "Link crumbs darken to neutral.800 and underline",
+      "focus": "2px forest.700 outline on the focused link",
+      "current": "Last item is non-interactive and marked aria-current='page'",
+      "truncation": "maxItemWidth caps each label with an ellipsis"
+    }
+  },
+
+  "accessibility": {
+    "role": "nav landmark with aria-label (default 'Breadcrumb'); ordered list of items",
+    "current": "Last item carries aria-current='page'",
+    "focusRing": "2px forest.700 outline, 2px offset",
+    "keyboardSupport": "Tab through the ancestor links; Enter activates",
+    "screenReader": "Announced as a navigation landmark; separators are aria-hidden",
+    "wcag": "AA"
+  },
+
+  "athenaConstraints": {
+    "separator": "'/' by default",
+    "currentIsNonLink": true
+  },
+
+  "figmaDivergences": [
+    {
+      "property": "item text color",
+      "figma": "the assembled sample shows color.text.subtlest (#6b6e76)",
+      "implementation": "colors.text.neutral.default (neutral.600, #525252) — the value defined on the BreadcrumbItem part",
+      "reason": "#6b6e76 is an Atlassian gray not in the Athena palette; the item part itself specifies neutral.600."
+    }
+  ],
+
+  "aiHints": {
+    "priority": "medium",
+    "keywords": ["breadcrumbs", "breadcrumb", "trail", "navigation", "location", "hierarchy", "path", "wayfinding"],
+    "context": "Reach for Breadcrumbs to show where a page sits in a hierarchy and let users step back up. Put ancestors as links and the current page last (no href). Place at the top of detail pages or in a Page Header. Not a replacement for primary navigation.",
+    "neverUseWhen": [
+      "There is no hierarchy / only one level — omit them",
+      "It would act as the primary navigation — use the app nav",
+      "The current page would be a link — leave the last item without href"
+    ]
+  }
+}

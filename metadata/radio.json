@@ -1,0 +1,167 @@
+{
+  "component": {
+    "name": "Radio",
+    "category": "atom",
+    "type": "input",
+    "description": "An input control for selecting exactly one option from a mutually-exclusive set. Almost always used in a group sharing one `name`.",
+    "figmaNode": "514:2154",
+    "variants": ["unchecked", "checked"],
+    "modifiers": ["isInvalid", "isDisabled", "isRequired"],
+    "note": "14px circular dial, forest.500 fill + WHITE CHECK when selected (Athena uses a check, not the traditional dot). Hover/press/focus are real CSS pseudo-states (no `state` prop). Synced to Figma '❖ Radio'."
+  },
+
+  "tokens": {
+    "dial": {
+      "size": "14px",
+      "radius": "radius.pill (circular)",
+      "border": "1px solid colors.border.neutral.default (neutral.300)"
+    },
+    "background": {
+      "unchecked": "colors.background.neutral.default (white); hover → colors.background.neutral.weak.hovered (neutral.100); press → colors.background.neutral.weak.pressed (neutral.200)",
+      "checked": "colors.background.primary.default (forest.500); hover → colors.background.primary.strong (forest.700); press → colors.background.primary.strongest (forest.900)",
+      "checkedInvalid": "colors.background.danger.default (danger.500); hover → .strong (danger.600); press → .pressed (danger.700)",
+      "disabled": "colors.background.neutral.disabled (neutral.100)"
+    },
+    "mark": {
+      "shape": "check (reuses the Checkbox check path), white",
+      "disabled": "colors.text.neutral.disabled (neutral.400)"
+    },
+    "border": {
+      "default": "colors.border.neutral.default (neutral.300)",
+      "checked": "colors.border.primary.default (forest.500)",
+      "invalid": "colors.border.danger.default (danger.500)",
+      "disabled": "colors.border.neutral.disabled (neutral.300)"
+    },
+    "label": {
+      "typography": "typography.textStyles.body-m (Inter 14px / 20px)",
+      "color": "colors.text.neutral.strong (neutral.800); disabled → colors.text.neutral.disabled (neutral.400)",
+      "requiredAsterisk": "colors.text.danger.default (danger.500), 12px"
+    },
+    "spacing": ["spacing.2xs (4px dial↔label gap)"],
+    "focusRing": "2px colors.border.primary.strong (forest.700), offset 2px",
+    "shadow": ""
+  },
+
+  "usage": {
+    "useCases": [
+      "Choose one option from a short, mutually-exclusive set (plan, shipping speed, payment method)",
+      "Single-answer form question",
+      "Switch a view between two or three exclusive modes"
+    ],
+    "frequency": "grouped",
+    "requiredProps": ["label (or aria-label)", "name (to group exclusive options)"],
+    "commonPatterns": [
+      {
+        "name": "Radio group",
+        "description": "Two or more radios sharing one name inside a radiogroup. Exactly one is selectable; default one to a sensible value.",
+        "jsx": "<div role='radiogroup' aria-label='Plan'><Radio name='plan' value='free' label='Free' defaultChecked /><Radio name='plan' value='pro' label='Pro' /></div>"
+      },
+      {
+        "name": "Controlled group",
+        "description": "Drive selection from state; each radio is controlled via isChecked + onChange comparing value.",
+        "jsx": "<Radio name='plan' value='pro' label='Pro' isChecked={plan === 'pro'} onChange={() => setPlan('pro')} />"
+      },
+      {
+        "name": "Required single-answer with error",
+        "description": "Mark the group invalid when nothing is selected on submit.",
+        "jsx": "<Radio name='consent' label='Yes' isRequired isInvalid={submitted && !answer} />"
+      }
+    ],
+    "antiPatterns": [
+      {
+        "scenario": "Using a radio for an option the user can also deselect",
+        "reason": "Radios cannot be unchecked once a group has a selection; there is no 'none' state.",
+        "alternative": "Use a Checkbox, or add an explicit 'None' radio option."
+      },
+      {
+        "scenario": "A single standalone radio with no group",
+        "reason": "One radio implies a missing set and cannot be toggled off.",
+        "alternative": "Use a Checkbox or Toggle for a standalone boolean."
+      },
+      {
+        "scenario": "Radios in a group with different (or missing) name values",
+        "reason": "Without a shared name they are not mutually exclusive — multiple can be selected.",
+        "alternative": "Give every radio in the set the same name."
+      },
+      {
+        "scenario": "Using radios for 6+ options",
+        "reason": "Long exclusive lists are easier to scan and select in a dropdown.",
+        "alternative": "Use a Select / Dropdown menu for long option lists."
+      }
+    ]
+  },
+
+  "composition": {
+    "slots": {
+      "label": "Optional — text beside the dial (omit only for standalone radios, then set aria-label)"
+    },
+    "nestedComponents": ["check mark (inline SVG)"],
+    "commonPartners": ["Radio (siblings in a group)", "RadioGroup", "FormSection", "Button"],
+    "parentConstraints": ["radiogroup / fieldset", "Form section", "Modal body", "Settings list"]
+  },
+
+  "behavior": {
+    "states": ["default", "hover", "press", "focus", "checked", "invalid", "disabled"],
+    "interactions": {
+      "hover": "unchecked → neutral.100 fill; checked → forest.700 fill",
+      "press": "unchecked → neutral.200 fill; checked → forest.900 fill",
+      "focus": "2px forest.700 outline, 2px offset",
+      "checked": "forest.500 fill + white check",
+      "invalid": "unchecked → danger.500 border; checked → danger.500 fill; sets aria-invalid",
+      "disabled": "neutral.100 fill, neutral.300 border, neutral.400 check, cursor not-allowed"
+    },
+    "keyboard": "Arrow keys move selection within a group; Tab enters/leaves the group (native radio behavior).",
+    "controlled": "Pass isChecked + onChange for controlled; omit isChecked and use defaultChecked for uncontrolled."
+  },
+
+  "accessibility": {
+    "role": "radio",
+    "grouping": "Share `name` across the set; wrap in role='radiogroup' (or fieldset/legend) with an accessible group label",
+    "focusRing": "2px forest.700 outline, 2px offset",
+    "invalidState": "aria-invalid reflects isInvalid",
+    "keyboardSupport": "Arrow keys cycle selection; Space selects; Tab moves in/out of the group",
+    "screenReader": "Native input drives the accessible name from the wrapping label; standalone radios must carry aria-label",
+    "wcag": "AA",
+    "contrastNote": "White check on danger.500 (checked+invalid) is a graphical object (≥3:1), which passes; this differs from Button, where danger.500 fails AA for white TEXT and uses danger.700."
+  },
+
+  "athenaConstraints": {
+    "borderRadius": "radius.pill",
+    "dialSize": "14px",
+    "selectedMark": "check (not a dot)",
+    "fillOnState": "forest.500 (single brand accent)"
+  },
+
+  "figmaDivergences": [
+    {
+      "property": "state",
+      "figma": "explicit state property (default / hover / press / focus)",
+      "implementation": "real CSS pseudo-states (:hover, :active, :focus-visible)",
+      "reason": "Matches Button/Checkbox; pseudo-states are browser-driven rather than a prop."
+    },
+    {
+      "property": "focus ring color",
+      "figma": "colors.border.primary.strongest (forest.800, #152e28)",
+      "implementation": "colors.border.primary.strong (forest.700)",
+      "reason": "Keeps the focus ring identical across Button, Checkbox, and Radio for a coherent system."
+    },
+    {
+      "property": "unchecked invalid",
+      "figma": "not defined as a variant (Figma only ships checked+invalid)",
+      "implementation": "danger.500 border on the empty dial",
+      "reason": "Group-level validation commonly shows an error before any option is picked."
+    }
+  ],
+
+  "aiHints": {
+    "priority": "high",
+    "keywords": ["radio", "radio button", "single select", "one of", "exclusive", "choice", "option", "plan", "mutually exclusive"],
+    "context": "Reach for Radio when the user must pick exactly one option from a small set (2–5). Always group with a shared name. For multiple selections use Checkbox; for long lists use Select; for a standalone boolean use Toggle or Checkbox.",
+    "neverUseWhen": [
+      "The user may select more than one option — use Checkbox",
+      "The option must be deselectable to a 'none' state — use Checkbox or add an explicit None radio",
+      "There is only one option and no set — use Checkbox or Toggle",
+      "The list has 6+ options — use a Select / Dropdown menu"
+    ]
+  }
+}

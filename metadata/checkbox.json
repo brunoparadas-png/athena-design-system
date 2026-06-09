@@ -1,0 +1,164 @@
+{
+  "component": {
+    "name": "Checkbox",
+    "category": "atom",
+    "type": "input",
+    "description": "An input control that lets a user select one or more options from a set, toggle a single setting on/off, or — via the indeterminate state — represent a partially-selected group.",
+    "figmaNode": "507:90021",
+    "variants": ["unchecked", "checked", "indeterminate"],
+    "modifiers": ["isInvalid", "isDisabled", "isRequired"],
+    "note": "14px sharp box, forest.500 fill when on, white mark. Hover/press/focus are real CSS pseudo-states (no `state` prop), matching Button. Indeterminate takes priority over checked. Synced to Figma '❖ Checkbox'."
+  },
+
+  "tokens": {
+    "box": {
+      "size": "14px",
+      "radius": "radius.none",
+      "border": "1px solid colors.border.neutral.default (neutral.300)"
+    },
+    "background": {
+      "unchecked": "transparent; hover → colors.background.neutral.weak (neutral.50); press → colors.background.neutral.weak.pressed (neutral.200)",
+      "checked": "colors.background.primary.default (forest.500); hover → colors.background.primary.strong (forest.700); press → colors.background.primary.strongest (forest.900)",
+      "indeterminate": "same as checked (forest.500 → .strong → .strongest)",
+      "disabled": "colors.background.neutral.disabled (neutral.100)",
+      "invalidUncheckedPress": "danger.100"
+    },
+    "mark": {
+      "on": "colors.text.neutral.inverse (white)",
+      "disabled": "colors.text.neutral.disabled (neutral.400)"
+    },
+    "border": {
+      "default": "colors.border.neutral.default (neutral.300)",
+      "checked": "colors.border.primary.default (forest.500)",
+      "invalid": "colors.border.danger.default (danger.500)",
+      "disabled": "transparent (unchecked keeps colors.border.neutral.disabled)"
+    },
+    "label": {
+      "typography": "typography.textStyles.body-m (Inter 14px / 20px)",
+      "color": "colors.text.neutral.strong (neutral.800); disabled → colors.text.neutral.disabled (neutral.400)",
+      "requiredAsterisk": "colors.text.danger.default (danger.500), 12px"
+    },
+    "spacing": ["spacing.2xs (4px box↔label gap)"],
+    "focusRing": "2px colors.border.primary.strong (forest.700), offset 2px",
+    "shadow": ""
+  },
+
+  "usage": {
+    "useCases": [
+      "Select one or more options from a list (multi-select)",
+      "Toggle a single boolean setting on/off",
+      "Accept terms / opt-in within a form",
+      "\"Select all\" parent row — use isIndeterminate when only some children are selected",
+      "Bulk-selection header in a table"
+    ],
+    "frequency": "repeatable",
+    "requiredProps": ["label (or aria-label if standalone)"],
+    "commonPatterns": [
+      {
+        "name": "Checkbox group",
+        "description": "A vertical stack of related checkboxes under a group label. Each is independently selectable.",
+        "jsx": "<fieldset><legend>Topics</legend><Checkbox label='News' /><Checkbox label='Sports' /><Checkbox label='Culture' /></fieldset>"
+      },
+      {
+        "name": "Select-all parent",
+        "description": "A parent checkbox is checked when all children are, indeterminate when only some are, unchecked when none are.",
+        "jsx": "<Checkbox label='Select all' isChecked={allSelected} isIndeterminate={someSelected && !allSelected} onChange={toggleAll} />"
+      },
+      {
+        "name": "Required consent",
+        "description": "A single required checkbox gating form submission, with a danger asterisk.",
+        "jsx": "<Checkbox label='I agree to the terms' isRequired isInvalid={submitted && !agreed} />"
+      },
+      {
+        "name": "Controlled toggle",
+        "description": "Controlled via isChecked + onChange to drive a single setting.",
+        "jsx": "<Checkbox label='Email notifications' isChecked={enabled} onChange={(e) => setEnabled(e.target.checked)} />"
+      }
+    ],
+    "antiPatterns": [
+      {
+        "scenario": "Using a checkbox for a single, instantly-applied on/off setting",
+        "reason": "An immediate-effect binary setting reads better as a switch; checkboxes imply a value confirmed on submit.",
+        "alternative": "Use Toggle for instant settings; keep Checkbox for form values committed on save."
+      },
+      {
+        "scenario": "Using a checkbox to choose exactly one option from a mutually-exclusive set",
+        "reason": "Checkboxes allow multiple selections; single-choice semantics confuse users and assistive tech.",
+        "alternative": "Use Radio / Radio group for mutually-exclusive choices."
+      },
+      {
+        "scenario": "Setting isIndeterminate together with isChecked on a leaf checkbox",
+        "reason": "Indeterminate is only meaningful on a parent summarizing children; the dash takes priority and hides the check.",
+        "alternative": "Reserve isIndeterminate for select-all parents; use isChecked on leaves."
+      },
+      {
+        "scenario": "Omitting both label and aria-label",
+        "reason": "The box has no accessible name and is unusable by screen readers.",
+        "alternative": "Always pass label, or set aria-label for a standalone checkbox (e.g. a table-row selector)."
+      }
+    ]
+  },
+
+  "composition": {
+    "slots": {
+      "label": "Optional — text beside the box (omit only for standalone checkboxes, then set aria-label)"
+    },
+    "nestedComponents": ["check mark (inline SVG)", "dash mark (inline SVG)"],
+    "commonPartners": ["Checkbox (in a group)", "TextField", "Button", "FormSection", "Table (row selection)"],
+    "parentConstraints": ["fieldset/legend group", "Form section", "Table header / row", "Modal body"]
+  },
+
+  "behavior": {
+    "states": ["default", "hover", "press", "focus", "checked", "indeterminate", "invalid", "disabled"],
+    "interactions": {
+      "hover": "unchecked → neutral.50 fill; checked/indeterminate → forest.700 fill",
+      "press": "unchecked → neutral.200 fill (danger.100 when invalid); checked/indeterminate → forest.900 fill",
+      "focus": "2px forest.700 outline, 2px offset",
+      "checked": "forest.500 fill + white check",
+      "indeterminate": "forest.500 fill + white dash; set via the native indeterminate DOM property and prioritized over checked",
+      "invalid": "danger.500 border in every check state; fill stays forest when checked; sets aria-invalid",
+      "disabled": "neutral.100 fill, neutral.400 mark, cursor not-allowed"
+    },
+    "controlled": "Pass isChecked + onChange for controlled; omit isChecked and pass defaultChecked for uncontrolled."
+  },
+
+  "accessibility": {
+    "role": "checkbox",
+    "minTargetHeight": "label row is clickable; box is 14px with a surrounding 20px line-height hit area",
+    "focusRing": "2px forest.700 outline, 2px offset",
+    "indeterminateState": "set on the native input via the indeterminate DOM property (never an attribute); exposed to AT as aria-checked=mixed",
+    "invalidState": "aria-invalid reflects isInvalid",
+    "keyboardSupport": "Space toggles; Tab moves focus in/out",
+    "screenReader": "Native input drives the accessible name from the wrapping label; standalone checkboxes must carry aria-label",
+    "wcag": "AA",
+    "contrastNote": "White mark on forest.500 fill and neutral.800 label text both meet AA."
+  },
+
+  "athenaConstraints": {
+    "borderRadius": "radius.none",
+    "boxSize": "14px",
+    "fillOnState": "forest.500 (single brand accent)",
+    "indeterminatePriority": "dash overrides check"
+  },
+
+  "figmaDivergences": [
+    {
+      "property": "state",
+      "figma": "explicit state property (default / hover / press / focus)",
+      "implementation": "real CSS pseudo-states (:hover, :active, :focus-visible)",
+      "reason": "Matches Button; pseudo-states are driven by the browser rather than a prop."
+    }
+  ],
+
+  "aiHints": {
+    "priority": "high",
+    "keywords": ["checkbox", "select", "multi-select", "option", "opt-in", "agree", "terms", "indeterminate", "select all", "tick", "boolean"],
+    "context": "Reach for Checkbox when the user can select zero, one, or many options, or to capture a boolean form value committed on submit. Use isIndeterminate only on a select-all parent. For mutually-exclusive choices use Radio; for instantly-applied settings use Toggle.",
+    "neverUseWhen": [
+      "Exactly one option must be chosen from a set — use Radio / Radio group",
+      "The setting applies instantly with no submit — use Toggle",
+      "It is a leaf option and you set isIndeterminate — reserve indeterminate for select-all parents",
+      "There is no label and no aria-label — the control has no accessible name"
+    ]
+  }
+}

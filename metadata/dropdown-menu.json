@@ -1,0 +1,168 @@
+{
+  "component": {
+    "name": "DropdownMenu",
+    "category": "molecule",
+    "type": "navigation",
+    "description": "A trigger that opens a Menu popover of actions or options. Owns the open/close state, outside-click and Escape dismissal, and focus return; the Menu surface it wraps holds the rows (actions, checkboxes, radios, groups, separators).",
+    "figmaNode": "677:6012",
+    "variants": ["button trigger", "icon trigger"],
+    "modifiers": ["buttonSpacing", "placement", "isOpen", "defaultOpen", "maxHeight"],
+    "note": "Trigger is styled like the neutral Button (sharp rect, white fill, neutral.300 border, forest tint on hover). Composes Menu — items/spacing/maxHeight/menuLabel pass straight through. While open the trigger takes the forest.50 selected tint and the chevron flips up. Synced to Figma '❖ Dropdown menu'."
+  },
+
+  "tokens": {
+    "trigger": {
+      "radius": "radius.none",
+      "border": "1px solid colors.border.neutral.default (neutral.300)",
+      "background": "colors.background.neutral.default (white)",
+      "color": "colors.text.neutral.default (neutral.600)",
+      "typography": "font-main, semibold, font-size.xs (14px) / line-height.xs (20px)",
+      "paddingInline": "spacing.sm (12px)",
+      "gap": "spacing.xs (6px label↔chevron gap)",
+      "heightDefault": "40px (buttonSpacing='default')",
+      "heightCompact": "32px (buttonSpacing='compact')",
+      "iconTrigger": "square — padding-inline 0, aspect-ratio 1/1, 20px icon"
+    },
+    "triggerStates": {
+      "hover": "colors.background.primary.weak.hovered (forest.100) fill, forest border, colors.text.primary.strong (forest.700) text",
+      "press": "colors.background.primary.weak.pressed (forest.200) fill, forest border, forest.700 text",
+      "focus": "focus-ring-width (2px) solid colors.border.primary.strong (forest.700), focus-ring-offset (2px)",
+      "open": "colors.background.primary.weak (forest.50) selected tint, colors.border.primary.strong (forest.700) border, forest.700 text; chevron rotates 180deg"
+    },
+    "popover": {
+      "position": "absolute, top calc(100% + spacing.2xs) — 4px below the trigger",
+      "alignStart": "left: 0 (placement='bottom-start')",
+      "alignEnd": "right: 0 (placement='bottom-end')",
+      "zIndex": "20"
+    },
+    "menu": "Surface tokens are owned by the nested Menu component (forest.50 / forest.700 selected rows, neutral row text, 40px / 32px row heights).",
+    "shadow": ""
+  },
+
+  "usage": {
+    "useCases": [
+      "Expose a set of actions behind a labelled button (e.g. 'Choices', 'Sort by')",
+      "An overflow / 'more' menu behind an icon trigger (more-horizontal)",
+      "A filter or multi-select control where checkbox rows stay open while toggling",
+      "A single-choice option list using radio rows that closes on pick",
+      "Row-level or toolbar actions in Athena Tools surfaces"
+    ],
+    "frequency": "repeatable",
+    "requiredProps": ["items", "triggerLabel (button trigger) or aria-label (icon trigger)"],
+    "commonPatterns": [
+      {
+        "name": "Action menu",
+        "description": "A labelled button opening a short list of commands that close the menu on pick.",
+        "jsx": "<DropdownMenu triggerLabel='Actions' items={[{ id: 'edit', label: 'Edit' }, { id: 'dup', label: 'Duplicate' }, { type: 'separator' }, { id: 'del', label: 'Delete' }]} onSelect={(id) => run(id)} />"
+      },
+      {
+        "name": "Icon overflow menu",
+        "description": "Icon-only trigger for a row or toolbar overflow menu; aria-label gives it an accessible name and bottom-end keeps it on screen.",
+        "jsx": "<DropdownMenu triggerType='icon' triggerIcon='more-horizontal' aria-label='More actions' placement='bottom-end' items={items} />"
+      },
+      {
+        "name": "Multi-select filter",
+        "description": "Checkbox rows keep the menu open so several can be toggled before dismissing; selection is driven by isSelected on each row.",
+        "jsx": "<DropdownMenu triggerLabel='Filter' items={topics.map((t) => ({ id: t.id, type: 'checkbox', label: t.name, isSelected: t.on }))} onSelect={(id) => toggle(id)} />"
+      },
+      {
+        "name": "Controlled open state",
+        "description": "Drive open/close from the parent via isOpen + onOpenChange (e.g. to coordinate with other UI).",
+        "jsx": "<DropdownMenu isOpen={open} onOpenChange={setOpen} triggerLabel='Sort' items={items} />"
+      }
+    ],
+    "antiPatterns": [
+      {
+        "scenario": "Using DropdownMenu for primary page navigation",
+        "reason": "It is a transient action/option popover, not a persistent wayfinding affordance; hiding top-level destinations behind a trigger hurts discoverability.",
+        "alternative": "Use Tabs or plain links for primary navigation."
+      },
+      {
+        "scenario": "Using DropdownMenu as a form select where a labelled value is validated",
+        "reason": "It has no associated form value, label, or validation surface, so submit/validation flows can't see the chosen option.",
+        "alternative": "Use a labelled native/DS select or a RadioGroup inside the form."
+      },
+      {
+        "scenario": "An icon trigger with no aria-label",
+        "reason": "An icon-only button has no visible text, so it exposes no accessible name to screen readers.",
+        "alternative": "Always pass aria-label when triggerType='icon'."
+      },
+      {
+        "scenario": "Setting closeOnSelect={true} on a multi-select checkbox menu",
+        "reason": "Forcing close after every checkbox toggle breaks the multi-select flow the default behavior is built for.",
+        "alternative": "Leave closeOnSelect unset — checkbox rows keep the menu open by default; only action/radio rows close."
+      }
+    ]
+  },
+
+  "composition": {
+    "slots": {
+      "triggerLabel": "Text for a button trigger (default 'Select'); ignored for icon triggers",
+      "triggerIcon": "Icon for an icon trigger (default 'more-horizontal'); ignored for button triggers",
+      "items": "MenuNode[] passed straight through to the nested Menu — action / checkbox / radio rows, groups, and separators"
+    },
+    "nestedComponents": ["Menu", "Icon"],
+    "commonPartners": ["Menu", "Button", "Icon"],
+    "parentConstraints": ["Toolbar / page header", "Table row or header (overflow actions)", "Filter bar", "Any inline-block layout — the wrapper is position:relative and the popover absolutely positioned beneath it"]
+  },
+
+  "behavior": {
+    "states": ["default", "hover", "press", "focus", "open"],
+    "interactions": {
+      "hover": "trigger → forest.100 fill, forest border, forest.700 text",
+      "press": "trigger → forest.200 fill, forest border, forest.700 text",
+      "focus": "2px forest.700 outline, 2px offset",
+      "open": "trigger takes the forest.50 selected tint with forest.700 border/text; chevron flips up (rotate 180); popover renders 4px below, z-index 20, aligned by placement",
+      "openFromTrigger": "Click toggles; ArrowDown / Enter / Space on the trigger opens and focuses the first enabled row",
+      "dismiss": "Outside mousedown closes; Escape closes and returns focus to the trigger; Tab closes without stealing focus back",
+      "select": "closeOnSelect defaults true EXCEPT a 'checkbox' row keeps the menu open (multi-select); action and radio rows close. Override per-instance with closeOnSelect."
+    },
+    "controlled": "Pass isOpen + onOpenChange for controlled; omit isOpen and pass defaultOpen for uncontrolled.",
+    "responsive": "Wrapper is inline-block; popover is absolutely positioned via plain CSS (no floating-ui), so it does not auto-flip — pick placement ('bottom-start' / 'bottom-end') to keep it on screen."
+  },
+
+  "accessibility": {
+    "role": "button trigger with aria-haspopup='menu'; the popover surface is the Menu (role='menu')",
+    "trigger": "aria-haspopup='menu' always; aria-expanded reflects open; aria-controls points at the menu id only while open; icon trigger requires aria-label for an accessible name",
+    "focusManagement": "Opening focuses the first enabled row (autoFocusFirst on Menu); Escape and outside-Tab close, and Escape returns focus to the trigger",
+    "keyboardSupport": "Trigger: ArrowDown / Enter / Space open and focus the first row. Menu: ArrowUp/Down, Home/End roving-tabindex navigation, Enter/Space select, Escape closes, Tab closes.",
+    "screenReader": "Trigger announces its expanded/collapsed state and that it controls a menu; rows announce as menuitem / menuitemcheckbox / menuitemradio with aria-checked from the Menu.",
+    "wcag": "AA",
+    "contrastNote": "neutral.600 trigger text on white and forest.700 text on forest.50 (open) both meet AA."
+  },
+
+  "athenaConstraints": {
+    "borderRadius": "radius.none",
+    "triggerFill": "white default; forest.50 selected tint when open (single brand accent)",
+    "triggerHeights": "40px default / 32px compact",
+    "placement": "bottom-start | bottom-end only",
+    "checkboxKeepsOpen": "checkbox rows stay open; action/radio rows close"
+  },
+
+  "figmaDivergences": [
+    {
+      "property": "state",
+      "figma": "explicit state property (default / hover / press / focus / open)",
+      "implementation": "real CSS pseudo-states (:hover, :active, :focus-visible) and a state-driven `open` class — no `state` prop",
+      "reason": "Matches Button; interaction states are driven by the browser and open state rather than a prop."
+    },
+    {
+      "property": "positioning",
+      "figma": "popover floats below the trigger",
+      "implementation": "plain CSS absolute positioning (top: 100% + 4px, left/right: 0) with no floating-ui dependency",
+      "reason": "Lightweight; placement is chosen explicitly via the placement prop and the popover does not auto-flip or collision-detect."
+    }
+  ],
+
+  "aiHints": {
+    "priority": "high",
+    "keywords": ["dropdown", "dropdown menu", "menu", "actions", "overflow", "more menu", "kebab", "filter", "options", "popover", "select actions"],
+    "context": "Reach for DropdownMenu to hang a list of actions or options off a trigger — a labelled button or an icon-only 'more' button. It composes Menu, so build the rows as MenuNode[] (action / checkbox / radio / group / separator). Use checkbox rows for multi-select (the menu stays open); use it for transient actions, not primary navigation or validated form values.",
+    "neverUseWhen": [
+      "It is primary page navigation — use Tabs or links",
+      "It must hold a validated form value — use a labelled select or RadioGroup",
+      "The trigger is icon-only and you omit aria-label — it has no accessible name",
+      "You force closeOnSelect on a checkbox (multi-select) menu — let checkbox rows keep it open"
+    ]
+  }
+}

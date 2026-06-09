@@ -1,0 +1,204 @@
+{
+  "component": {
+    "name": "Modal",
+    "category": "molecule",
+    "type": "container",
+    "description": "A dialog layered over a dimmed blanket, portalled to document.body. Interrupts the flow to demand a focused decision or task — confirming an action, capturing input, or surfacing content that must be dealt with before continuing. Composed from ModalHeader, ModalBody, and ModalFooter.",
+    "figmaNode": "35:2877",
+    "variants": ["default", "danger"],
+    "modifiers": ["shouldScrollInViewport", "shouldCloseOnBlanketClick", "shouldCloseOnEscape", "full-screen"],
+    "note": "White card with SHARP corners (radius-none, DS convention) and --shadow-overlay over a one-off ink blanket rgba(5,12,31,0.46). Four exported parts: Modal / ModalHeader / ModalBody / ModalFooter, wired together via context. Traps focus, locks body scroll, restores focus to the trigger on close. Synced to Figma '❖ Modal dialog'."
+  },
+
+  "tokens": {
+    "blanket": {
+      "background": "one-off ink rgba(5,12,31,0.46) (no token)",
+      "position": "position fixed, inset 0, z-index 1000",
+      "gutter": "spacing.3xl (32px) padding around the card; 0 for full-screen"
+    },
+    "card": {
+      "background": "colors.background.neutral.default (--bg-neutral-default, white)",
+      "radius": "radius.none (sharp — DS convention)",
+      "shadow": "--shadow-overlay (none for full-screen)",
+      "maxHeight": "calc(100vh - 2 * spacing.3xl); none when shouldScrollInViewport; 100vh for full-screen",
+      "fontFamily": "--font-main (Inter)"
+    },
+    "size": {
+      "small": "max-width 400px",
+      "medium": "max-width 600px (default)",
+      "large": "max-width 760px",
+      "x-large": "max-width 968px",
+      "full-screen": "fills the viewport (width/height 100%, no shadow, no gutter)"
+    },
+    "header": {
+      "padding": "spacing.xl spacing.xl spacing.md (24 / 24 / 16)",
+      "gap": "spacing.md (16px) title-row ↔ close; spacing.base (8px) icon ↔ title",
+      "title": "Inter bold 20/24 (font-size.lg / line-height.sm, font-weight.bold), colors.text.neutral.strong (--text-neutral-strong, neutral.800)",
+      "leadingIcon": "20px Icon, colors.text.neutral.default; appearance=danger defaults to a 'warning' glyph tinted colors.text.danger.default (--text-danger-default, danger.500)"
+    },
+    "closeButton": {
+      "icon": "24px 'close' Icon",
+      "color": "colors.text.neutral.default (neutral.600)",
+      "padding": "spacing.2xs (4px)",
+      "hover": "background colors.background.primary.weak.hovered (forest.100), color text.primary.strong",
+      "press": "background colors.background.primary.weak.pressed (forest.200)",
+      "focusRing": "2px colors.border.primary.strong (forest.700), --focus-ring-offset"
+    },
+    "body": {
+      "padding": "0 spacing.xl (0 24px; header/footer give the vertical room)",
+      "typography": "Inter 14/20 (font-size.xs / line-height.xs)",
+      "color": "colors.text.neutral.strong (neutral.800)",
+      "overflow": "overflow-y auto; visible when shouldScrollInViewport",
+      "focusRing": "2px colors.border.primary.strong (forest.700), inset offset -2px"
+    },
+    "footer": {
+      "background": "colors.background.neutral.default (white)",
+      "align": "justify-content flex-end",
+      "gap": "spacing.base (8px)",
+      "padding": "spacing.md spacing.xl spacing.xl (16 / 24 / 24)"
+    }
+  },
+
+  "usage": {
+    "useCases": [
+      "Confirm a consequential action before proceeding",
+      "Confirm a destructive / irreversible action (appearance=danger)",
+      "Capture a short focused form or input without leaving the page",
+      "Surface content the user must read or act on before continuing",
+      "Present an isolated full-screen task (full-screen size)"
+    ],
+    "frequency": "singleton",
+    "requiredProps": ["isOpen", "ModalHeader title (or aria-label on Modal when there is no title)"],
+    "commonPatterns": [
+      {
+        "name": "Confirmation dialog",
+        "description": "A small modal with a title, a sentence of body copy, and a Cancel + Confirm footer.",
+        "jsx": "<Modal isOpen={open} onClose={close} size='small'><ModalHeader title='Publish article?' /><ModalBody>This will make the article visible to everyone.</ModalBody><ModalFooter><Button appearance='subtle' onClick={close}>Cancel</Button><Button appearance='primary' onClick={confirm}>Publish</Button></ModalFooter></Modal>"
+      },
+      {
+        "name": "Destructive confirmation",
+        "description": "appearance=danger surfaces a warning icon in the header; the consumer pairs it with a danger Confirm button.",
+        "jsx": "<Modal isOpen={open} onClose={close} appearance='danger' size='small'><ModalHeader title='Delete account?' /><ModalBody>This permanently removes your account and cannot be undone.</ModalBody><ModalFooter><Button appearance='subtle' onClick={close}>Cancel</Button><Button appearance='danger' onClick={confirm}>Delete</Button></ModalFooter></Modal>"
+      },
+      {
+        "name": "Form modal",
+        "description": "A medium/large modal whose body holds form fields; the body scrolls while header and footer stay pinned.",
+        "jsx": "<Modal isOpen={open} onClose={close} size='large'><ModalHeader title='Edit profile' /><ModalBody><TextField label='Name' /><TextField label='Email' /></ModalBody><ModalFooter><Button appearance='subtle' onClick={close}>Cancel</Button><Button appearance='primary' onClick={save}>Save</Button></ModalFooter></Modal>"
+      },
+      {
+        "name": "Custom leading icon",
+        "description": "Pass an explicit icon to ModalHeader to override the default (or to add one to a default-appearance modal).",
+        "jsx": "<ModalHeader title='All set' icon='check-circle' />"
+      }
+    ],
+    "antiPatterns": [
+      {
+        "scenario": "Using a modal for a non-blocking notification or status message",
+        "reason": "Modals seize focus and block the page; a transient or low-priority message should not interrupt the user.",
+        "alternative": "Use Banner for persistent in-page messages or Toast for transient confirmations."
+      },
+      {
+        "scenario": "Nesting a modal inside another open modal",
+        "reason": "Stacked dialogs break the focus trap and disorient users; only one blocking surface should be active.",
+        "alternative": "Replace the content of the existing modal, or use a multi-step flow within one modal."
+      },
+      {
+        "scenario": "Using full-screen size for a short confirmation",
+        "reason": "Full-screen overwhelms a one-line decision and removes the surrounding context unnecessarily.",
+        "alternative": "Use size='small' (or 'medium') for confirmations; reserve full-screen for immersive tasks."
+      },
+      {
+        "scenario": "Using appearance=danger for a non-destructive action",
+        "reason": "The warning icon and danger Confirm signal irreversible consequences; misusing them erodes the cue.",
+        "alternative": "Use appearance='default' for ordinary confirmations; reserve danger for destructive/irreversible actions."
+      },
+      {
+        "scenario": "Rendering a Modal with neither a ModalHeader title nor an aria-label",
+        "reason": "The dialog has no accessible name, so screen readers announce it without context.",
+        "alternative": "Always include a ModalHeader title, or set aria-label on Modal when there is no visible title."
+      }
+    ]
+  },
+
+  "composition": {
+    "slots": {
+      "children": "The dialog contents — typically ModalHeader, ModalBody, and ModalFooter in that order",
+      "ModalHeader.title": "Heading text; also sets the dialog's accessible name",
+      "ModalHeader.icon": "Optional leading icon (defaults to 'warning' when appearance=danger)",
+      "ModalBody.children": "Scrollable content region",
+      "ModalFooter.children": "Right-aligned action buttons (typically Cancel + Confirm)"
+    },
+    "nestedComponents": ["ModalHeader", "ModalBody", "ModalFooter", "Icon", "Button"],
+    "commonPartners": ["Button", "Icon"],
+    "parentConstraints": ["Portalled to document.body — renders outside the DOM position where it is declared, independent of any parent layout or overflow"]
+  },
+
+  "behavior": {
+    "states": ["closed", "open", "default", "danger", "full-screen", "body-scroll", "viewport-scroll"],
+    "interactions": {
+      "open": "Focus moves into the dialog (first focusable element, or the dialog itself); body scroll is locked",
+      "focusTrap": "Tab and Shift+Tab cycle within the dialog and never leave it",
+      "close": "Escape, blanket click, or the header close button calls onClose; focus is restored to the previously-focused trigger",
+      "shouldCloseOnEscape": "Escape closes the modal; defaults to true, set false to require an explicit action",
+      "shouldCloseOnBlanketClick": "Clicking the dimmed blanket (not the card) closes the modal; defaults to true",
+      "shouldScrollInViewport": "Switches from body-only scroll to whole-overlay scroll (body overflow becomes visible, overlay aligns to top); defaults to false",
+      "bodyScroll": "By default the ModalBody scrolls while header and footer stay pinned"
+    },
+    "controlled": "Always controlled: render based on isOpen and update it from onClose. The component returns null when isOpen is false."
+  },
+
+  "accessibility": {
+    "role": "dialog",
+    "ariaModal": "aria-modal='true' marks content outside the dialog inert to assistive tech",
+    "accessibleName": "aria-labelledby points at the ModalHeader title; falls back to aria-label on Modal when no title is present",
+    "accessibleDescription": "ModalBody carries an id wired through context for description association",
+    "focusManagement": "Focus moves into the dialog on open and is restored to the trigger on close; a manual focus trap keeps Tab cycling within the dialog (dialog itself has tabIndex=-1)",
+    "scrollRegion": "ModalBody has tabIndex=0 so the scrollable region is keyboard-reachable (satisfies axe scrollable-region-focusable)",
+    "keyboardSupport": "Tab / Shift+Tab cycle focus within the dialog; Escape closes (when shouldCloseOnEscape); Enter/Space activate the focused button",
+    "screenReader": "Announced as a dialog with its title as the name; background scroll is locked and outside content is inert",
+    "wcag": "AA",
+    "contrastNote": "neutral.800 title and body text on white, the danger.500 header icon, and the forest.700 focus ring all meet AA."
+  },
+
+  "athenaConstraints": {
+    "borderRadius": "radius.none (sharp corners)",
+    "cardBackground": "white (--bg-neutral-default)",
+    "shadow": "--shadow-overlay (none for full-screen)",
+    "blanket": "one-off ink rgba(5,12,31,0.46), z-index 1000, 32px gutter",
+    "dangerCue": "appearance=danger tints the header icon danger.500; the danger Confirm button is the consumer's choice, not automatic"
+  },
+
+  "figmaDivergences": [
+    {
+      "property": "border-radius",
+      "figma": "some variants show 4px corners",
+      "implementation": "radius.none (sharp corners)",
+      "reason": "Athena DS convention is sharp corners across all surfaces."
+    },
+    {
+      "property": "appearance=danger Confirm fill",
+      "figma": "danger appearance implies a danger.500-tinted Confirm",
+      "implementation": "the Confirm uses the Button component, which keeps the danger fill at danger.700 for AA contrast",
+      "reason": "Button owns its own fills; danger.700 meets AA where danger.500 would not."
+    },
+    {
+      "property": "ModalBody tabIndex",
+      "figma": "no focus on the body",
+      "implementation": "ModalBody is tabIndex=0",
+      "reason": "Accessibility addition so the scrollable region is keyboard-reachable (axe scrollable-region-focusable)."
+    }
+  ],
+
+  "aiHints": {
+    "priority": "high",
+    "keywords": ["modal", "dialog", "popup", "overlay", "confirm", "confirmation", "blanket", "backdrop", "alert dialog", "destructive"],
+    "context": "Reach for Modal when the user must make a focused decision or complete a task before continuing — confirmations, short forms, or content that must be dealt with. Compose ModalHeader + ModalBody + ModalFooter, drive visibility with isOpen, and use appearance='danger' only for destructive/irreversible actions (pair it with a danger Confirm Button). Use small for confirmations and full-screen only for immersive tasks.",
+    "neverUseWhen": [
+      "The message is non-blocking or transient — use Banner or Toast",
+      "A modal is already open — never nest modals",
+      "The action is a short confirmation — do not use full-screen size",
+      "The action is not destructive — do not use appearance='danger'",
+      "There is no ModalHeader title and no aria-label — the dialog has no accessible name"
+    ]
+  }
+}

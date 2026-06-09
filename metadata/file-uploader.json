@@ -1,0 +1,204 @@
+{
+  "component": {
+    "name": "FileUploader",
+    "category": "molecule",
+    "type": "input",
+    "description": "A dashed dropzone that opens the native file picker on click and accepts drag-and-drop, paired with a list of file rows showing each file's name, size, upload progress, and a remove control. Exports both FileUploader (dropzone + list) and FileRow (a single file item — the Figma isEmpty=false part).",
+    "figmaNode": "703:13044",
+    "exports": ["FileUploader", "FileRow"],
+    "variants": ["empty (dropzone only)", "withFiles (dropzone + FileRow list)", "dragging", "disabled"],
+    "modifiers": ["isDisabled", "multiple", "accept"],
+    "note": "Dropzone is a clickable DIV (not a button) because it wraps a Button; keyboard/AT users trigger the hidden native <input type=file> via the inner Button. Drag-over tints the zone forest.50 + switches the dashed border to SOLID forest.500. UploadFile = { id, name, size?, progress? (0–1) }. Reuses Button, Icon, and ProgressBar. Synced to Figma '❖ File Uploader'."
+  },
+
+  "tokens": {
+    "dropzone": {
+      "background": "colors.background.neutral.default (input white); hover → colors.background.primary.weak (forest.50); dragging → colors.background.primary.weak (forest.50); disabled → colors.background.neutral.weak (neutral.50)",
+      "border": "1px dashed colors.border.neutral.default (neutral.300); hover → forest.500; dragging → SOLID colors.border.primary.default (forest.500)",
+      "padding": "spacing.md spacing.base (16px 8px)",
+      "gap": "spacing.2xs (4px)",
+      "layout": "centered column (align + justify center)"
+    },
+    "placeholderIcon": {
+      "size": "48px",
+      "color": "colors.text.neutral.strong (neutral.800); disabled → colors.text.neutral.disabled (neutral.400)",
+      "icons": "image (default) | cloud-upload | file"
+    },
+    "fieldLabel": {
+      "typography": "12px / 16px, font-weight semibold",
+      "color": "colors.text.neutral.default (neutral.600)"
+    },
+    "message": {
+      "typography": "12px / 16px",
+      "color": "colors.text.neutral.weak (neutral.500)",
+      "align": "center"
+    },
+    "input": "visually-hidden native <input type=file> (1px clip) — keeps keyboard + a11y intact",
+    "fileRow": {
+      "border": "1px solid colors.border.neutral.default (neutral.300)",
+      "background": "colors.background.neutral.default (white)",
+      "padding": "spacing.sm spacing.md (12px 16px)",
+      "gap": "spacing.base (8px)"
+    },
+    "fileIconPill": {
+      "shape": "radius.pill circle, padding spacing.2xs (4px)",
+      "background": "colors.background.primary.weak (forest.50)",
+      "icon": "20px file icon, colors.text.primary.strong (forest.700)"
+    },
+    "fileName": {
+      "typography": "14px / 20px, font-weight semibold",
+      "color": "colors.text.neutral.strong (neutral.800)"
+    },
+    "fileSize": {
+      "typography": "12px / 16px",
+      "color": "colors.text.neutral.default (neutral.600)"
+    },
+    "progress": {
+      "bar": "reused ProgressBar (value 0–1); appearance='success' at progress ≥ 1 (still forest — forest IS the system green)",
+      "percentLabel": "12px / 16px semibold, colors.text.primary.default (forest.500)"
+    },
+    "removeButton": {
+      "icon": "16px trash icon, colors.text.neutral.default (neutral.600)",
+      "hover": "colors.background.primary.weak.hovered (forest.100) tint + forest.700 icon",
+      "press": "colors.background.primary.weak.pressed (forest.200)",
+      "focusRing": "2px colors.border.primary.strong (forest.700), inset (offset -2px)"
+    }
+  },
+
+  "usage": {
+    "useCases": [
+      "Let a user attach one or many files to a form (resumes, documents, images)",
+      "Upload media or assets with visible per-file progress",
+      "Import a dataset or file inside a settings or admin flow",
+      "Collect attachments inside a Modal/dialog upload step",
+      "Replace/add to an existing set of files, showing the current list below the zone"
+    ],
+    "frequency": "occasional",
+    "requiredProps": ["label (or aria-label on the input) for an accessible name", "onFilesAdded"],
+    "commonPatterns": [
+      {
+        "name": "Form attachment field",
+        "description": "Controlled uploader inside a form section; files held in state, added via onFilesAdded, removed via onRemove.",
+        "jsx": "<FileUploader label='Attachments' message='PDF or PNG, up to 10MB' multiple files={files} onFilesAdded={add} onRemove={remove} />"
+      },
+      {
+        "name": "Image upload with placeholder",
+        "description": "Use the image placeholder icon and an accept filter for image-only uploads.",
+        "jsx": "<FileUploader label='Cover image' icon='image' accept='image/*' buttonLabel='Add image' onFilesAdded={add} />"
+      },
+      {
+        "name": "Determinate progress list",
+        "description": "Each in-flight file carries a progress 0–1; the FileRow bar reads as success at 1.",
+        "jsx": "<FileUploader files={[{ id: '1', name: 'report.pdf', size: '200 KB', progress: 0.6 }]} onFilesAdded={add} onRemove={remove} />"
+      },
+      {
+        "name": "Standalone file row",
+        "description": "Render a single already-uploaded file outside the uploader (e.g. in a summary).",
+        "jsx": "<FileRow file={{ id: '1', name: 'logo.svg', size: '12 KB' }} onRemove={remove} />"
+      }
+    ],
+    "antiPatterns": [
+      {
+        "scenario": "Using drag-and-drop as the only upload path",
+        "reason": "Drag-only excludes keyboard, touch, and assistive-tech users; the zone must always be click/Button-triggerable.",
+        "alternative": "Keep the always-present click-to-upload Button; treat drag-and-drop as an enhancement on top of it."
+      },
+      {
+        "scenario": "Omitting the field label and the input's aria-label",
+        "reason": "The hidden native input has no accessible name and is unusable by screen readers.",
+        "alternative": "Always pass label (it is wired as aria-labelledby), or set an aria-label on the control."
+      },
+      {
+        "scenario": "Showing a determinate percent when upload progress is unknown",
+        "reason": "A frozen or fabricated percent misleads users about real upload state.",
+        "alternative": "Use an indeterminate progress pattern until a real fraction is available; omit progress for already-uploaded files."
+      },
+      {
+        "scenario": "Using FileUploader for a single inline avatar / image picker",
+        "reason": "The full dropzone + list is heavy for a one-shot single-image swap.",
+        "alternative": "Use a simple Button + preview thumbnail for lightweight single-avatar pickers."
+      }
+    ]
+  },
+
+  "composition": {
+    "slots": {
+      "label": "Optional field label above the dropzone (12/16 semibold neutral.600); wired as the input's accessible name",
+      "buttonLabel": "Text inside the dropzone Button (default 'Upload file')",
+      "message": "Hint under the Button — accepted types / max size (12/16 neutral.500)",
+      "icon": "48px placeholder icon in the zone: image (default) | cloud-upload | file"
+    },
+    "nestedComponents": ["Button", "Icon", "ProgressBar", "FileRow"],
+    "commonPartners": ["Button", "ProgressBar", "Modal (uploads inside a dialog)", "Form fields"],
+    "parentConstraints": ["Form section", "Modal body", "Settings / admin panel", "Card"]
+  },
+
+  "behavior": {
+    "states": ["empty", "hover", "dragging", "with files", "disabled"],
+    "interactions": {
+      "click": "Clicking anywhere in the zone OR the inner Button opens the hidden native file input; the Button stops propagation so it triggers the picker once",
+      "hover": "Zone tints forest.50 and the dashed border switches to forest.500",
+      "dragOver": "Sets a dragging state — zone tints forest.50 and the border becomes SOLID forest.500 (Figma isSelected)",
+      "dragLeave": "Clears dragging; ignores leaves into child elements",
+      "drop": "Clears dragging and emits the dropped files via onFilesAdded(File[])",
+      "select": "onChange emits chosen files via onFilesAdded(File[]); input value is reset so the same file can be re-selected",
+      "remove": "Each FileRow trash button fires onRemove(id)",
+      "disabled": "Zone cursor not-allowed, neutral.50 fill, muted placeholder; drag/drop/click are ignored and the input is disabled"
+    },
+    "controlled": "files is a controlled list owned by the parent; onFilesAdded(File[]) and onRemove(id) drive it. progress (0–1) per file is also parent-controlled.",
+    "progress": "FileRow renders the reused ProgressBar with value 0–1; at progress ≥ 1 it switches to appearance='success' (still forest)."
+  },
+
+  "accessibility": {
+    "role": "file input (native <input type=file>) drives the control and its accessible name",
+    "accessibleName": "aria-labelledby points at the field label; provide a label (or aria-label) so the control is named",
+    "hiddenInput": "The native input is visually-hidden (1px clip), NOT display:none — keeping it keyboard-focusable and exposed to AT",
+    "zoneSemantics": "The dropzone is a clickable DIV (it wraps a Button), so keyboard/AT users trigger uploads via the inner Button + hidden input rather than the div",
+    "removeButtons": "Each FileRow remove button is a real <button> with aria-label 'Remove {name}' (overridable via removeLabel)",
+    "focusRing": "Inner Button shows the focus ring (zone uses focus-within: outline none); remove button uses a 2px forest.700 inset ring",
+    "dragAndDrop": "Drag-and-drop is an enhancement layered over the always-present click-to-upload — never the only path",
+    "keyboardSupport": "Tab to the Button, Enter/Space to open the picker; Tab to each remove button, Enter/Space to remove",
+    "wcag": "AA",
+    "contrastNote": "forest.700 file icon on forest.50 pill, neutral.800 file name, and forest.500 percent on white all meet AA."
+  },
+
+  "athenaConstraints": {
+    "dropzoneBorder": "1px dashed neutral.300; solid forest.500 on hover/drag",
+    "borderRadius": "radius.none (rows + remove button); radius.pill only on the file icon",
+    "brandAccent": "forest.500 (single brand accent) — used for tint, percent, and success progress; forest IS the system green",
+    "alwaysClickable": "click/Button upload is always present; drag-and-drop is additive only"
+  },
+
+  "figmaDivergences": [
+    {
+      "property": "dropzone element",
+      "figma": "modeled as one input control",
+      "implementation": "a clickable DIV (not a button) because it contains a Button; keyboard/AT users trigger via the inner Button + the hidden native input",
+      "reason": "A button cannot legally nest a button; the hidden <input type=file> carries the real control semantics and accessible name."
+    },
+    {
+      "property": "progress",
+      "figma": "shows a detached progress bar with a percent",
+      "implementation": "a composed reuse of the Athena ProgressBar (value 0–1) plus a forest.500 percent label",
+      "reason": "Reuse the system ProgressBar rather than redrawing the bar; success appearance kicks in at progress ≥ 1."
+    },
+    {
+      "property": "icons",
+      "figma": "uses file / image / cloud-upload glyphs",
+      "implementation": "added three new icons to the set: file, image, cloud-upload",
+      "reason": "The placeholder and file-row pill needed glyphs that did not yet exist in the Icon set."
+    }
+  ],
+
+  "aiHints": {
+    "priority": "high",
+    "keywords": ["file uploader", "upload", "dropzone", "drag and drop", "attachment", "file input", "browse", "progress", "import"],
+    "context": "Reach for FileUploader when a user attaches or uploads one or many files, especially when per-file progress and a removable list matter. Always keep the click/Button path; layer drag-and-drop as an enhancement. Provide a label (accessible name) and a message hint for accepted types/size. For a lightweight single-image/avatar swap, prefer a Button + preview instead.",
+    "neverUseWhen": [
+      "Drag-and-drop would be the only upload path — keep the click/Button fallback",
+      "No label and no aria-label is provided — the input has no accessible name",
+      "Upload progress is unknown but you would show a determinate percent — use an indeterminate pattern",
+      "A single inline avatar / image picker is enough — a Button + preview is lighter"
+    ]
+  }
+}

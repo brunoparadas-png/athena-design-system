@@ -1,0 +1,132 @@
+{
+  "component": {
+    "name": "Tabs",
+    "category": "molecule",
+    "type": "navigation",
+    "description": "Organizes related content into selectable panels on a single page, so only one panel shows at a time.",
+    "figmaNode": "183:3466",
+    "variants": ["default"],
+    "note": "tablist of Tab buttons over a 1px track + tabpanels. Selected: forest.500 text + 3px forest underline; unselected neutral.500 (hover neutral.600). Inter medium 14/20. Roving-tabindex arrow-key nav with automatic activation. Synced to Figma '❖ Tabs'."
+  },
+
+  "tokens": {
+    "tab": {
+      "padding": "spacing.xs spacing.base (6px 8px)",
+      "minHeight": "32px",
+      "typography": "Inter medium (500), font-size.xs (14px) / line-height.xs (20px)",
+      "unselected": "colors.text.neutral.weak (neutral.500); hover → colors.text.neutral.default (neutral.600)",
+      "selected": "colors.text.primary.default (forest.500) + 3px colors.border.primary.default (forest.500) underline",
+      "disabled": "colors.text.neutral.disabled (neutral.400)"
+    },
+    "track": "1px bottom border, rgba(11,18,40,0.14)",
+    "panel": "spacing.md (16px) top padding, colors.text.neutral.strong",
+    "focusRing": "2px colors.border.primary.strong (forest.700)",
+    "shadow": ""
+  },
+
+  "usage": {
+    "useCases": [
+      "Split related content into sections on one page (Overview / Activity / Settings)",
+      "Switch views without navigating away",
+      "Group settings or detail panels under one header"
+    ],
+    "frequency": "repeatable",
+    "requiredProps": ["tabs"],
+    "commonPatterns": [
+      {
+        "name": "Basic tabs",
+        "description": "Provide tabs with labels and content; the first enabled tab is selected by default.",
+        "jsx": "<Tabs label='Sections' tabs={[{id:'a',label:'Overview',content:<Overview/>},{id:'b',label:'Activity',content:<Activity/>}]} />"
+      },
+      {
+        "name": "Controlled",
+        "description": "Own the selected id to sync with the URL or external state.",
+        "jsx": "<Tabs tabs={tabs} selectedId={tab} onChange={setTab} />"
+      },
+      {
+        "name": "With a disabled tab",
+        "description": "Disabled tabs are skipped by keyboard navigation.",
+        "jsx": "<Tabs tabs={[{id:'a',label:'A',content:...},{id:'b',label:'B',content:...,isDisabled:true}]} />"
+      }
+    ],
+    "antiPatterns": [
+      {
+        "scenario": "Using tabs for sequential steps",
+        "reason": "Tabs imply independent, freely-switchable sections, not an ordered flow.",
+        "alternative": "Use a stepper / wizard with a Progress bar."
+      },
+      {
+        "scenario": "Tabs for navigating between separate pages/URLs as primary nav",
+        "reason": "Tabs organize content on one page; cross-page nav belongs elsewhere.",
+        "alternative": "Use the app's primary navigation (Menu / Page Layout)."
+      },
+      {
+        "scenario": "Too many tabs to fit on one line",
+        "reason": "Overflowing tabs are hard to scan and reach.",
+        "alternative": "Reduce sections, or use a Select / Menu for overflow."
+      },
+      {
+        "scenario": "Hiding critical content behind a non-default tab",
+        "reason": "Users may never open it.",
+        "alternative": "Keep essential content on the default tab or outside tabs."
+      }
+    ]
+  },
+
+  "composition": {
+    "slots": {
+      "tabs": "Required — array of { id?, label, content, isDisabled? }"
+    },
+    "nestedComponents": [],
+    "commonPartners": ["Page Header", "Breadcrumbs", "Button", "Table"],
+    "parentConstraints": ["Detail page body", "Card", "Settings page", "Under a Page Header"]
+  },
+
+  "behavior": {
+    "states": ["default", "hover", "press", "focus", "selected", "disabled"],
+    "interactions": {
+      "select": "Click or arrow-to a tab to show its panel",
+      "hover": "Unselected tabs darken to neutral.600",
+      "keyboard": "Arrow Left/Right/Up/Down move and activate (automatic); Home/End jump to first/last; disabled tabs skipped",
+      "focus": "2px forest.700 inset outline on the focused tab",
+      "selected": "forest.500 text + 3px forest underline"
+    },
+    "controlled": "Controlled via selectedId + onChange; uncontrolled via defaultSelectedId (defaults to first enabled)."
+  },
+
+  "accessibility": {
+    "roles": "tablist / tab / tabpanel",
+    "wiring": "Each tab aria-controls its panel; each panel aria-labelledby its tab; selected tab aria-selected=true",
+    "rovingTabindex": "Only the selected tab is in the tab order (tabIndex 0); the rest are -1 and reached via arrows",
+    "focusRing": "2px forest.700 outline",
+    "keyboardSupport": "Tab to enter the tablist, Arrows to switch, Tab again to reach the panel",
+    "screenReader": "Announced as a tab list with selected state",
+    "wcag": "AA"
+  },
+
+  "athenaConstraints": {
+    "indicator": "3px forest.500 underline on the selected tab",
+    "activation": "automatic (selection follows focus)"
+  },
+
+  "figmaDivergences": [
+    {
+      "property": "font family",
+      "figma": "Atlassian Sans Medium (library default)",
+      "implementation": "Inter Medium",
+      "reason": "Athena's system font is Inter; Atlassian Sans was the Figma kit default."
+    }
+  ],
+
+  "aiHints": {
+    "priority": "high",
+    "keywords": ["tabs", "tab", "tabbed", "sections", "panels", "switch view", "overview", "tablist"],
+    "context": "Reach for Tabs to split related content into switchable panels on one page. Provide a declarative tabs array. Use for peer sections, not ordered steps or cross-page navigation. Keep the count small enough to fit one line.",
+    "neverUseWhen": [
+      "The content is an ordered sequence — use a stepper/wizard",
+      "It's primary cross-page navigation — use the app nav",
+      "There are too many sections to fit — reduce or use a Select",
+      "Essential content would hide behind a secondary tab — surface it by default"
+    ]
+  }
+}

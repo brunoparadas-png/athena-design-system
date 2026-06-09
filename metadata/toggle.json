@@ -1,0 +1,152 @@
+{
+  "component": {
+    "name": "Toggle",
+    "category": "atom",
+    "type": "input",
+    "description": "A slide switch for an instantly-applied on/off setting. The change takes effect immediately — there is no submit step.",
+    "figmaNode": "671:5884",
+    "variants": ["off", "on"],
+    "sizes": ["default (32×16)", "large (40×20)"],
+    "modifiers": ["isDisabled"],
+    "note": "Rendered as a native checkbox with role='switch'. White dot, off track neutral.500, on track forest.500. Hover/focus are real CSS pseudo-states (no `state` prop). Synced to Figma '❖ Toggle'."
+  },
+
+  "tokens": {
+    "track": {
+      "off": "colors.background.neutral.strongest (neutral.500); hover → .strongest.hovered (neutral.600)",
+      "on": "colors.background.primary.default (forest.500); hover → colors.background.primary.strong.hovered (forest.600)",
+      "disabled": "colors.background.neutral.disabled (neutral.100) — both on and off",
+      "radius": "radius.pill"
+    },
+    "dot": {
+      "color": "neutral.0 (white) in every state, including disabled",
+      "shadow": "0 1px 2px rgba(9,30,66,0.25)",
+      "radius": "radius.pill",
+      "sizes": { "default": "12px", "large": "16px" },
+      "travel": { "default": "16px", "large": "20px" }
+    },
+    "dimensions": {
+      "default": "32×16 track",
+      "large": "40×20 track"
+    },
+    "label": {
+      "typography": "typography.textStyles.body-m (Inter 14px / 20px)",
+      "color": "colors.text.neutral.strong (neutral.800); disabled → colors.text.neutral.disabled (neutral.400)",
+      "gap": "spacing.base (8px)"
+    },
+    "focusRing": "2px colors.border.primary.strong (forest.700), offset 2px",
+    "shadow": ""
+  },
+
+  "usage": {
+    "useCases": [
+      "Instantly enable/disable a setting (notifications, dark mode, autosave)",
+      "Switch a feature on or off in a settings list with no save button",
+      "Binary control where the effect is immediate and reversible"
+    ],
+    "frequency": "repeatable",
+    "requiredProps": ["label (or aria-label)"],
+    "commonPatterns": [
+      {
+        "name": "Settings row",
+        "description": "Label/description on the left, toggle pinned right; flips a setting immediately.",
+        "jsx": "<Toggle label='Email notifications' isChecked={on} onChange={(e) => save(e.target.checked)} />"
+      },
+      {
+        "name": "Standalone switch",
+        "description": "Icon-adjacent or compact contexts; supply aria-label since there is no visible label.",
+        "jsx": "<Toggle aria-label='Dark mode' isChecked={dark} onChange={toggleTheme} />"
+      },
+      {
+        "name": "Large variant",
+        "description": "Touch-friendly 40×20 switch for denser/mobile surfaces.",
+        "jsx": "<Toggle size='large' label='Autosave' defaultChecked />"
+      }
+    ],
+    "antiPatterns": [
+      {
+        "scenario": "Using a toggle for a value that only applies after pressing Save",
+        "reason": "Toggles imply an immediate effect; a deferred value misleads users.",
+        "alternative": "Use a Checkbox for form values committed on submit."
+      },
+      {
+        "scenario": "Using a toggle to choose one of several options",
+        "reason": "A switch is binary (on/off), not a multi-way selector.",
+        "alternative": "Use Radio / Radio group, or a Select."
+      },
+      {
+        "scenario": "A toggle with no label and no aria-label",
+        "reason": "The switch has no accessible name and its meaning is unclear.",
+        "alternative": "Always pass label, or set aria-label for a standalone switch."
+      },
+      {
+        "scenario": "Requiring a confirmation dialog after every toggle",
+        "reason": "Friction defeats the instant-effect intent of a switch.",
+        "alternative": "Make the action immediate and reversible; reserve confirmation for destructive settings."
+      }
+    ]
+  },
+
+  "composition": {
+    "slots": {
+      "label": "Optional — text after the switch (omit only with an aria-label)"
+    },
+    "nestedComponents": [],
+    "commonPartners": ["FormSection", "List row", "Text (setting description)"],
+    "parentConstraints": ["Settings list", "Form section", "Toolbar", "Card header"]
+  },
+
+  "behavior": {
+    "states": ["off", "on", "hover", "focus", "disabled"],
+    "interactions": {
+      "hover": "off → neutral.600 track; on → forest.600 track",
+      "focus": "2px forest.700 outline, 2px offset",
+      "on": "forest.500 track, dot slides to the far edge (16px default / 20px large)",
+      "disabled": "neutral.100 track (on and off), white dot, cursor not-allowed"
+    },
+    "controlled": "Pass isChecked + onChange for controlled; omit isChecked and use defaultChecked for uncontrolled.",
+    "motion": "Dot translateX 0.12s ease; respects prefers-reduced-motion."
+  },
+
+  "accessibility": {
+    "role": "switch",
+    "focusRing": "2px forest.700 outline, 2px offset",
+    "keyboardSupport": "Space toggles; Tab moves focus in/out",
+    "screenReader": "Native checkbox with role='switch' announces on/off; name comes from the wrapping label or aria-label",
+    "wcag": "AA",
+    "contrastNote": "Off track neutral.500 and on track forest.500 are UI-component colors (≥3:1 against the white page); the white dot meets 3:1 against both."
+  },
+
+  "athenaConstraints": {
+    "borderRadius": "radius.pill (one of the few non-sharp Athena shapes)",
+    "fillOnState": "forest.500 (single brand accent)",
+    "immediateEffect": true
+  },
+
+  "figmaDivergences": [
+    {
+      "property": "state",
+      "figma": "explicit state property (default / hover / focus)",
+      "implementation": "real CSS pseudo-states (:hover, :focus-visible)",
+      "reason": "Matches the rest of the system; pseudo-states are browser-driven."
+    },
+    {
+      "property": "focus ring color",
+      "figma": "colors.border.primary.default (forest.500)",
+      "implementation": "colors.border.primary.strong (forest.700)",
+      "reason": "Keeps the focus ring identical across Button, Checkbox, Radio, and Toggle."
+    }
+  ],
+
+  "aiHints": {
+    "priority": "high",
+    "keywords": ["toggle", "switch", "on off", "enable", "disable", "setting", "instant", "dark mode", "slide"],
+    "context": "Reach for Toggle when a single setting flips on/off and applies immediately (settings rows, feature switches). For a value saved on submit use Checkbox; for one-of-many use Radio; for a triggered action use Button.",
+    "neverUseWhen": [
+      "The value only applies after a Save action — use Checkbox",
+      "The user picks one option from several — use Radio / Radio group",
+      "It triggers a one-shot action rather than a persistent state — use Button",
+      "There is no label and no aria-label — the switch has no accessible name"
+    ]
+  }
+}

@@ -1,0 +1,119 @@
+{
+  "component": {
+    "name": "Spinner",
+    "category": "atom",
+    "type": "display",
+    "description": "An animated arc that tells users content is loading. Indeterminate (no known duration); draws in the current text color so it adapts to any context.",
+    "figmaNode": "832:4816",
+    "variants": ["inherit"],
+    "sizes": ["xsmall (12px)", "small (16px)", "medium (24px)", "large (48px)", "xlarge (96px)"],
+    "note": "SVG arc (~75%, round caps) spun via CSS. appearance=inherit → currentColor. Respects prefers-reduced-motion. Synced to Figma '❖ Spinner'."
+  },
+
+  "tokens": {
+    "color": "currentColor (inherits from the parent's text color)",
+    "sizes": { "xsmall": "12px", "small": "16px", "medium": "24px", "large": "48px", "xlarge": "96px" },
+    "stroke": "1.5 units in a 16 viewBox (scales with size), round caps",
+    "motion": "rotate 360° / 0.7s linear infinite; slows to 2s under prefers-reduced-motion",
+    "shadow": ""
+  },
+
+  "usage": {
+    "useCases": [
+      "Indeterminate loading where progress is unknown",
+      "Inside a button while an action is in flight",
+      "Centered in a panel/section while its content loads",
+      "Inline next to a label ('Saving…')"
+    ],
+    "frequency": "repeatable",
+    "requiredProps": [],
+    "commonPatterns": [
+      {
+        "name": "Panel loading",
+        "description": "Large spinner centered in the area whose content is loading.",
+        "jsx": "<div className='panel'><Spinner size='large' label='Loading results' /></div>"
+      },
+      {
+        "name": "Inline with text",
+        "description": "Small spinner beside a status label.",
+        "jsx": "<span style={{display:'inline-flex',gap:8,alignItems:'center'}}><Spinner size='small' /> Saving…</span>"
+      },
+      {
+        "name": "Color via context",
+        "description": "Set color on a wrapper; the arc inherits it.",
+        "jsx": "<span style={{color:'var(--forest-500)'}}><Spinner /></span>"
+      }
+    ],
+    "antiPatterns": [
+      {
+        "scenario": "Using a spinner when progress IS known",
+        "reason": "A spinner is indeterminate; known progress should be quantified.",
+        "alternative": "Use a Progress bar."
+      },
+      {
+        "scenario": "Many spinners on one screen at once",
+        "reason": "Multiple spinners create visual noise and competing focal points.",
+        "alternative": "Use one spinner for the whole region, or skeleton placeholders."
+      },
+      {
+        "scenario": "Showing a spinner for very fast (<300ms) operations",
+        "reason": "A brief flash of a spinner reads as a glitch.",
+        "alternative": "Delay showing it, or skip it for near-instant operations."
+      },
+      {
+        "scenario": "Hard-coding a color that fights the surface",
+        "reason": "The spinner is designed to inherit currentColor.",
+        "alternative": "Set color on a wrapping element instead."
+      }
+    ]
+  },
+
+  "composition": {
+    "slots": {},
+    "nestedComponents": [],
+    "commonPartners": ["Button (loading state)", "Banner", "Page Layout", "Table (loading)"],
+    "parentConstraints": ["Button", "Panel / Card", "Inline with a status label", "Empty/loading state"]
+  },
+
+  "behavior": {
+    "states": ["spinning"],
+    "interactions": {
+      "motion": "Continuous 360° rotation; not interactive",
+      "reducedMotion": "Animation slows to 2s rather than stopping, so it still reads as 'in progress'"
+    }
+  },
+
+  "accessibility": {
+    "role": "status",
+    "label": "aria-label defaults to 'Loading' (override per context, e.g. 'Loading results')",
+    "screenReader": "Announced politely via role=status; the SVG is aria-hidden",
+    "keyboardSupport": "Not focusable / not interactive",
+    "wcag": "AA",
+    "contrastNote": "Inherits currentColor; ensure the inherited color meets ≥3:1 against its background (it is a non-text graphical indicator)."
+  },
+
+  "athenaConstraints": {
+    "color": "inherit (currentColor) — no fixed brand color",
+    "indeterminate": true
+  },
+
+  "figmaDivergences": [
+    {
+      "property": "animation",
+      "figma": "8 discrete keyframes of a rotating arc image",
+      "implementation": "a single SVG arc rotated continuously via CSS",
+      "reason": "Smoother, resolution-independent, and tiny; the visual result matches."
+    }
+  ],
+
+  "aiHints": {
+    "priority": "medium",
+    "keywords": ["spinner", "loading", "loader", "busy", "in progress", "fetching", "saving", "indeterminate"],
+    "context": "Reach for Spinner to indicate indeterminate loading — in a button, a panel, or inline. Use Progress bar when progress is measurable. Keep one spinner per region; set color on a wrapper since the arc inherits currentColor.",
+    "neverUseWhen": [
+      "Progress is known/measurable — use Progress bar",
+      "The operation is near-instant (<300ms) — skip or delay it",
+      "You need many at once — prefer one regional spinner or skeletons"
+    ]
+  }
+}

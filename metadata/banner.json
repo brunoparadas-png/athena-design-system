@@ -1,0 +1,131 @@
+{
+  "component": {
+    "name": "Banner",
+    "category": "molecule",
+    "type": "display",
+    "description": "A prominent, full-width message strip — typically pinned to the top of a view or section — for system-level information or errors that affect the whole page.",
+    "figmaNode": "679:1301",
+    "variants": ["info", "error"],
+    "note": "12px padding, sharp corners, message wraps. error = danger.700 fill + white text + warning icon (role=alert); info = neutral.50 fill + neutral.800 text + info icon (role=status). Synced to Figma '❖ Banner'."
+  },
+
+  "tokens": {
+    "layout": {
+      "padding": "spacing.sm (12px)",
+      "gap": "spacing.base (8px) icon↔text",
+      "radius": "radius.none",
+      "width": "100% (full-width strip)"
+    },
+    "typography": "Inter regular, font-size.xs (14px) / line-height.xs (20px)",
+    "appearances": {
+      "error": "bg colors.background.danger.button (danger.700, AA-safe with white); text colors.text.neutral.inverse (white); warning icon (white, 24px)",
+      "info": "bg colors.background.neutral.weak (neutral.50); text colors.text.neutral.strong (neutral.800); info icon (neutral.800, 24px)"
+    },
+    "icon": "24px, currentColor",
+    "shadow": ""
+  },
+
+  "usage": {
+    "useCases": [
+      "Page- or app-level error that blocks or affects the whole view",
+      "System status / maintenance notice",
+      "Trial/billing or account-level information",
+      "A persistent message that belongs at the top of a region"
+    ],
+    "frequency": "rare",
+    "requiredProps": ["children", "appearance"],
+    "commonPatterns": [
+      {
+        "name": "Top-of-page error",
+        "description": "Pinned above page content; assertive so screen readers announce it.",
+        "jsx": "<Banner appearance='error'>We couldn’t save your changes. Try again.</Banner>"
+      },
+      {
+        "name": "Maintenance notice",
+        "description": "Polite, informational strip.",
+        "jsx": "<Banner appearance='info'>Scheduled maintenance Saturday at 02:00 UTC.</Banner>"
+      }
+    ],
+    "antiPatterns": [
+      {
+        "scenario": "Using a banner for transient, low-importance feedback",
+        "reason": "Banners are prominent and page-level; minor confirmations are better as lighter, transient UI.",
+        "alternative": "Use an inline message or a (future) toast."
+      },
+      {
+        "scenario": "Field-level validation inside a form",
+        "reason": "A page-level banner is too heavy and detached from the field.",
+        "alternative": "Use inline field error text (Parts/<Message>)."
+      },
+      {
+        "scenario": "Stacking many banners at once",
+        "reason": "Competing prominent strips overwhelm the page and bury the priority message.",
+        "alternative": "Show the single highest-priority banner."
+      },
+      {
+        "scenario": "Using info styling for a blocking error",
+        "reason": "Low-emphasis neutral styling under-communicates severity and isn't announced assertively.",
+        "alternative": "Use appearance='error'."
+      }
+    ]
+  },
+
+  "composition": {
+    "slots": {
+      "children": "Required — message text (may wrap)",
+      "icon": "Auto warning icon for error, info icon for info; override or set null"
+    },
+    "nestedComponents": ["Icon (warning, 24px)"],
+    "commonPartners": ["Page Layout", "Page Header", "Link (inline in the message)"],
+    "parentConstraints": ["Top of a page/view", "Top of a section", "Above a form"]
+  },
+
+  "behavior": {
+    "states": ["info", "error"],
+    "interactions": {
+      "static": "Non-interactive message; the Figma version has no actions or dismiss",
+      "wrapping": "Long text wraps to multiple lines"
+    }
+  },
+
+  "accessibility": {
+    "role": "error → alert (assertive); info → status (polite); overridable via role",
+    "screenReader": "Announced on render per role; the icon is aria-hidden",
+    "keyboardSupport": "Not interactive",
+    "wcag": "AA",
+    "contrastNote": "error uses danger.700 (white text 5.81:1, AA); info uses neutral.800 on neutral.50."
+  },
+
+  "athenaConstraints": {
+    "borderRadius": "radius.none",
+    "fullWidth": true,
+    "dangerFill": "danger.700 (AA-safe), consistent with Button"
+  },
+
+  "figmaDivergences": [
+    {
+      "property": "icon↔text gap",
+      "figma": "spacing.2xs (4px)",
+      "implementation": "spacing.base (8px)",
+      "reason": "4px crowds the 24px icon against the text; 8px reads better and matches the rendered spacing."
+    },
+    {
+      "property": "text overflow",
+      "figma": "single line, truncated (fixed-height demo)",
+      "implementation": "wraps to multiple lines",
+      "reason": "Real banners contain full messages; truncating system errors would hide critical detail."
+    }
+  ],
+
+  "aiHints": {
+    "priority": "medium",
+    "keywords": ["banner", "alert", "notice", "message", "system", "error", "maintenance", "announcement"],
+    "context": "Reach for Banner for page- or app-level messages — system errors, maintenance, account notices — pinned to the top of a view. Use error for blocking problems (assertive), info for neutral notices. For field errors use inline messages; for transient confirmation prefer lighter UI.",
+    "neverUseWhen": [
+      "The feedback is transient/minor — use a lighter inline message or toast",
+      "It's a single form field error — use inline field error text",
+      "Severity is high but you reach for info — use error",
+      "You need several at once — show only the top-priority banner"
+    ]
+  }
+}

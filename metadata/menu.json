@@ -1,0 +1,193 @@
+{
+  "component": {
+    "name": "Menu",
+    "category": "molecule",
+    "type": "navigation",
+    "description": "The popup surface that holds a vertical list of rows — action commands plus optional checkbox/radio selections, category groups, and separators. Driven declaratively by an `items: MenuNode[]` array and usually rendered inside DropdownMenu, but works standalone.",
+    "figmaNode": "677:5752",
+    "variants": ["default", "compact", "scrollable"],
+    "modifiers": ["maxHeight", "autoFocusFirst"],
+    "note": "White surface, 1px neutral.200 border, radius-sm (4px), shadow-overlay, min-width 180px. Rows are action / checkbox / radio; selected rows take the forest tint (forest.50 fill, forest.700 text + indicator). Owns roving-tabindex arrow-key navigation. Hover/press/focus are real CSS pseudo-states (no `state` prop), matching Button/Checkbox. Synced to Figma '❖ Menu' and its DropdownItem parts (677:5552)."
+  },
+
+  "tokens": {
+    "surface": {
+      "background": "colors.background.neutral.default (white)",
+      "border": "1px solid colors.border.neutral.weak (neutral.200)",
+      "radius": "radius.sm (4px)",
+      "shadow": "shadow.overlay",
+      "minWidth": "180px",
+      "padding": "spacing.2xs (4px) top/bottom",
+      "scroll": "set maxHeight to cap height + overflow-y auto with a stable scrollbar gutter (Figma 'Scrollable')"
+    },
+    "row": {
+      "height": "40px (default spacing) / 32px (compact)",
+      "padding": "spacing.base spacing.md (8px 16px) default / spacing.xs spacing.md (6px 16px) compact",
+      "gap": "spacing.sm (12px)",
+      "typography": "Inter 14px / 20px (font-size-xs / line-height-xs)",
+      "transition": "background-color & color 0.12s ease (disabled under prefers-reduced-motion)"
+    },
+    "background": {
+      "unselected": "transparent; hover → colors.background.neutral.weak.hovered (neutral.100); press → colors.background.neutral.weak.pressed (neutral.200)",
+      "selected": "colors.background.primary.weak (forest.50); hover → colors.background.primary.weak.hovered (forest.100); press → colors.background.primary.weak.pressed (forest.200)"
+    },
+    "text": {
+      "default": "colors.text.neutral.default (neutral.600)",
+      "selected": "colors.text.primary.strong (forest.700)",
+      "disabled": "colors.text.neutral.disabled (neutral.400)",
+      "description": "colors.text.neutral.weak (neutral.500), 12px / 16px",
+      "groupLabel": "colors.text.neutral.weak (neutral.500), 12px / 16px, semibold, padding 6 16 2"
+    },
+    "indicators": {
+      "checkbox": "14px sharp box (radius.none), 1px neutral.300 border; on → forest.500 fill + border, white check mark",
+      "radio": "14px circle (radius.pill), 1px neutral.300 border; on → forest.500 ring + 8px forest.500 dot",
+      "indicatorWell": "20px square that centers the 14px box/circle (aligns to row gap)",
+      "disabled": "neutral.300 border (neutral.disabled), neutral.disabled fill; dot → neutral.400"
+    },
+    "icon": {
+      "size": "20px (action rows only, iconBefore / iconAfter)",
+      "color": "currentColor — follows neutral.600 / forest.700 / disabled"
+    },
+    "separator": "1px line, colors.background neutral.100, 4px vertical margin",
+    "spacing": ["spacing.2xs (4px surface pad)", "spacing.sm (12px row gap)", "spacing.base / spacing.md (8px / 16px row padding)", "spacing.3xs (2px label↔description gap)"],
+    "focusRing": "2px colors.border.primary.strong (forest.700), inset (offset -2px so the ring stays within the row)"
+  },
+
+  "usage": {
+    "useCases": [
+      "Action menu opened from a trigger button (the popup body of DropdownMenu)",
+      "Overflow / 'more actions' (…) menu on a card, row, or toolbar",
+      "Multi-select option list using checkbox rows (stays open on toggle)",
+      "Single-select option list using radio rows (e.g. sort / view mode)",
+      "Grouped command list with category headings and separators",
+      "Long, scrollable picker — cap with maxHeight"
+    ],
+    "frequency": "single (one open surface at a time, usually owned by DropdownMenu)",
+    "requiredProps": ["items", "label (or aria-labelledby)"],
+    "commonPatterns": [
+      {
+        "name": "Action menu",
+        "description": "A flat list of command rows that each fire onSelect; the usual DropdownMenu body.",
+        "jsx": "<Menu label='Actions' items={[{ id: 'edit', label: 'Edit', iconBefore: 'pencil' }, { id: 'dup', label: 'Duplicate', iconBefore: 'copy' }, { type: 'separator' }, { id: 'del', label: 'Delete', iconBefore: 'trash', isDisabled: !canDelete }]} onSelect={(id) => run(id)} />"
+      },
+      {
+        "name": "Grouped menu with categories",
+        "description": "MenuGroup nodes add a heading above their rows; separators divide sections.",
+        "jsx": "<Menu label='Insert' items={[{ label: 'Blocks', items: [{ id: 'text', label: 'Text' }, { id: 'img', label: 'Image' }] }, { type: 'separator' }, { label: 'Embeds', items: [{ id: 'yt', label: 'YouTube' }] }]} onSelect={insert} />"
+      },
+      {
+        "name": "Multi-select (checkbox rows)",
+        "description": "type:'checkbox' rows show the box indicator and stay open as the user toggles each isSelected.",
+        "jsx": "<Menu label='Columns' items={cols.map(c => ({ id: c.key, type: 'checkbox', label: c.name, isSelected: visible.has(c.key) }))} onSelect={toggleColumn} />"
+      },
+      {
+        "name": "Single-select (radio rows)",
+        "description": "type:'radio' rows in a group express a one-of-many choice within the menu (e.g. sort order).",
+        "jsx": "<Menu label='Sort by' items={[{ id: 'new', type: 'radio', label: 'Newest', isSelected: sort === 'new' }, { id: 'old', type: 'radio', label: 'Oldest', isSelected: sort === 'old' }]} onSelect={setSort} />"
+      },
+      {
+        "name": "Scrollable picker",
+        "description": "Pass maxHeight to cap the surface and scroll the rows past it (Figma 'Scrollable').",
+        "jsx": "<Menu label='Timezone' maxHeight={280} items={zones.map(z => ({ id: z, label: z }))} onSelect={pick} />"
+      }
+    ],
+    "antiPatterns": [
+      {
+        "scenario": "Using Menu as an always-visible primary navigation",
+        "reason": "Menu is a transient popup surface; persistent navigation should be visible and orientation-aware.",
+        "alternative": "Use Tabs for in-page section switching, or a side-nav for app navigation."
+      },
+      {
+        "scenario": "Using radio rows where a labelled form control fits better",
+        "reason": "A mutually-exclusive choice that lives in a form reads clearer as a grouped form control than as menu rows.",
+        "alternative": "Use RadioGroup for single-choice form fields; reserve radio rows for in-menu options like sort/view mode."
+      },
+      {
+        "scenario": "Closing the menu when a menuitemcheckbox is toggled",
+        "reason": "Checkbox rows model multi-select; closing on each toggle forces a reopen per change.",
+        "alternative": "Keep the menu open on checkbox toggle; only action rows (and optionally radio rows) should dismiss it."
+      },
+      {
+        "scenario": "Putting an icon on a checkbox or radio row via iconBefore",
+        "reason": "Checkbox/radio rows render their selection indicator in the leading slot; iconBefore/iconAfter apply to action rows only.",
+        "alternative": "Use iconBefore/iconAfter on action rows; let checkbox/radio rows own the leading indicator."
+      },
+      {
+        "scenario": "Omitting both label and aria-labelledby",
+        "reason": "The role='menu' list has no accessible name for screen-reader users.",
+        "alternative": "Pass label, or aria-labelledby pointing at the trigger/heading that names the menu."
+      }
+    ]
+  },
+
+  "composition": {
+    "slots": {
+      "items": "Ordered MenuNode[] — MenuItem rows, MenuGroup sections, and MenuSeparator dividers may be freely mixed",
+      "label / description": "Per-row primary text and optional secondary line (neutral.500, 12px)",
+      "iconBefore / iconAfter": "Leading / trailing 20px Icon on action rows only"
+    },
+    "nestedComponents": ["Icon (action row leading/trailing)", "check mark (inline SVG)", "radio dot (span)"],
+    "commonPartners": ["DropdownMenu (the usual parent)", "Button (the trigger)"],
+    "parentConstraints": ["Rendered in a popover/portal owned by DropdownMenu", "Can stand alone but expects an external trigger to manage open/close and Escape"]
+  },
+
+  "behavior": {
+    "states": ["default", "hover", "press", "focus", "selected", "disabled", "scrollable"],
+    "interactions": {
+      "hover": "unselected row → neutral.100 fill; selected row → forest.100 fill; also sets the active (roving-focus) row",
+      "press": "unselected row → neutral.200 fill; selected row → forest.200 fill",
+      "focus": "2px forest.700 outline, inset (-2px offset) so the ring stays within the row",
+      "selected": "forest.50 fill, forest.700 text + indicator; checkbox shows white check, radio shows forest.500 dot",
+      "disabled": "neutral.400 text, muted indicator, cursor not-allowed; row is skipped by keyboard navigation",
+      "click": "fires the row's onSelect(id) then the menu-level onSelect(id, item); disabled rows are inert"
+    },
+    "navigation": "Roving tabindex — exactly one enabled row is tabbable (tabIndex 0), the rest are -1; ArrowDown/ArrowUp wrap focus across enabled rows, Home/End jump to first/last, disabled rows are skipped. autoFocusFirst focuses the first enabled row on mount (set by DropdownMenu when it opens). onKeyDown is forwarded to the surface first (e.g. for DropdownMenu's Escape handler).",
+    "controlled": "Selection is fully controlled by the caller: pass isSelected per row and update it in response to onSelect. The component holds no selection state — only the active (focused) row index.",
+    "responsive": {
+      "minWidth": "180px floor; grows to fit content",
+      "maxHeight": "optional cap that turns the surface into a scroll region with a stable scrollbar gutter"
+    }
+  },
+
+  "accessibility": {
+    "role": "menu (the list); rows are menuitem / menuitemcheckbox / menuitemradio; groups are role='group'; dividers are role='separator'",
+    "ariaChecked": "checkbox/radio rows expose aria-checked reflecting isSelected; action rows omit it",
+    "grouping": "MenuGroup renders a labelled role='group' with aria-labelledby pointing at its heading span",
+    "naming": "The menu takes its accessible name from aria-labelledby (preferred) or label; group rows from their heading",
+    "focusManagement": "Roving tabindex — focus moves between rows with arrows/Home/End, never tabbing to each row; autoFocusFirst lands focus on the first enabled row on open",
+    "keyboardSupport": "ArrowDown/ArrowUp move focus (wrapping, skipping disabled); Home/End jump to first/last; Enter/Space activate the focused row; Escape is handled by the parent via forwarded onKeyDown",
+    "screenReader": "Announced as a menu with item count; checkbox/radio rows announce checked state; group headings announce section context",
+    "wcag": "AA",
+    "contrastNote": "neutral.600 row text and forest.700 selected text on their respective fills meet AA; white check on forest.500 meets AA."
+  },
+
+  "athenaConstraints": {
+    "surfaceRadius": "radius.sm (4px)",
+    "rowHeight": "40px default / 32px compact",
+    "selectedTint": "forest.50 fill + forest.700 text/indicator (single brand accent)",
+    "checkboxRadius": "radius.none (14px sharp box, matches Checkbox atom)",
+    "indicatorFill": "forest.500 (single brand accent)",
+    "api": "declarative items array, mirroring the Tabs / RadioGroup array-driven convention"
+  },
+
+  "figmaDivergences": [
+    {
+      "property": "state",
+      "figma": "explicit state property on rows (default / hover / press / focus)",
+      "implementation": "real CSS pseudo-states (:hover, :active, :focus-visible)",
+      "reason": "Matches Button/Checkbox; pseudo-states are driven by the browser rather than a prop."
+    }
+  ],
+
+  "aiHints": {
+    "priority": "high",
+    "keywords": ["menu", "dropdown", "popup", "context menu", "overflow menu", "more actions", "kebab", "options", "action list", "checkbox menu", "radio menu", "menuitem"],
+    "context": "Reach for Menu as the body of a popup of actions or options — the surface a Button/DropdownMenu opens. Use action rows for commands, checkbox rows for multi-select (keep it open on toggle), radio rows for an in-menu single choice. Group related rows with MenuGroup headings and divide sections with separators. Cap long lists with maxHeight. Selection is controlled — drive isSelected from your state and update it in onSelect.",
+    "neverUseWhen": [
+      "You need always-visible navigation — use Tabs or a side-nav, not a transient popup",
+      "A mutually-exclusive choice belongs in a form — use RadioGroup instead of radio rows",
+      "You would close the surface on every checkbox toggle — multi-select menus stay open",
+      "The menu has no label and no aria-labelledby — the list has no accessible name"
+    ]
+  }
+}

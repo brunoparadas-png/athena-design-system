@@ -1,0 +1,151 @@
+{
+  "component": {
+    "name": "Tag",
+    "category": "atom",
+    "type": "display",
+    "description": "Labels UI objects for quick recognition and navigation — categories, statuses, filters, or metadata. Compact, non-interactive by default; optionally removable or linked.",
+    "figmaNode": "410:10023",
+    "variants": ["gray", "green", "red", "purple", "blue", "orange"],
+    "modifiers": ["removable (onRemove)", "link (href)"],
+    "note": "Sharp rectangle, 1px per-appearance border, Inter semibold 12px/16px, 20px tall. 'green' maps to the teal palette. Hover/pressed are CSS pseudo-states and only apply when interactive. Synced to Figma 'Tag'."
+  },
+
+  "tokens": {
+    "shape": {
+      "height": "20px",
+      "radius": "radius.none (sharp)",
+      "border": "1px solid (per-appearance)",
+      "paddingInline": "spacing.2xs (4px); removable trims right to spacing.3xs (2px)",
+      "gap": "spacing.xs (6px) between text and remove button"
+    },
+    "typography": "Inter semibold, font-size.2xs (12px) / line-height.xxs (16px)",
+    "appearances": {
+      "gray": "bg neutral.100 (hover .200 / press .300), border neutral.300, text neutral.600",
+      "green": "bg teal.100 (hover .200 / press .300), border teal.500, text teal.800 (darkened from .700 for AA)",
+      "red": "bg danger.50 (hover .100 / press .200), border danger.400, text danger.700",
+      "purple": "bg purple.50 (hover .100 / press .200), border purple.400, text purple.700",
+      "blue": "bg blue.50 (hover .100 / press .200), border blue.400, text blue.700",
+      "orange": "bg orange.50 (hover .100 / press .200), border orange.400, text orange.700"
+    },
+    "removeButton": "16px, inherits tag text color; hover/press tint with the appearance bg steps",
+    "focusRing": "2px colors.border.primary.strong (forest.700), offset 2px (interactive/remove only)",
+    "shadow": ""
+  },
+
+  "usage": {
+    "useCases": [
+      "Label a category, topic, or content type",
+      "Show a status or attribute (e.g. Draft, Published)",
+      "Display applied filters as removable chips",
+      "Surface metadata keywords on a card or row"
+    ],
+    "frequency": "repeatable",
+    "requiredProps": ["children (text)"],
+    "commonPatterns": [
+      {
+        "name": "Status label",
+        "description": "A colored, non-interactive tag conveying state.",
+        "jsx": "<Tag appearance='green'>Published</Tag>"
+      },
+      {
+        "name": "Removable filter chip",
+        "description": "Applied filters the user can dismiss; onRemove updates the filter set.",
+        "jsx": "<Tag appearance='blue' onRemove={() => removeFilter(id)}>Sports</Tag>"
+      },
+      {
+        "name": "Linked category",
+        "description": "Tag that navigates to a filtered/category view.",
+        "jsx": "<Tag appearance='gray' href='/topics/news'>News</Tag>"
+      },
+      {
+        "name": "Tag list",
+        "description": "A wrapping row of tags on a card or detail header.",
+        "jsx": "<div style={{display:'flex',gap:8,flexWrap:'wrap'}}>{tags.map(t => <Tag key={t}>{t}</Tag>)}</div>"
+      }
+    ],
+    "antiPatterns": [
+      {
+        "scenario": "Using a tag as a primary action button",
+        "reason": "Tags are labels; their low visual weight under-communicates an action.",
+        "alternative": "Use a Button for actions."
+      },
+      {
+        "scenario": "Encoding meaning by color alone",
+        "reason": "Color is not perceivable by all users; appearance should reinforce, not replace, the label text.",
+        "alternative": "Keep a clear text label; use appearance as secondary emphasis."
+      },
+      {
+        "scenario": "Long sentences inside a tag",
+        "reason": "Tags are single-line and compact; long text breaks the rhythm.",
+        "alternative": "Keep to 1–2 words; use body text for longer content."
+      },
+      {
+        "scenario": "Making a tag both a link and removable in the same chip",
+        "reason": "Two competing targets in one small control are error-prone and ambiguous.",
+        "alternative": "Pick one — link OR removable — per tag."
+      }
+    ]
+  },
+
+  "composition": {
+    "slots": {
+      "children": "Required — tag text",
+      "remove": "Optional — trailing × button rendered when onRemove is set"
+    },
+    "nestedComponents": ["Icon (close, 12px) for the remove button"],
+    "commonPartners": ["Tag (siblings in a list)", "Card", "TextField (token input)", "Page Header"],
+    "parentConstraints": ["Card", "Table cell", "Filter bar", "Detail header"]
+  },
+
+  "behavior": {
+    "states": ["default", "hover", "pressed"],
+    "interactions": {
+      "static": "No interaction — a plain label (span)",
+      "linkHover": "Whole chip darkens to the appearance hover/press bg step; text underlines",
+      "remove": "Remove button tints with the appearance bg steps on hover/press and calls onRemove",
+      "focus": "2px forest.700 outline on the interactive element (link or remove button)"
+    }
+  },
+
+  "accessibility": {
+    "role": "Static tag is plain text; link → link role; remove → button with aria-label (default 'Remove')",
+    "focusRing": "2px forest.700 outline",
+    "keyboardSupport": "Interactive tags are tabbable; Enter/Space activate the link or remove button",
+    "screenReader": "Remove button should ideally name the tag it removes (pass removeLabel like 'Remove Sports')",
+    "wcag": "AA",
+    "contrastNote": "Each appearance pairs a dark .700 text on a light .50/.100 fill, meeting AA for text; do not rely on color alone to convey meaning."
+  },
+
+  "athenaConstraints": {
+    "borderRadius": "radius.none",
+    "greenIsTeal": true,
+    "decorativePalettes": "Tags consume the teal/purple/blue/orange/danger/neutral primitives directly (no semantic alias layer for the six tones)"
+  },
+
+  "figmaDivergences": [
+    {
+      "property": "state",
+      "figma": "explicit state property (default / hover / pressed)",
+      "implementation": "real CSS pseudo-states, applied only to interactive tags (link or remove button)",
+      "reason": "A static label tag has no interaction; matches the rest of the system."
+    },
+    {
+      "property": "green text color",
+      "figma": "teal.700 (#008069) on teal.100",
+      "implementation": "teal.800 (#00705c)",
+      "reason": "Figma's teal.700 on teal.100 is 4.03:1, failing WCAG AA for 12px text. teal.800 is ~4.9:1. Same AA-first approach as Button's danger divergence."
+    }
+  ],
+
+  "aiHints": {
+    "priority": "medium",
+    "keywords": ["tag", "chip", "label", "badge", "category", "status", "filter", "keyword", "pill"],
+    "context": "Reach for Tag to label or categorize content, show a status, or present removable filters. Keep text to 1–2 words. Use onRemove for filter chips, href for category links. For actions use Button; for counts/notifications a dedicated Badge would be preferable (not yet in the system).",
+    "neverUseWhen": [
+      "You need an action trigger — use Button",
+      "Meaning depends on color with no text — add a clear label",
+      "The content is a sentence — use body text",
+      "You need both a link and a remove action in one chip — split into two"
+    ]
+  }
+}

@@ -1,0 +1,194 @@
+{
+  "component": {
+    "name": "TextArea",
+    "category": "atom",
+    "type": "input",
+    "description": "A multi-line text input for capturing longer free-form content such as comments, descriptions, messages, or notes. The multi-line sibling of TextField — it wraps a label, a bordered white container holding a native resizable <textarea>, and an optional helper message that can carry neutral, error, or success status.",
+    "figmaNode": "32:1639",
+    "variants": ["default", "compact"],
+    "modifiers": ["isInvalid", "isValid", "isDisabled", "isRequired", "isMonospaced"],
+    "note": "Label is 12/16 semibold neutral.600; the textarea container is white with a 1px neutral.300 border and SHARP corners (radius-none, DS convention). The textarea fills it with 8px padding (6px vertical when compact), min-height 80px (64px compact), and is resizable vertically by default. Hover/focus are real CSS states (no `state` prop), matching Button/TextField. The helper message has three tones; error wins over success. Synced to Figma '❖ Text area'."
+  },
+
+  "tokens": {
+    "label": {
+      "typography": "12px / 16px, semibold",
+      "color": "colors.text.neutral.default (neutral.600)",
+      "requiredAsterisk": "colors.text.danger.default (danger.500)"
+    },
+    "container": {
+      "background": "colors.background.neutral.default (white); disabled → colors.background.neutral.weak (neutral.50)",
+      "border": "1px solid colors.border.neutral.default (neutral.300)",
+      "radius": "radius.none",
+      "minHeight": "80px (default) / 64px (isCompact) via the inner textarea",
+      "padding": "spacing.base (8px) on the textarea; compact tightens vertical padding to spacing.xs (6px)"
+    },
+    "value": {
+      "typography": "typography.textStyles.body-s (14px / 20px)",
+      "typed": "colors.text.neutral.strong (neutral.800)",
+      "placeholder": "colors.text.neutral.weak (neutral.500)",
+      "disabled": "colors.text.neutral.disabled (neutral.400)",
+      "monospaced": "isMonospaced renders the value in font.code (IBM Plex Mono)"
+    },
+    "icons": {
+      "messageIcon": "16px — `warning` (error) / `check-circle` (success)"
+    },
+    "border": {
+      "default": "colors.border.neutral.default (neutral.300)",
+      "hover": "neutral.400",
+      "focus": "colors.border.primary.default (forest.500)",
+      "invalid": "colors.border.danger.default (danger.500) in every state",
+      "disabled": "colors.border.neutral.disabled (neutral.300)"
+    },
+    "message": {
+      "typography": "12px / 16px",
+      "neutral": "colors.text.neutral.weak (neutral.500)",
+      "error": "colors.text.danger.strong (danger.700) — AA-safe for 12px text",
+      "success": "colors.text.primary.default (forest.500)"
+    },
+    "spacing": ["spacing.2xs (4px label↔textarea↔message gap)", "spacing.base (8px textarea padding)", "spacing.xs (6px compact vertical padding / message icon↔text gap)"],
+    "focusRing": "2px colors.border.primary.strong (forest.700), offset 1px, on the container; switches to danger.700 when invalid. The inner textarea has outline:none.",
+    "shadow": ""
+  },
+
+  "usage": {
+    "useCases": [
+      "Capture multi-line free-form text — comments, descriptions, messages, notes",
+      "A long-form field inside a form section with a label, helper text, and validation",
+      "A bio or about field where the user may write several lines or paragraphs",
+      "Code or config entry via isMonospaced (renders the value in IBM Plex Mono)",
+      "Feedback or message-box input where line wrapping and vertical resize help"
+    ],
+    "frequency": "repeatable",
+    "requiredProps": ["label (or aria-label if standalone)"],
+    "commonPatterns": [
+      {
+        "name": "Labeled multi-line field",
+        "description": "Standard textarea with a label and placeholder inside a form.",
+        "jsx": "<TextArea label='Description' placeholder='Tell us more…' value={text} onChange={(e) => setText(e.target.value)} />"
+      },
+      {
+        "name": "Required field with validation",
+        "description": "Required textarea that surfaces an error message + warning icon when invalid.",
+        "jsx": "<TextArea label='Message' isRequired isInvalid={!!error} helperText={error ?? 'Up to 500 characters.'} maxLength={500} />"
+      },
+      {
+        "name": "Success confirmation",
+        "description": "Valid tone shows a forest message with a check-circle icon after a passing check.",
+        "jsx": "<TextArea label='Notes' isValid helperText='Saved' />"
+      },
+      {
+        "name": "Code input",
+        "description": "Monospaced textarea with no resize, used for a config or snippet field.",
+        "jsx": "<TextArea label='Config' isMonospaced resize='none' rows={8} />"
+      }
+    ],
+    "antiPatterns": [
+      {
+        "scenario": "Using TextArea for a single short value",
+        "reason": "A one-line value does not need wrapping, multiple rows, or resize, and reads as too large.",
+        "alternative": "Use TextField for names, emails, search, and other single-line entry."
+      },
+      {
+        "scenario": "Omitting both label and aria-label",
+        "reason": "The textarea has no accessible name and is unusable by screen readers.",
+        "alternative": "Always pass label, or set aria-label for a standalone textarea."
+      },
+      {
+        "scenario": "Conveying the error only through the red border",
+        "reason": "Color alone fails accessibility; users who can't perceive the color get no error.",
+        "alternative": "Pass helperText with isInvalid so the message text, warning icon, and aria role=alert all carry the error."
+      },
+      {
+        "scenario": "Disabling resize without a good reason",
+        "reason": "Vertical resize lets users see more of their content; removing it hurts long-form entry.",
+        "alternative": "Keep the default vertical resize; only set resize='none' for fixed layouts like code blocks."
+      },
+      {
+        "scenario": "Using isMonospaced for prose",
+        "reason": "The code font is for code/config; it makes ordinary sentences harder to read.",
+        "alternative": "Leave the default font for prose; reserve isMonospaced for code or structured text."
+      }
+    ]
+  },
+
+  "composition": {
+    "slots": {
+      "label": "Optional — text above the textarea (omit only for standalone fields, then set aria-label)",
+      "helperText": "Optional helper/status message below the textarea (the Figma <Message>)"
+    },
+    "nestedComponents": ["Icon (message: warning / check-circle, 16px)", "native <textarea>"],
+    "commonPartners": ["TextField", "Button (form submit)", "Checkbox", "FormSection"],
+    "parentConstraints": ["Form section", "Modal body", "fieldset"]
+  },
+
+  "behavior": {
+    "states": ["default", "hover", "focus", "filled", "invalid", "valid", "disabled"],
+    "interactions": {
+      "hover": "border darkens to neutral.400 (only when not disabled and not focused)",
+      "focus": "focus-within → forest.500 border + 2px forest.700 outline offset 1px on the container; inner textarea has outline:none",
+      "filled": "typed value renders in neutral.800 at 14/20; placeholder is neutral.500",
+      "invalid": "danger.500 border in every state; focus ring switches to danger.700; sets aria-invalid; pair with an error helperText",
+      "valid": "success tone on the helper message (forest.500 text + check-circle icon); border is unchanged",
+      "disabled": "neutral.50 fill, neutral.300 border, neutral.400 text, cursor not-allowed, resize forced to none"
+    },
+    "resize": "Resizable vertically by default; the `resize` prop accepts vertical | horizontal | both | none. Disabled forces resize to none. The textarea remains keyboard-resizable.",
+    "toneResolution": "Helper tone is error if isInvalid, else success if isValid, else neutral — error always wins over success.",
+    "controlled": "Pass value + onChange for controlled; omit value and pass defaultValue for uncontrolled. ref and remaining textarea attributes (rows defaults to 4, maxLength, name, etc.) are forwarded to the native <textarea>."
+  },
+
+  "accessibility": {
+    "role": "textbox",
+    "minTargetHeight": "80px default / 64px compact textarea (min-height)",
+    "focusRing": "2px forest.700 outline, offset 1px, on the container (danger.700 when invalid)",
+    "labelWiring": "label is linked to the textarea via htmlFor/id; a standalone field (no label) must carry aria-label",
+    "invalidState": "aria-invalid reflects isInvalid",
+    "requiredState": "isRequired sets the native required attribute (and its implicit aria) plus a danger asterisk on the label",
+    "describedBy": "helperText is linked to the textarea through aria-describedby; the error message has role=alert",
+    "keyboardSupport": "Tab moves focus in/out; standard text-editing keys apply; the textarea stays keyboard-resizable",
+    "screenReader": "Native textarea drives the accessible name from the associated label or aria-label; error messages are announced via role=alert",
+    "wcag": "AA",
+    "contrastNote": "Error MESSAGE text uses danger.700 (5.81:1 on white) so 12px text passes AA; the danger.500 border is a 3:1 non-text element and passes."
+  },
+
+  "athenaConstraints": {
+    "borderRadius": "radius.none",
+    "minHeight": "80px (default) / 64px (isCompact)",
+    "focusBorder": "forest.500 (single brand accent)",
+    "errorMessageColor": "danger.700 (--text-danger-strong) — never danger.500 for the message text"
+  },
+
+  "figmaDivergences": [
+    {
+      "property": "state",
+      "figma": "explicit state property (default / hover / focus / typing / filled)",
+      "implementation": "real CSS states (:hover, :focus-within) plus the value the user types",
+      "reason": "Matches Button/TextField; states are driven by the browser and the textarea value rather than a prop."
+    },
+    {
+      "property": "error message color",
+      "figma": "danger.500",
+      "implementation": "danger.700 via the --text-danger-strong token",
+      "reason": "danger.500 is only 3.54:1 on white and fails AA for 12px text; danger.700 is 5.81:1 and passes. The danger BORDER stays danger.500 (a 3:1 non-text element, which passes)."
+    },
+    {
+      "property": ".minheight-controller",
+      "figma": "a Figma-only layer that fakes the textarea's min-height",
+      "implementation": "a real CSS min-height (80px / 64px compact) plus the `rows` attribute (defaults to 4)",
+      "reason": "The Figma hack has no runtime equivalent; min-height and rows produce the actual minimum size in the browser."
+    }
+  ],
+
+  "aiHints": {
+    "priority": "high",
+    "keywords": ["text area", "textarea", "multiline", "multi-line input", "description", "comment", "message box", "notes", "long text", "code input", "monospace"],
+    "context": "Reach for TextArea for multi-line / long-form text such as comments, descriptions, messages, or notes; reach for TextField for single-line input. Always give it a label (or aria-label). Use isRequired for required fields, isInvalid + an error helperText to surface validation, isValid for success confirmation, isCompact for dense layouts, and isMonospaced for code or config. The default vertical resize suits long-form entry; set resize='none' only for fixed layouts.",
+    "neverUseWhen": [
+      "The value is a single short line — use TextField",
+      "There is no label and no aria-label — the field has no accessible name",
+      "An error is shown only via the border color — pair isInvalid with an error helperText",
+      "You disable resize without a layout reason — keep the default vertical resize",
+      "You apply isMonospaced to prose — reserve the code font for code or structured text"
+    ]
+  }
+}

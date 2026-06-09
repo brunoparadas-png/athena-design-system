@@ -1,0 +1,136 @@
+{
+  "component": {
+    "name": "Link",
+    "category": "atom",
+    "type": "navigation",
+    "description": "Takes people to a new location in the app or on another site. Renders a real anchor; for offsite destinations it shows an external icon and opens a new tab.",
+    "figmaNode": "76:1252",
+    "variants": ["default", "subtle", "inverse"],
+    "modifiers": ["isExternal"],
+    "note": "Inter 14/20. default = blue.500 underlined; subtle = neutral, underline on hover; inverse = white for dark surfaces. Hover/press are CSS pseudo-states. Synced to Figma 'Link'."
+  },
+
+  "tokens": {
+    "typography": "Inter regular, font-size.xs (14px) / line-height.xs (20px)",
+    "gap": "spacing.2xs (~4px) between text and external icon",
+    "appearances": {
+      "default": "colors.text.link.default (blue.500); hover → blue.700; press → blue.800; always underlined",
+      "subtle": "colors.text.neutral.weak (neutral.500); no underline by default, underline on hover; press → colors.text.neutral.strong (neutral.800)",
+      "inverse": "colors.text.neutral.inverse (white); hover/press → blue.100; for dark surfaces"
+    },
+    "externalIcon": "Icon 'external-link' at 14px, inherits link color, not underlined",
+    "focusRing": "2px colors.border.primary.strong (forest.700); inverse uses white for contrast",
+    "shadow": ""
+  },
+
+  "usage": {
+    "useCases": [
+      "Navigate within the app or to another page",
+      "Open an external resource (docs, policy, third-party site)",
+      "Inline navigation inside body copy",
+      "A low-emphasis navigation affordance where a button would be too heavy"
+    ],
+    "frequency": "repeatable",
+    "requiredProps": ["children (text)", "href"],
+    "commonPatterns": [
+      {
+        "name": "Inline text link",
+        "description": "A default link inside a paragraph; underlined so it is distinguishable from surrounding text.",
+        "jsx": "Read the <Link href='/report'>full report</Link> for details."
+      },
+      {
+        "name": "External link",
+        "description": "Offsite destination — external icon + opens a new tab with safe rel.",
+        "jsx": "<Link href='https://example.com' isExternal>Documentation</Link>"
+      },
+      {
+        "name": "Subtle link",
+        "description": "Lower-emphasis navigation (e.g. a 'view all' affordance) where blue would be too loud.",
+        "jsx": "<Link href='/all' appearance='subtle'>View all</Link>"
+      },
+      {
+        "name": "Inverse on dark",
+        "description": "Links over a dark banner or footer.",
+        "jsx": "<Link href='/privacy' appearance='inverse'>Privacy</Link>"
+      }
+    ],
+    "antiPatterns": [
+      {
+        "scenario": "Using a Link to trigger an action (submit, delete, toggle)",
+        "reason": "Links navigate; actions that mutate state should look and behave like buttons.",
+        "alternative": "Use a Button (text appearance for low emphasis)."
+      },
+      {
+        "scenario": "A link with no href (or href='#') used as a button",
+        "reason": "Breaks keyboard/AT expectations and right-click/open-in-new-tab.",
+        "alternative": "Use a Button, or give the Link a real destination."
+      },
+      {
+        "scenario": "Removing the underline from default links inside body text",
+        "reason": "Color alone is not a reliable link affordance within paragraphs.",
+        "alternative": "Keep default (underlined); reserve subtle for standalone links."
+      },
+      {
+        "scenario": "Opening internal navigation in a new tab",
+        "reason": "Unexpected new tabs disorient users; reserve new tabs for genuinely external destinations.",
+        "alternative": "Only set isExternal for offsite links."
+      }
+    ]
+  },
+
+  "composition": {
+    "slots": {
+      "children": "Required — link text",
+      "externalIcon": "Auto-rendered after the text when isExternal"
+    },
+    "nestedComponents": ["Icon (external-link, 14px)"],
+    "commonPartners": ["Body text", "Breadcrumbs", "Banner", "Page Header"],
+    "parentConstraints": ["Paragraph / body copy", "Footer", "Banner", "List"]
+  },
+
+  "behavior": {
+    "states": ["default", "hover", "press", "focus"],
+    "interactions": {
+      "default": "blue.500 → blue.700 (hover) → blue.800 (press); underline persists",
+      "subtle": "neutral.500; underline appears on hover; press → neutral.800",
+      "inverse": "white; hover/press → blue.100",
+      "focus": "2px forest.700 outline (white on inverse)"
+    },
+    "external": "Sets target=_blank and rel='noopener noreferrer' (both overridable); announces 'opens in a new tab' via visually-hidden text."
+  },
+
+  "accessibility": {
+    "role": "link",
+    "focusRing": "2px forest.700 outline, 2px offset; inverse uses white",
+    "keyboardSupport": "Tab to focus; Enter activates",
+    "screenReader": "External links append a visually-hidden '(opens in a new tab)'; the icon is aria-hidden",
+    "wcag": "AA",
+    "contrastNote": "blue.500 (#2f68ff) on white is 4.6:1 (AA for text). Default links keep an underline so they are distinguishable by more than color."
+  },
+
+  "athenaConstraints": {
+    "defaultUnderlined": true,
+    "linkColor": "blue.500 (the one place blue leads, distinct from the forest brand action color)"
+  },
+
+  "figmaDivergences": [
+    {
+      "property": "state",
+      "figma": "explicit state property (default / hover / press)",
+      "implementation": "real CSS pseudo-states (:hover, :active, :focus-visible)",
+      "reason": "Matches the rest of the system; browser-driven."
+    }
+  ],
+
+  "aiHints": {
+    "priority": "high",
+    "keywords": ["link", "hyperlink", "anchor", "navigate", "external", "new tab", "url", "href", "read more", "view all"],
+    "context": "Reach for Link for navigation — within the app or offsite. Use default (underlined) inside body text, subtle for low-emphasis standalone links, inverse on dark surfaces, and isExternal for offsite destinations. For actions that mutate state use a Button (text appearance for low emphasis).",
+    "neverUseWhen": [
+      "The control triggers an action rather than navigation — use Button",
+      "There is no real href — use Button",
+      "It is inside body text and you want to drop the underline — keep default underlined",
+      "The destination is internal but you want a new tab — don't set isExternal"
+    ]
+  }
+}

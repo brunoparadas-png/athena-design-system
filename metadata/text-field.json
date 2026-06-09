@@ -1,0 +1,190 @@
+{
+  "component": {
+    "name": "TextField",
+    "category": "atom",
+    "type": "input",
+    "description": "A single-line text input for capturing short, free-form values such as names, emails, or search terms. Wraps a label, a bordered white input container (with optional leading/trailing icons), and an optional helper message that can carry neutral, error, or success status.",
+    "figmaNode": "586:9784",
+    "variants": ["default", "compact"],
+    "modifiers": ["isInvalid", "isValid", "isDisabled", "isRequired"],
+    "note": "Label is 12/16 semibold neutral.600; input container is white with a 1px neutral.300 border and SHARP corners (radius-none, DS convention), 40px tall (32px compact). Hover/focus are real CSS states (no `state` prop), matching Button/Checkbox. The helper message has three tones; error wins over success. Synced to Figma '❖ Text field'."
+  },
+
+  "tokens": {
+    "label": {
+      "typography": "12px / 16px, semibold",
+      "color": "colors.text.neutral.default (neutral.600)",
+      "requiredAsterisk": "colors.text.danger.default (danger.500)"
+    },
+    "container": {
+      "background": "colors.background.neutral.default (white); disabled → colors.background.neutral.weak (neutral.50)",
+      "border": "1px solid colors.border.neutral.default (neutral.300)",
+      "radius": "radius.none",
+      "minHeight": "40px (default) / 32px (isCompact)",
+      "padding": "0 spacing.base (8px horizontal)",
+      "gap": "spacing.base (8px) between icons and input"
+    },
+    "value": {
+      "typography": "typography.textStyles.body-s (14px / 20px)",
+      "typed": "colors.text.neutral.strong (neutral.800)",
+      "placeholder": "colors.text.neutral.weak (neutral.500)",
+      "disabled": "colors.text.neutral.disabled (neutral.400)"
+    },
+    "icons": {
+      "leadingTrailing": "20px, colors.text.neutral.weak (neutral.500); disabled → neutral.400",
+      "messageIcon": "16px — `warning` (error) / `check-circle` (success)"
+    },
+    "border": {
+      "default": "colors.border.neutral.default (neutral.300)",
+      "hover": "neutral.400",
+      "focus": "colors.border.primary.default (forest.500)",
+      "invalid": "colors.border.danger.default (danger.500) in every state",
+      "disabled": "colors.border.neutral.disabled (neutral.300)"
+    },
+    "message": {
+      "typography": "12px / 16px",
+      "neutral": "colors.text.neutral.weak (neutral.500)",
+      "error": "colors.text.danger.strong (danger.700) — AA-safe for 12px text",
+      "success": "colors.text.primary.default (forest.500)"
+    },
+    "spacing": ["spacing.2xs (4px label↔input↔message gap)", "spacing.base (8px container padding/gap)", "spacing.xs (6px message icon↔text gap)"],
+    "focusRing": "2px colors.border.primary.strong (forest.700), offset 1px, on the container; switches to danger.700 when invalid. The inner input has outline:none.",
+    "shadow": ""
+  },
+
+  "usage": {
+    "useCases": [
+      "Capture a short single-line value — name, email, username, URL",
+      "Search input within a toolbar or page header",
+      "A field inside a form section with a label, helper text, and validation",
+      "Numeric or formatted entry via the forwarded `type` attribute",
+      "Input with a leading or trailing icon (e.g. a search glyph or a clear affordance)"
+    ],
+    "frequency": "repeatable",
+    "requiredProps": ["label (or aria-label if standalone)"],
+    "commonPatterns": [
+      {
+        "name": "Labeled form field",
+        "description": "Standard field with a label and placeholder inside a form.",
+        "jsx": "<TextField label='Full name' placeholder='Jane Doe' value={name} onChange={(e) => setName(e.target.value)} />"
+      },
+      {
+        "name": "Required field with validation",
+        "description": "Required field that surfaces an error message + warning icon when invalid.",
+        "jsx": "<TextField label='Email' type='email' isRequired isInvalid={!!error} helperText={error ?? 'We will never share it.'} />"
+      },
+      {
+        "name": "Success confirmation",
+        "description": "Valid tone shows a forest message with a check-circle icon after a passing check.",
+        "jsx": "<TextField label='Username' isValid helperText='Username is available' />"
+      },
+      {
+        "name": "Search with leading icon",
+        "description": "Compact field with a leading search icon, used in a toolbar.",
+        "jsx": "<TextField label='Search' aria-label='Search' iconBefore='search' isCompact placeholder='Search…' />"
+      }
+    ],
+    "antiPatterns": [
+      {
+        "scenario": "Using TextField for multi-line input",
+        "reason": "A single-line input clips and scrolls long text horizontally and offers no line wrapping.",
+        "alternative": "Use TextArea for comments, descriptions, or any multi-line entry."
+      },
+      {
+        "scenario": "Omitting both label and aria-label",
+        "reason": "The input has no accessible name and is unusable by screen readers.",
+        "alternative": "Always pass label, or set aria-label for a standalone field (e.g. a toolbar search)."
+      },
+      {
+        "scenario": "Conveying the error only through the red border",
+        "reason": "Color alone fails accessibility; users who can't perceive the color get no error.",
+        "alternative": "Pass helperText with isInvalid so the message text, warning icon, and aria role=alert all carry the error."
+      },
+      {
+        "scenario": "Using placeholder as the label",
+        "reason": "Placeholder text disappears on focus/typing, harming recall and accessibility.",
+        "alternative": "Always provide a persistent label; use placeholder only for supplementary examples."
+      }
+    ]
+  },
+
+  "composition": {
+    "slots": {
+      "label": "Optional — text above the input (omit only for standalone fields, then set aria-label)",
+      "iconBefore": "Optional leading 20px Icon by name",
+      "iconAfter": "Optional trailing 20px Icon by name",
+      "helperText": "Optional helper/status message below the input (the Figma <Message>)"
+    },
+    "nestedComponents": ["Icon (leading/trailing, 20px)", "Icon (message: warning / check-circle, 16px)", "native <input>"],
+    "commonPartners": ["TextField (other fields)", "TextArea", "Button (form submit)", "Checkbox", "FormSection"],
+    "parentConstraints": ["Form section", "Modal body", "Toolbar / page header (search)", "fieldset"]
+  },
+
+  "behavior": {
+    "states": ["default", "hover", "focus", "filled", "invalid", "valid", "disabled"],
+    "interactions": {
+      "hover": "border darkens to neutral.400 (only when not disabled and not focused)",
+      "focus": "focus-within → forest.500 border + 2px forest.700 outline offset 1px on the container; inner input has outline:none",
+      "filled": "typed value renders in neutral.800 at 14/20; placeholder is neutral.500",
+      "invalid": "danger.500 border in every state; focus ring switches to danger.700; sets aria-invalid; pair with an error helperText",
+      "valid": "success tone on the helper message (forest.500 text + check-circle icon); border is unchanged",
+      "disabled": "neutral.50 fill, neutral.300 border, neutral.400 text/icons, cursor not-allowed"
+    },
+    "toneResolution": "Helper tone is error if isInvalid, else success if isValid, else neutral — error always wins over success.",
+    "controlled": "Pass value + onChange for controlled; omit value and pass defaultValue for uncontrolled. ref and remaining input attributes (type, name, maxLength, etc.) are forwarded to the native <input>."
+  },
+
+  "accessibility": {
+    "role": "textbox",
+    "minTargetHeight": "40px default / 32px compact input container",
+    "focusRing": "2px forest.700 outline, offset 1px, on the container (danger.700 when invalid)",
+    "labelWiring": "label is linked to the input via htmlFor/id; a standalone field (no label) must carry aria-label",
+    "invalidState": "aria-invalid reflects isInvalid",
+    "requiredState": "isRequired sets the native required attribute (and its implicit aria)",
+    "describedBy": "helperText is linked to the input through aria-describedby; the error message has role=alert",
+    "keyboardSupport": "Tab moves focus in/out; standard text-editing keys apply",
+    "screenReader": "Native input drives the accessible name from the associated label or aria-label; error messages are announced via role=alert",
+    "wcag": "AA",
+    "contrastNote": "Error MESSAGE text uses danger.700 (5.81:1 on white) so 12px text passes AA; the danger.500 border is a 3:1 non-text element and passes."
+  },
+
+  "athenaConstraints": {
+    "borderRadius": "radius.none",
+    "minHeight": "40px (default) / 32px (isCompact)",
+    "focusBorder": "forest.500 (single brand accent)",
+    "errorMessageColor": "danger.700 (--text-danger-strong) — never danger.500 for the message text"
+  },
+
+  "figmaDivergences": [
+    {
+      "property": "state",
+      "figma": "explicit state property (default / hover / focus / typing / filled)",
+      "implementation": "real CSS states (:hover, :focus-within) plus the value the user types",
+      "reason": "Matches Button/Checkbox; states are driven by the browser and the input value rather than a prop."
+    },
+    {
+      "property": "error message color",
+      "figma": "danger.500",
+      "implementation": "danger.700 via a new --text-danger-strong token",
+      "reason": "danger.500 is only 3.54:1 on white and fails AA for 12px text; danger.700 is 5.81:1 and passes. The danger BORDER stays danger.500 (a 3:1 non-text element, which passes)."
+    },
+    {
+      "property": "success message icon",
+      "figma": "not present in the icon set",
+      "implementation": "added a `check-circle` icon for the success message",
+      "reason": "The valid tone needs a 16px confirmation glyph alongside the forest text."
+    }
+  ],
+
+  "aiHints": {
+    "priority": "high",
+    "keywords": ["text field", "input", "textbox", "form field", "email", "name", "search input", "validation", "error message", "helper text", "required"],
+    "context": "Reach for TextField to capture a single line of free-form text. Always give it a label (or aria-label). Use isRequired for required fields, isInvalid + an error helperText to surface validation, isValid for success confirmation, and isCompact for dense toolbars. Add iconBefore/iconAfter for affordances like search. For multi-line input use TextArea instead.",
+    "neverUseWhen": [
+      "The input is multi-line — use TextArea",
+      "There is no label and no aria-label — the field has no accessible name",
+      "An error is shown only via the border color — pair isInvalid with an error helperText",
+      "You intend the placeholder to stand in for the label — provide a persistent label"
+    ]
+  }
+}

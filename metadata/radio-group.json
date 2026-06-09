@@ -1,0 +1,137 @@
+{
+  "component": {
+    "name": "RadioGroup",
+    "category": "molecule",
+    "type": "input",
+    "description": "Presents a list of options where only one may be selected. Wraps the Radio atom, shares a single `name`, manages selection, and cascades group-level disabled/invalid/required state.",
+    "figmaNode": "514:2212",
+    "variants": ["vertical", "horizontal"],
+    "modifiers": ["isDisabled", "isInvalid", "isRequired"],
+    "note": "Composite over the Radio atom. role='radiogroup' with an aria-labelledby group label. Declarative `options` + `onChange` API, mirroring Figma. Synced to Figma '❖ Radio group'."
+  },
+
+  "tokens": {
+    "layout": {
+      "groupGap": "spacing.base (8px) between label and options",
+      "optionGapVertical": "spacing.2xs (4px)",
+      "optionGapHorizontal": "spacing.md (16px)"
+    },
+    "legend": {
+      "typography": "typography.textStyles.body-m, semibold",
+      "color": "colors.text.neutral.strong (neutral.800)",
+      "requiredAsterisk": "colors.text.danger.default (danger.500), 12px"
+    },
+    "radio": "delegates all dial/label/state tokens to the Radio atom",
+    "shadow": ""
+  },
+
+  "usage": {
+    "useCases": [
+      "Pick one option from a short mutually-exclusive set (plan, shipping speed, payment method)",
+      "Single-answer survey or form question",
+      "Settings that offer a few exclusive modes"
+    ],
+    "frequency": "repeatable",
+    "requiredProps": ["options", "label (or aria-label / aria-labelledby)"],
+    "commonPatterns": [
+      {
+        "name": "Uncontrolled group",
+        "description": "Provide options + defaultValue; the group tracks selection internally.",
+        "jsx": "<RadioGroup label='Plan' options={[{value:'free',label:'Free'},{value:'pro',label:'Pro'}]} defaultValue='free' />"
+      },
+      {
+        "name": "Controlled group",
+        "description": "Parent owns the value; onChange returns the newly-selected value.",
+        "jsx": "<RadioGroup label='Plan' options={plans} value={plan} onChange={(v) => setPlan(v)} />"
+      },
+      {
+        "name": "Required with validation",
+        "description": "Mark invalid when nothing is selected on submit.",
+        "jsx": "<RadioGroup label='Accept?' options={yesNo} isRequired isInvalid={submitted && !value} />"
+      },
+      {
+        "name": "Horizontal layout",
+        "description": "Lay a small set of short options in a row.",
+        "jsx": "<RadioGroup label='Size' orientation='horizontal' options={sizes} defaultValue='m' />"
+      }
+    ],
+    "antiPatterns": [
+      {
+        "scenario": "Using RadioGroup when multiple selections are allowed",
+        "reason": "A radio group is single-choice by definition.",
+        "alternative": "Use a set of Checkboxes."
+      },
+      {
+        "scenario": "Rendering loose Radio atoms without a group wrapper",
+        "reason": "Loses the radiogroup role, the shared label, and consistent name management.",
+        "alternative": "Use RadioGroup so the set is announced and grouped correctly."
+      },
+      {
+        "scenario": "No label, aria-label, or aria-labelledby",
+        "reason": "The group has no accessible name for assistive tech.",
+        "alternative": "Pass label (renders + wires aria-labelledby), or supply aria-label/aria-labelledby."
+      },
+      {
+        "scenario": "Long option lists (6+)",
+        "reason": "Hard to scan; takes excessive vertical space.",
+        "alternative": "Use a Select / Dropdown menu."
+      }
+    ]
+  },
+
+  "composition": {
+    "slots": {
+      "label": "Optional group label (renders a legend and wires aria-labelledby)",
+      "options": "Required array of { value, label, isDisabled? }"
+    },
+    "nestedComponents": ["Radio"],
+    "commonPartners": ["FormSection", "Button (submit)", "TextField"],
+    "parentConstraints": ["Form", "Modal body", "Settings panel"]
+  },
+
+  "behavior": {
+    "states": ["default", "disabled (all)", "invalid (all)", "required"],
+    "interactions": {
+      "select": "Clicking or arrowing to an option selects it and deselects the rest",
+      "keyboard": "Arrow keys move selection within the group; Tab enters/leaves",
+      "disabledOption": "Per-option isDisabled disables a single radio; group isDisabled disables all",
+      "invalid": "Cascades isInvalid to every radio (empty dials show danger border; a selected one shows danger fill)"
+    },
+    "controlled": "Controlled via value + onChange; uncontrolled via defaultValue with internal state."
+  },
+
+  "accessibility": {
+    "role": "radiogroup",
+    "grouping": "All radios share one name; the group exposes an accessible name via label→aria-labelledby, or aria-label/aria-labelledby",
+    "focusRing": "inherited from Radio (2px forest.700, offset 2px)",
+    "invalidState": "each Radio receives aria-invalid",
+    "keyboardSupport": "Arrow keys cycle selection; Space selects; Tab moves in/out of the group",
+    "screenReader": "Announced as a radio group with N options and the current selection",
+    "wcag": "AA"
+  },
+
+  "athenaConstraints": {
+    "selectionModel": "single-choice",
+    "wraps": "Radio atom"
+  },
+
+  "figmaDivergences": [
+    {
+      "property": "API shape",
+      "figma": "documented as <RadioGroup options onChange aria-labelledby isDisabled />",
+      "implementation": "matches that signature and adds value/defaultValue, isInvalid, isRequired, orientation, and a built-in label that wires aria-labelledby",
+      "reason": "Rounds out controlled/uncontrolled usage and validation without changing the documented core API."
+    }
+  ],
+
+  "aiHints": {
+    "priority": "high",
+    "keywords": ["radio group", "single select", "one of", "options", "choose one", "exclusive", "plan picker", "survey"],
+    "context": "Reach for RadioGroup whenever the user picks exactly one option from a small set and you want it grouped, labelled, and accessible. Prefer it over loose Radio atoms. For multi-select use Checkboxes; for long lists use Select.",
+    "neverUseWhen": [
+      "Multiple selections are allowed — use Checkboxes",
+      "There are 6+ options — use a Select / Dropdown menu",
+      "It is a single standalone boolean — use Toggle or Checkbox"
+    ]
+  }
+}

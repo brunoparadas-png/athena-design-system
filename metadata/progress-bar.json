@@ -1,0 +1,128 @@
+{
+  "component": {
+    "name": "ProgressBar",
+    "category": "atom",
+    "type": "display",
+    "description": "Displays the status of a determinate process as a horizontal fill from 0 to 1. Use when progress is measurable; for unknown duration use Spinner.",
+    "figmaNode": "703:13482",
+    "variants": ["default", "success", "inverse"],
+    "note": "6px tall, rounded ends. default = forest fill on a subtle track; inverse (Figma 'Transparent') = white fill on a translucent track for dark surfaces; success = completed state (forest, the system green). Synced to Figma '❖ Progress bar'."
+  },
+
+  "tokens": {
+    "shape": { "height": "6px", "radius": "radius.pill (rounded ends)" },
+    "appearances": {
+      "default": "track rgba(5,21,36,0.06); fill colors.background.primary.default (forest.500)",
+      "success": "same as default (forest); represents completion",
+      "inverse": "track rgba(0,0,0,0.16); fill colors.background.neutral.default (white) — for dark/colored surfaces"
+    },
+    "motion": "fill width transitions 0.2s ease; disabled under prefers-reduced-motion",
+    "shadow": ""
+  },
+
+  "usage": {
+    "useCases": [
+      "File upload / download progress",
+      "Multi-step form or onboarding completion",
+      "Determinate task progress (processing N of M)",
+      "Storage / quota usage"
+    ],
+    "frequency": "repeatable",
+    "requiredProps": ["value", "label (recommended)"],
+    "commonPatterns": [
+      {
+        "name": "Upload progress",
+        "description": "Bind value to a 0–1 fraction; label names the process.",
+        "jsx": "<ProgressBar value={0.4} label='Upload progress' />"
+      },
+      {
+        "name": "Completion",
+        "description": "Full bar at the end of a process.",
+        "jsx": "<ProgressBar appearance='success' value={1} label='Complete' />"
+      },
+      {
+        "name": "On a dark/brand surface",
+        "description": "Inverse uses a white fill so it reads on dark backgrounds.",
+        "jsx": "<ProgressBar appearance='inverse' value={0.6} label='Loading' />"
+      }
+    ],
+    "antiPatterns": [
+      {
+        "scenario": "Using a progress bar when progress is unknown",
+        "reason": "A determinate bar implies a measurable fraction.",
+        "alternative": "Use a Spinner for indeterminate loading."
+      },
+      {
+        "scenario": "Passing percentages (0–100) to value",
+        "reason": "value is a 0–1 fraction; 100 clamps to full.",
+        "alternative": "Divide by 100 (e.g. value={pct / 100})."
+      },
+      {
+        "scenario": "Default (forest) progress bar on a dark/colored surface",
+        "reason": "The subtle track and forest fill lose contrast on dark backgrounds.",
+        "alternative": "Use appearance='inverse'."
+      },
+      {
+        "scenario": "No label / accessible name",
+        "reason": "Screen readers cannot describe what is progressing.",
+        "alternative": "Pass a label naming the process."
+      }
+    ]
+  },
+
+  "composition": {
+    "slots": {},
+    "nestedComponents": [],
+    "commonPartners": ["Button", "Banner", "File Uploader", "Modal dialog"],
+    "parentConstraints": ["Form step header", "Card", "Upload row", "Toolbar"]
+  },
+
+  "behavior": {
+    "states": ["determinate (0–1)"],
+    "interactions": {
+      "fill": "Bar width = round(value*100)%; clamped to 0–1",
+      "motion": "Width animates on change (0.2s); respects prefers-reduced-motion"
+    }
+  },
+
+  "accessibility": {
+    "role": "progressbar",
+    "ariaValues": "aria-valuemin=0, aria-valuemax=100, aria-valuenow=round(value*100)",
+    "label": "Provide a label as the accessible name",
+    "keyboardSupport": "Not interactive / not focusable",
+    "wcag": "AA",
+    "contrastNote": "Fill vs track is a non-text indicator (≥3:1). On dark surfaces use inverse so the white fill keeps contrast."
+  },
+
+  "athenaConstraints": {
+    "height": "6px",
+    "radius": "radius.pill",
+    "fill": "forest.500 (default/success) — the single brand accent"
+  },
+
+  "figmaDivergences": [
+    {
+      "property": "value units",
+      "figma": "value prop shown as {progress} / {1}",
+      "implementation": "value is a 0–1 fraction, clamped",
+      "reason": "Standard determinate-progress convention; maps cleanly to aria-valuenow."
+    },
+    {
+      "property": "appearance naming",
+      "figma": "type = 'Progress bar' / 'Transparent progress bar' / 'Success progress bar'",
+      "implementation": "appearance = 'default' / 'inverse' / 'success'",
+      "reason": "'inverse' reads clearer than 'transparent' and matches Link's inverse naming; success shares forest because forest is the system green."
+    }
+  ],
+
+  "aiHints": {
+    "priority": "medium",
+    "keywords": ["progress", "progress bar", "loading", "upload", "completion", "percent", "determinate", "steps"],
+    "context": "Reach for ProgressBar when progress is measurable (uploads, multi-step flows, processing). Use Spinner for indeterminate loading. Use appearance='inverse' on dark surfaces and 'success'/value=1 for completion.",
+    "neverUseWhen": [
+      "Progress is unknown — use Spinner",
+      "On a dark surface with the default appearance — use inverse",
+      "You have a 0–100 percentage — divide by 100 first"
+    ]
+  }
+}

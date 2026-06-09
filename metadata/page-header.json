@@ -1,0 +1,172 @@
+{
+  "component": {
+    "name": "PageHeader",
+    "category": "molecule",
+    "type": "layout",
+    "description": "A slot-based composition shell that defines the top of a page: an optional breadcrumb trail, a real heading with optional right-aligned actions, and an optional bottom bar for search / filters. Purely presentational — it arranges whatever you pass into its slots.",
+    "figmaNode": "515:10093",
+    "variants": ["title-only", "with-breadcrumbs", "with-actions", "with-bottom-bar"],
+    "modifiers": ["truncateTitle", "headingLevel"],
+    "note": "Flex column, 32px top padding baked in. Title is Heading/L: Inter bold 24/28, neutral.800. breadcrumbs/actions/bottomBar are open ReactNode slots, not fixed layers — pass Breadcrumbs, Buttons, and a TextField. headingLevel (1|2|3) changes the rendered tag for the document outline only; the visual size never changes. Synced to Figma '❖ Page header'."
+  },
+
+  "tokens": {
+    "root": {
+      "layout": "flex column, width 100%",
+      "paddingTop": "spacing.3xl (32px) — baked in to match the Figma frame",
+      "fontFamily": "font.main (Inter)"
+    },
+    "content": {
+      "layout": "flex column, width 100%",
+      "gap": "spacing.2xs (4px) — breadcrumbs ↔ title row"
+    },
+    "main": {
+      "layout": "flex row, justify-content space-between, align-items flex-start",
+      "gap": "spacing.md (16px) — where the title and actions meet"
+    },
+    "title": {
+      "typography": "Heading/L — Inter bold, font-size.xl (24px) / line-height.md (28px), font-weight.bold (700)",
+      "color": "colors.text.neutral.strong (neutral.800)",
+      "truncate": "overflow hidden + text-overflow ellipsis + white-space nowrap (single line); min-width 0 so it can shrink"
+    },
+    "actions": {
+      "layout": "flex row, align-items flex-start, flex-shrink 0 (right-aligned, never compresses)",
+      "gap": "spacing.base (8px)"
+    },
+    "bottomBar": {
+      "layout": "flex row, align-items flex-start, width 100%",
+      "gap": "spacing.base (8px)",
+      "paddingTop": "spacing.md (16px)"
+    },
+    "spacing": ["spacing.3xl (32px top)", "spacing.md (16px title↔actions, bottomBar top)", "spacing.base (8px action/bottomBar gaps)", "spacing.2xs (4px breadcrumbs↔title)"],
+    "shadow": ""
+  },
+
+  "usage": {
+    "useCases": [
+      "Define the top of a content page — page title plus context and controls",
+      "Show a breadcrumb trail above the title for nested navigation",
+      "Place page-level actions (Create, Save, Export) to the right of the title",
+      "Add a search field and filter controls in a bottom bar above a list or table",
+      "Truncate a long, dynamic title to a single line to keep the header height fixed"
+    ],
+    "frequency": "once-per-page",
+    "requiredProps": ["children (the page title)"],
+    "commonPatterns": [
+      {
+        "name": "Title with breadcrumbs and actions",
+        "description": "The standard page top: a breadcrumb trail, the title, and one or two primary/secondary actions to the right.",
+        "jsx": "<PageHeader breadcrumbs={<Breadcrumbs items={trail} />} actions={<><Button variant='secondary'>Export</Button><Button>Create</Button></>}>Campaigns</PageHeader>"
+      },
+      {
+        "name": "List header with search + filter",
+        "description": "A title plus a bottom bar holding a flex-1 search TextField and a Filter button — the toolbar above a table or list.",
+        "jsx": "<PageHeader bottomBar={<><TextField style={{ flex: 1 }} placeholder='Search' /><Button variant='secondary'>Filter</Button></>}>Members</PageHeader>"
+      },
+      {
+        "name": "Truncated title",
+        "description": "A long, user-supplied title kept to one line with an ellipsis so the header height stays constant.",
+        "jsx": "<PageHeader truncateTitle actions={<Button>Edit</Button>}>{document.name}</PageHeader>"
+      },
+      {
+        "name": "Nested-section heading level",
+        "description": "Render the title as an h2 to fit a page that already has an h1, without changing its visual size.",
+        "jsx": "<PageHeader headingLevel={2}>Billing</PageHeader>"
+      }
+    ],
+    "antiPatterns": [
+      {
+        "scenario": "Using PageHeader as an app-wide top nav or banner",
+        "reason": "It is a per-page header (title + page-scoped controls), not a global chrome bar; reusing it as app navigation muddles the document outline and layout.",
+        "alternative": "Use a dedicated AppBar / top-nav for global chrome; keep PageHeader for the page's own title and actions."
+      },
+      {
+        "scenario": "Packing more than ~3 actions inline",
+        "reason": "actions has flex-shrink 0 and sits beside the title; too many buttons crowd the title and break on narrow widths.",
+        "alternative": "Keep 1–3 primary/secondary buttons inline and overflow the rest into a Menu (\"More\" / kebab)."
+      },
+      {
+        "scenario": "Rendering the title as a plain div or styled span",
+        "reason": "Bypassing the heading drops the page's heading semantics and harms screen-reader navigation.",
+        "alternative": "Pass the title as children so it renders as a real heading; use headingLevel to fit the outline."
+      },
+      {
+        "scenario": "Nesting multiple PageHeaders on one page",
+        "reason": "A page has one top; stacked PageHeaders duplicate the 32px frame and produce competing top-level headings.",
+        "alternative": "Use a single PageHeader per page; use FormSection titles or lower headings for sub-sections."
+      }
+    ]
+  },
+
+  "composition": {
+    "slots": {
+      "title": "Required — the page title, passed as children; rendered as a real heading (Heading/L)",
+      "breadcrumbs": "Optional — a breadcrumb trail above the title, typically a <Breadcrumbs /> nav landmark",
+      "actions": "Optional — right-aligned controls beside the title, typically Buttons (icon-only ones need aria-label)",
+      "bottomBar": "Optional — a full-width row below the title for search / filters (e.g. a flex-1 TextField + a Filter Button)"
+    },
+    "nestedComponents": [],
+    "commonPartners": ["Breadcrumbs", "Button", "TextField"],
+    "parentConstraints": ["Top of a page body / content column", "Below a side nav or app shell", "Above a list, table, or form"]
+  },
+
+  "behavior": {
+    "states": ["static"],
+    "interactions": {
+      "static": "Purely presentational / compositional — no internal state, no event handlers of its own. All interactivity lives in the components passed into the slots.",
+      "truncate": "When truncateTitle is set, the title clamps to a single line with an ellipsis (overflow hidden, nowrap); min-width 0 lets it shrink beside the actions.",
+      "responsive": "Adapts by letting the title shrink/truncate while actions (flex-shrink 0) stay beside it; the bottomBar stretches full width with a flex-1 search field."
+    },
+    "controlled": "Not applicable — PageHeader holds no state. Manage any state (search value, breadcrumb data) in the slotted children."
+  },
+
+  "accessibility": {
+    "role": "none (layout shell)",
+    "heading": "The title renders as a real heading — h1 by default; headingLevel (1|2|3) lets you fit the page's outline without changing the visual size",
+    "breadcrumbs": "The breadcrumbs slot should hold the Breadcrumbs nav landmark (nav with an accessible name) so AT users can skip to it",
+    "actions": "Pass real Buttons into actions; icon-only buttons must carry an aria-label",
+    "landmarks": "PageHeader itself is a plain container; rely on the heading and the breadcrumbs nav landmark for structure",
+    "wcag": "AA",
+    "contrastNote": "neutral.800 title text on the page background meets AA."
+  },
+
+  "athenaConstraints": {
+    "topPadding": "spacing.3xl (32px) — fixed to match the Figma frame",
+    "titleStyle": "Heading/L: Inter bold 24/28, neutral.800 (visual size is independent of headingLevel)",
+    "actionsGap": "spacing.base (8px), right-aligned, flex-shrink 0",
+    "singlePerPage": "one PageHeader per page"
+  },
+
+  "figmaDivergences": [
+    {
+      "property": "actions / bottomBar / breadcrumbs",
+      "figma": "fixed Figma layers in the frame",
+      "implementation": "open ReactNode slots",
+      "reason": "Slots let any Button / field arrangement work, instead of hard-coding the Figma layer set."
+    },
+    {
+      "property": "headingLevel",
+      "figma": "no equivalent property",
+      "implementation": "headingLevel (1|2|3) chooses the rendered tag (h1–h3) for the document outline; visual size unchanged",
+      "reason": "Added so the title can fit any page's heading hierarchy without restyling."
+    },
+    {
+      "property": "top padding",
+      "figma": "spacing around the frame",
+      "implementation": "32px (spacing.3xl) padding-top baked into the root",
+      "reason": "Bakes the Figma frame's top offset into the component so it sits correctly without a wrapper."
+    }
+  ],
+
+  "aiHints": {
+    "priority": "high",
+    "keywords": ["page header", "page title", "heading", "breadcrumbs", "actions", "toolbar", "title bar", "page top", "filters", "search bar"],
+    "context": "Reach for PageHeader to build the top of a content page: pass the title as children, a <Breadcrumbs /> into breadcrumbs, Buttons into actions, and a search TextField + Filter Button into bottomBar. It is a layout shell with no state — put state in the slotted children. Use headingLevel to fit the page outline and truncateTitle for long dynamic titles.",
+    "neverUseWhen": [
+      "You need an app-wide top nav or global banner — use a dedicated AppBar / top-nav",
+      "There are more than ~3 inline actions — overflow the extras into a Menu",
+      "You would render the title as a plain div — keep the real heading semantics",
+      "A page already has a PageHeader — use one per page, not nested"
+    ]
+  }
+}
