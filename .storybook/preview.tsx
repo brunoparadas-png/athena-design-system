@@ -1,8 +1,16 @@
 import type { Preview } from '@storybook/react-vite';
 import '../src/tokens/tokens.css';
+import athenaTheme from './theme';
 
 const preview: Preview = {
   parameters: {
+    options: {
+      // Sort the sidebar alphabetically (by title, then story name).
+      storySort: { method: 'alphabetical' },
+    },
+    docs: {
+      theme: athenaTheme,
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,
@@ -23,7 +31,7 @@ const preview: Preview = {
   },
   decorators: [
     (Story) => (
-      <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      <div style={{ fontFamily: '"Inter", system-ui, sans-serif' }}>
         <Story />
       </div>
     ),
