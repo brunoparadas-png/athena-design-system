@@ -1,0 +1,137 @@
+/* Athena Text Area — synced to Figma "❖ Text area" (node 32:1639). The multi-line
+   sibling of TextField: a label (12/16 semibold neutral.600), a bordered white
+   container holding a resizable <textarea> (14/20, neutral.800 value, neutral.500
+   placeholder), and a helper <Message> in three tones. Hover/focus are real CSS
+   states; focus shows the 2px forest.700 ring + forest.500 border. Invalid uses a
+   danger.500 border; isMonospaced swaps in the code font. */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2xs); /* 4px */
+  font-family: var(--font-main);
+  width: 100%;
+}
+
+/* ── Label ── */
+.label {
+  font-size: var(--font-size-2xs); /* 12px */
+  line-height: var(--line-height-xxs); /* 16px */
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-neutral-default); /* neutral.600 */
+}
+.required {
+  color: var(--text-danger-default); /* danger.500 */
+}
+
+/* ── Textarea container ── */
+.container {
+  box-sizing: border-box;
+  display: flex;
+  width: 100%;
+  background-color: var(--bg-neutral-default); /* input white */
+  border: 1px solid var(--border-neutral-default); /* neutral.300 */
+  border-radius: var(--radius-none); /* sharp — DS convention */
+  transition:
+    border-color 0.12s ease,
+    box-shadow 0.12s ease;
+}
+
+.container:hover:not(.disabled):not(:focus-within) {
+  border-color: var(--neutral-400);
+}
+
+/* Focus (Figma focus/typing) — forest.500 border + 2px forest.700 ring. */
+.container:focus-within {
+  border-color: var(--border-primary-default); /* forest.500 */
+  outline: var(--focus-ring-width) solid var(--border-primary-strong); /* forest.700 */
+  outline-offset: 1px;
+}
+
+/* Invalid — danger.500 border in every state. */
+.invalid,
+.invalid:hover {
+  border-color: var(--border-danger-default); /* danger.500 */
+}
+.invalid:focus-within {
+  border-color: var(--border-danger-default);
+  outline-color: var(--border-danger-strong); /* danger.700 ring */
+}
+
+/* Disabled — muted fill + border, not-allowed. */
+.disabled,
+.disabled:hover {
+  background-color: var(--bg-neutral-weak); /* neutral.50 */
+  border-color: var(--border-neutral-disabled); /* neutral.300 */
+  cursor: not-allowed;
+}
+
+/* ── Native textarea ── */
+.field {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+  min-height: 80px;
+  margin: 0;
+  border: 0;
+  padding: var(--spacing-base); /* 8px */
+  background: transparent;
+  font-family: inherit;
+  font-size: var(--font-size-xs); /* 14px */
+  line-height: var(--line-height-xs); /* 20px */
+  color: var(--text-neutral-strong); /* neutral.800 typed value */
+}
+.compact .field {
+  padding-block: var(--spacing-xs); /* 6px — tighter */
+  min-height: 64px;
+}
+.monospaced {
+  font-family: var(--font-code); /* IBM Plex Mono */
+}
+.field::placeholder {
+  color: var(--text-neutral-weak); /* neutral.500 */
+}
+.field:focus {
+  outline: none; /* ring lives on the container */
+}
+.field:disabled {
+  color: var(--text-neutral-disabled); /* neutral.400 */
+  cursor: not-allowed;
+  -webkit-text-fill-color: var(--text-neutral-disabled); /* Safari */
+}
+.field:disabled::placeholder {
+  color: var(--text-neutral-disabled);
+}
+
+/* ── Helper message ── */
+.message {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-xs); /* 6px */
+  font-size: var(--font-size-2xs); /* 12px */
+  line-height: var(--line-height-xxs); /* 16px */
+}
+.messageIcon {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+.messageText {
+  flex: 1 1 auto;
+  min-width: 0;
+  word-break: break-word;
+}
+.neutral {
+  color: var(--text-neutral-weak); /* neutral.500 */
+}
+.error {
+  color: var(--text-danger-strong); /* danger.700 — AA-safe for 12px text */
+}
+.success {
+  color: var(--text-primary-default); /* forest.500 */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .container {
+    transition: none;
+  }
+}

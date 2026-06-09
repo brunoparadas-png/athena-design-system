@@ -1,0 +1,83 @@
+/* Athena Tabs — synced to Figma "❖ Tabs" (node 183:3466).
+   Tab list over a 1px bottom track. Tabs are Inter medium 14/20: unselected
+   neutral.500 (hover neutral.600), selected forest.500 with a 3px forest
+   underline indicator. Hover/press/focus are real CSS pseudo-states. */
+
+.tabs {
+  font-family: var(--font-main);
+}
+
+.tablist {
+  display: flex;
+  position: relative;
+  /* full-width 1px track under the tabs (one-off translucent ink) */
+  border-bottom: 1px solid rgba(11, 18, 40, 0.14);
+}
+
+.tab {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: var(--spacing-xs) var(--spacing-base); /* 6px 8px */
+  font-family: inherit;
+  font-size: var(--font-size-xs); /* 14px */
+  line-height: var(--line-height-xs); /* 20px */
+  font-weight: var(--font-weight-medium); /* 500 */
+  color: var(--text-neutral-weak); /* neutral.500 */
+  white-space: nowrap;
+  transition: color 0.12s ease;
+}
+
+.tab:hover:not(:disabled):not(.selected) {
+  color: var(--text-neutral-default); /* neutral.600 */
+}
+
+.tab:focus-visible {
+  outline: var(--focus-ring-width) solid var(--border-primary-strong);
+  outline-offset: -2px; /* inset so the ring stays within the tab */
+}
+
+/* ── Selected — forest text + 3px underline indicator (over the track) ── */
+.selected {
+  color: var(--text-primary-default); /* forest.500 */
+}
+.selected::after {
+  content: '';
+  position: absolute;
+  left: var(--spacing-base); /* 8px — matches horizontal padding */
+  right: var(--spacing-base);
+  bottom: -1px; /* overlap the 1px track */
+  height: 3px;
+  background-color: var(--bg-primary-default); /* forest.500 */
+}
+
+.tab:disabled {
+  color: var(--text-neutral-disabled);
+  cursor: not-allowed;
+}
+
+/* ── Panel ── */
+.panel {
+  padding-top: var(--spacing-md); /* 16px */
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-xs);
+  color: var(--text-neutral-strong);
+}
+.panel:focus-visible {
+  outline: var(--focus-ring-width) solid var(--border-primary-strong);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tab {
+    transition: none;
+  }
+}

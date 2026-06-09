@@ -1,0 +1,51 @@
+/* Athena Progress bar — synced to Figma "❖ Progress bar" (node 703:13482).
+   6px tall, rounded ends. Three types: default (forest fill on a subtle dark
+   tint track), inverse (white fill on a translucent track, for dark/colored
+   surfaces — Figma "Transparent"), success (forest, the completed state).
+
+   The two track tints are one-off translucent values (no semantic alias), kept
+   inline with comments — like the Tag palettes. */
+
+.track {
+  position: relative;
+  width: 100%;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.bar {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  transition: width 0.2s ease;
+}
+
+/* ── default ── */
+.default {
+  background-color: rgba(5, 21, 36, 0.06); /* subtle dark tint track */
+}
+.default .bar {
+  background-color: var(--bg-primary-default); /* forest.500 */
+}
+
+/* ── success (completion) — forest, same green as default in this system ── */
+.success {
+  background-color: rgba(5, 21, 36, 0.06);
+}
+.success .bar {
+  background-color: var(--bg-primary-default);
+}
+
+/* ── inverse (Figma "Transparent") — for dark / colored surfaces ── */
+.inverse {
+  background-color: rgba(0, 0, 0, 0.16);
+}
+.inverse .bar {
+  background-color: var(--bg-neutral-default); /* white */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar {
+    transition: none;
+  }
+}

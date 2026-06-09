@@ -1,0 +1,147 @@
+/* Athena Checkbox — synced to Figma "❖ Checkbox" (node 507:90021).
+   14px sharp box, forest fill when on, white mark. Hover/press/focus are real
+   CSS pseudo-states (not a `state` prop), matching Button. Indeterminate uses
+   the native :indeterminate pseudo-class (set via ref) and takes priority over
+   checked. Invalid adds a danger.500 border; the fill stays forest when checked
+   so the selection is still legible. */
+
+.root {
+  display: inline-flex;
+  align-items: flex-start; /* box pins to the first line when the label wraps */
+  gap: var(--spacing-2xs); /* 4px */
+  cursor: pointer;
+  /* Figma main type: Inter, body-m */
+  font-family: var(--font-main);
+  font-size: var(--font-size-xs); /* 14px */
+  line-height: var(--line-height-xs); /* 20px */
+  color: var(--text-neutral-strong);
+}
+
+.control {
+  display: inline-flex;
+  position: relative;
+  flex-shrink: 0;
+  /* center the 14px box on the 20px first line: (20 - 14) / 2 = 3px */
+  margin-top: 3px;
+}
+
+/* Visually-hidden native input — keeps keyboard, focus, and the a11y tree intact. */
+.input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: inherit;
+}
+
+.box {
+  box-sizing: border-box;
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-neutral-default);
+  border-radius: var(--radius-none);
+  background-color: transparent;
+  color: var(--text-neutral-inverse); /* mark color when filled */
+  transition:
+    background-color 0.12s ease,
+    border-color 0.12s ease;
+}
+
+/* ── Marks ── visibility is CSS-driven so it works controlled OR uncontrolled ── */
+.mark {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
+.check,
+.dash {
+  display: none;
+  line-height: 0;
+}
+.input:checked + .box .check {
+  display: block;
+}
+/* indeterminate wins over checked: show the dash, hide the check */
+.input:indeterminate + .box .dash {
+  display: block;
+}
+.input:indeterminate + .box .check {
+  display: none;
+}
+
+/* ── On states (checked / indeterminate) — forest fill, white mark ── */
+.input:checked + .box,
+.input:indeterminate + .box {
+  background-color: var(--bg-primary-default);
+  border-color: var(--border-primary-default);
+}
+
+/* ── Hover ── */
+.input:not(:checked):not(:indeterminate):not(:disabled):hover + .box {
+  background-color: var(--bg-neutral-weak);
+}
+.input:checked:not(:disabled):hover + .box,
+.input:indeterminate:not(:disabled):hover + .box {
+  background-color: var(--bg-primary-strong);
+  border-color: var(--bg-primary-strong);
+}
+
+/* ── Press ── */
+.input:not(:checked):not(:indeterminate):not(:disabled):active + .box {
+  background-color: var(--bg-neutral-weak-pressed);
+}
+.input:checked:not(:disabled):active + .box,
+.input:indeterminate:not(:disabled):active + .box {
+  background-color: var(--bg-primary-strongest);
+  border-color: var(--bg-primary-strongest);
+}
+
+/* ── Invalid — danger border in every check state; fill stays forest when on ── */
+.input:not(:disabled) + .box.invalid {
+  border-color: var(--border-danger-default);
+}
+.input:not(:checked):not(:indeterminate):not(:disabled):active + .box.invalid {
+  background-color: var(--danger-100);
+}
+
+/* ── Focus — 2px forest.700 ring, matches Button ── */
+.input:focus-visible + .box {
+  outline: var(--focus-ring-width) solid var(--border-primary-strong);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* ── Disabled ── */
+.root:has(.input:disabled) {
+  cursor: not-allowed;
+  color: var(--text-neutral-disabled);
+}
+.input:disabled + .box {
+  background-color: var(--bg-neutral-disabled);
+  border-color: transparent;
+  color: var(--text-neutral-disabled); /* gray mark when checked + disabled */
+}
+.input:disabled:not(:checked):not(:indeterminate) + .box {
+  /* unchecked disabled keeps a faint border for the empty box */
+  border-color: var(--border-neutral-disabled);
+}
+
+/* ── Label ── */
+.label {
+  display: inline-block;
+  word-break: break-word;
+}
+.required {
+  color: var(--text-danger-default);
+  font-size: var(--font-size-2xs); /* 12px */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .box {
+    transition: none;
+  }
+}

@@ -1,0 +1,32 @@
+/* Athena Spinner — synced to Figma "❖ Spinner" (node 832:4816).
+   An animated arc that lets users know content is loading. appearance=inherit:
+   the arc draws in currentColor, so it adapts to its context. Five fixed sizes
+   (12/16/24/48/96px). Continuous rotation; respects prefers-reduced-motion. */
+
+.root {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit; /* arc uses currentColor */
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+.svg {
+  display: block;
+  transform-origin: center;
+  animation: athena-spinner-rotate 0.7s linear infinite;
+}
+
+@keyframes athena-spinner-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .svg {
+    /* keep indicating progress, but slow it right down */
+    animation-duration: 2s;
+  }
+}

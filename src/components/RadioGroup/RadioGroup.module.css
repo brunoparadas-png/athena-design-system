@@ -1,0 +1,36 @@
+/* Athena Radio group — synced to Figma "❖ Radio group" (node 514:2212).
+   A labelled radiogroup wrapping Radio atoms. Vertical stack by default; the
+   group label sits above with a small gap. Selection is single-choice. */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-base); /* 8px between group label and options */
+}
+
+.legend {
+  font-family: var(--font-main);
+  font-size: var(--font-size-xs); /* 14px */
+  line-height: var(--line-height-xs); /* 20px */
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-neutral-strong);
+}
+
+.required {
+  color: var(--text-danger-default);
+  font-size: var(--font-size-2xs); /* 12px */
+  font-weight: var(--font-weight-regular);
+}
+
+.optionsColumn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2xs); /* 4px — matches the 24px Figma row rhythm */
+}
+
+.optionsRow {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--spacing-md); /* 16px between horizontal options */
+}
