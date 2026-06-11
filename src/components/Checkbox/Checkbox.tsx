@@ -75,20 +75,18 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
     else if (forwardedRef) forwardedRef.current = node;
   };
 
-  // Whether the control is in the "on" state (checked or indeterminate).
-  // Used for data-on attribute so group-data-[on] variants can style
-  // hover/active on the filled state — Tailwind cannot chain multiple
-  // peer conditions (e.g. peer-checked:peer-hover:) on a single utility.
-  const isOn = (isChecked === true) || isIndeterminate;
-
-  // Mark visibility: indeterminate wins over checked.
+  // Mark visibility. The mark spans are NESTED inside the box, so peer-* (which
+  // only matches siblings of the input) can't reach them — use group-has-[],
+  // which reflects the real DOM :checked / :indeterminate state for both
+  // controlled and uncontrolled use. Indeterminate (a controlled-only prop)
+  // wins over checked.
   const checkClassName = isIndeterminate
-    ? 'hidden leading-[0]'
-    : 'hidden leading-[0] peer-checked:block';
+    ? 'hidden'
+    : 'hidden leading-[0] group-has-[:checked]/ctrl:block';
 
   const dashClassName = isIndeterminate
     ? 'block leading-[0]'
-    : 'hidden leading-[0]';
+    : 'hidden';
 
   return (
     <label
@@ -100,11 +98,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
           for compound state styling that peer alone cannot express.
         - mt-[3px] centers the 14px box on the 20px text first-line: (20 - 14) / 2 = 3px.
       */}
-      <span
-        className="group/ctrl inline-flex relative flex-shrink-0 mt-[3px]"
-        data-on={isOn ? '' : undefined}
-        data-invalid={isInvalid && !isDisabled ? '' : undefined}
-      >
+      <span className="group/ctrl inline-flex relative flex-shrink-0 mt-[3px]">
         {/* Visually-hidden native input — keeps keyboard, focus, and the a11y tree intact. */}
         <input
           ref={setRefs}
@@ -139,32 +133,27 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
           aria-hidden="true"
           className={[
             'box-border w-[14px] h-[14px] inline-flex items-center justify-center',
-            'bg-transparent border border-neutral-300 rounded-none text-white',
+            'bg-white border border-neutral-300 rounded-none text-white',
             'transition-[background-color,border-color] duration-[120ms] ease-[ease] motion-reduce:transition-none',
-            // Hover unchecked (not disabled)
-            'peer-hover:peer-[&:not(:disabled)]:bg-neutral-50',
-            // Active unchecked (not disabled)
-            'peer-active:peer-[&:not(:disabled)]:bg-neutral-200',
-            // On state: forest fill + border (overrides hover/active above via later source order)
-            'group-data-[on]/ctrl:bg-forest-500 group-data-[on]/ctrl:border-forest-500',
-            // On + hover (not disabled)
-            'group-data-[on]/ctrl:peer-hover:peer-[&:not(:disabled)]:bg-forest-700',
-            'group-data-[on]/ctrl:peer-hover:peer-[&:not(:disabled)]:border-forest-700',
-            // On + active (not disabled)
-            'group-data-[on]/ctrl:peer-active:peer-[&:not(:disabled)]:bg-forest-900',
-            'group-data-[on]/ctrl:peer-active:peer-[&:not(:disabled)]:border-forest-900',
-            // Invalid border (not disabled) — danger.500 overrides everything except disabled
-            'group-data-[invalid]/ctrl:border-danger-500',
-            // Invalid active press unchecked/not-indeterminate: danger-100 bg
-            isInvalid && !isDisabled && !isOn
-              ? 'peer-active:bg-[var(--danger-100,#ffe6e6)]'
-              : '',
+            // Hover / active while unchecked — the box is a direct sibling of the
+            // input, so peer-* applies here (unlike the nested mark spans above).
+            'peer-hover:peer-enabled:bg-neutral-50',
+            'peer-active:peer-enabled:bg-neutral-200',
+            // On state: forest fill + border, driven by the real :checked /
+            // :indeterminate DOM state. Registered after hover in Tailwind's
+            // cascade, so the filled state wins when both apply.
+            'peer-checked:bg-forest-500 peer-checked:border-forest-500',
+            'peer-indeterminate:bg-forest-500 peer-indeterminate:border-forest-500',
+            // On + hover / active (not disabled) — darker forest
+            'peer-checked:peer-hover:peer-enabled:bg-forest-700 peer-checked:peer-hover:peer-enabled:border-forest-700',
+            'peer-indeterminate:peer-hover:peer-enabled:bg-forest-700 peer-indeterminate:peer-hover:peer-enabled:border-forest-700',
+            'peer-checked:peer-active:peer-enabled:bg-forest-900 peer-checked:peer-active:peer-enabled:border-forest-900',
+            // Invalid border (not disabled) — danger.500
+            isInvalid && !isDisabled ? 'border-danger-500' : '',
             // Focus ring — 2px forest.700 outline, offset 2px
             'peer-focus-visible:outline-2 peer-focus-visible:outline-forest-700 peer-focus-visible:outline-offset-2',
-            // Disabled: neutral-100 bg, transparent border, neutral-400 text (gray mark when checked)
-            'peer-disabled:bg-neutral-100 peer-disabled:border-transparent peer-disabled:text-neutral-400',
-            // Disabled unchecked: restore faint border for the empty box
-            !isOn && isDisabled ? 'border-neutral-300' : '',
+            // Disabled wins last: neutral-100 fill, faint border, gray mark
+            'peer-disabled:bg-neutral-100 peer-disabled:border-neutral-300 peer-disabled:text-neutral-400',
           ].filter(Boolean).join(' ')}
         >
           <span className={checkClassName}>

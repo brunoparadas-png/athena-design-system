@@ -142,9 +142,11 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
             .filter(Boolean)
             .join(' ')}
         >
-          {/* Mark — hidden until checked; peer-checked/radio shows it */}
+          {/* Mark — hidden until checked. The SVG is NESTED inside the dial, so
+              peer-* (siblings only) can't reach it; group-has-[] reflects the
+              real :checked DOM state and works for nested elements. */}
           <svg
-            className="w-[14px] h-[14px] hidden peer-checked/radio:block"
+            className="w-[14px] h-[14px] hidden group-has-[:checked]/ctrl:block"
             viewBox="0 0 14 14"
             aria-hidden="true"
             focusable={false}

@@ -142,7 +142,7 @@ export function Modal({
   // Overlay: fixed blanket, centers the dialog. viewport-scroll mode aligns top and scrolls.
   // When isBlanketHidden, the overlay is transparent and pointer-events are disabled on it
   // so only the dialog itself receives clicks.
-  const overlayClass = `fixed inset-0 z-[1000] flex items-center justify-content ${
+  const overlayClass = `fixed inset-0 z-[1000] flex items-center justify-center ${
     isBlanketHidden ? 'bg-transparent pointer-events-none' : 'bg-[rgba(5,12,31,0.46)]'
   } ${isFullScreen ? 'p-0' : 'p-8'} ${shouldScrollInViewport ? 'items-start overflow-y-auto' : ''}`.trim();
 

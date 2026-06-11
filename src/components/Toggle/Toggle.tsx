@@ -42,9 +42,13 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(function Toggle(
 
   // Dot: default 12px, large 16px; travel: default 16px, large 20px
   // dot top/left = 2px in both sizes
-  // translateX on checked: default 16px = translate-x-4, large 20px = translate-x-5
+  // translateX on checked: default 16px = translate-x-4, large 20px = translate-x-5.
+  // The dot is NESTED in the track, so peer-* (siblings only) can't reach it —
+  // group-has-[:checked] on the wrapper reflects the real DOM state instead.
   const dotSizeClasses = isLarge ? 'w-4 h-4' : 'w-3 h-3';
-  const dotCheckedTranslate = isLarge ? 'peer-checked:translate-x-5' : 'peer-checked:translate-x-4';
+  const dotCheckedTranslate = isLarge
+    ? 'group-has-[:checked]/tgl:translate-x-5'
+    : 'group-has-[:checked]/tgl:translate-x-4';
 
   const rootClasses = `inline-flex items-center gap-2 cursor-pointer font-[var(--font-main)] text-sm leading-5 text-neutral-800 has-[:disabled]:cursor-not-allowed has-[:disabled]:text-neutral-400`;
 
@@ -79,7 +83,7 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(function Toggle(
 
   return (
     <label className={rootClasses}>
-      <span className={`inline-flex relative flex-shrink-0 ${trackSizeClasses}`}>
+      <span className={`group/tgl inline-flex relative flex-shrink-0 ${trackSizeClasses}`}>
         <input
           ref={forwardedRef}
           type="checkbox"
