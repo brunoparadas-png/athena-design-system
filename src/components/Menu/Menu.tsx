@@ -191,7 +191,7 @@ export function Menu({
 
   // Base item classes shared across all rows
   const itemBase =
-    'appearance-none m-0 border-0 bg-transparent cursor-pointer box-border w-full flex items-center gap-3 px-4 font-[inherit] text-sm leading-5 text-neutral-600 text-left transition-[background-color,color] duration-[120ms] ease-[ease] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-forest-700 focus-visible:outline-offset-[-2px] disabled:text-neutral-400 disabled:cursor-not-allowed';
+    'appearance-none m-0 border-0 cursor-pointer box-border w-full flex items-center gap-3 px-4 font-[inherit] text-sm leading-5 text-neutral-600 text-left transition-[background-color,color] duration-[120ms] ease-[ease] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-forest-700 focus-visible:outline-offset-[-2px] disabled:text-neutral-400 disabled:cursor-not-allowed';
 
   const itemSizeClass = spacing === 'compact' ? 'min-h-8 py-1.5' : 'min-h-10 py-2';
 
@@ -207,7 +207,7 @@ export function Menu({
 
     const selectedClass = item.isSelected
       ? 'bg-forest-50 text-forest-700 hover:enabled:bg-forest-100 active:enabled:bg-forest-200'
-      : 'hover:enabled:bg-neutral-100 active:enabled:bg-neutral-200';
+      : 'bg-transparent hover:enabled:bg-neutral-100 active:enabled:bg-neutral-200';
 
     const itemClassName = `${itemBase} ${itemSizeClass} ${selectedClass}`;
 
