@@ -21,6 +21,7 @@ npm run storybook        # dev surface at http://localhost:6006
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run lint` | ESLint |
 | `npx vitest --project storybook run` | Run every story as a browser test |
+| `npm run chromatic` | Publish Storybook to Chromatic for visual review |
 
 ## What's in here
 
@@ -130,6 +131,25 @@ story with `test: 'error'`, so a WCAG AA violation **fails the suite**. That gat
 tests (`play` functions) cover real behaviour — radio single-selection, tab click + keyboard
 navigation, tag removal — and each component carries a `CssCheck` story that asserts a
 resolved computed style, proving the tokens load in the preview.
+
+## Visual testing (Chromatic)
+
+Storybook is published to [Chromatic](https://www.chromatic.com/) for visual regression
+review — every story is snapshotted and diffed against its baseline.
+
+- **Locally:** `npm run chromatic`. The project token lives in `chromatic.config.json`,
+  which is **git-ignored** (never commit the token). Create it once with:
+
+  ```json
+  { "$schema": "https://www.chromatic.com/config-file.schema.json", "projectToken": "chpt_…" }
+  ```
+
+- **CI:** [`.github/workflows/chromatic.yml`](.github/workflows/chromatic.yml) runs on every
+  push. It reads the token from the `CHROMATIC_PROJECT_TOKEN` repo secret — add it under
+  **GitHub → Settings → Secrets and variables → Actions → New repository secret**.
+
+A build reporting visual changes "fails" with exit code 1 until the diffs are reviewed and
+accepted in the Chromatic UI — that's the review gate, not a broken build.
 
 ## Conventions
 

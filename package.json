@@ -7,6 +7,7 @@
     "dev": "storybook dev -p 6006",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
+    "chromatic": "chromatic",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "lint": "eslint ."
   },

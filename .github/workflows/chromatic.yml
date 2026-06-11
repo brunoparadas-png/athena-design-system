@@ -1,0 +1,31 @@
+name: Chromatic
+
+# Publish Storybook to Chromatic and run visual tests on every push.
+on: push
+
+jobs:
+  chromatic:
+    name: Run Chromatic
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Chromatic needs full git history to find each commit's baseline.
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Chromatic
+        uses: chromaui/action@latest
+        with:
+          # Add this in GitHub → Settings → Secrets and variables → Actions.
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          # Chromatic builds Storybook via the `build-storybook` script.

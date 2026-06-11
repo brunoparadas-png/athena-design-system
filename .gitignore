@@ -29,3 +29,6 @@ storybook-static
 # Storybook
 storybook-static
 *.storybook.log
+
+# Chromatic — config holds the project token; keep it local (CI uses a repo secret)
+chromatic.config.json
