@@ -1,6 +1,5 @@
 import { forwardRef, useId, type TextareaHTMLAttributes, type ReactNode } from 'react';
 import { Icon, type IconName } from '../Icon';
-import styles from './TextArea.module.css';
 
 /**
  * Prop names mirror the Figma "❖ Text area" properties: label, placeholder,
@@ -61,26 +60,43 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(function 
     tone === 'error' ? 'warning' : tone === 'success' ? 'check-circle' : null;
 
   const containerClass = [
-    styles.container,
-    isCompact ? styles.compact : '',
-    isInvalid ? styles.invalid : '',
-    isDisabled ? styles.disabled : '',
+    'box-border flex w-full bg-white border rounded-none transition-[border-color,box-shadow] duration-[120ms] ease-[ease] motion-reduce:transition-none',
+    // border color: invalid always danger, disabled neutral-300, default neutral-300
+    isInvalid
+      ? 'border-danger-500 focus-within:border-danger-500 focus-within:outline-2 focus-within:outline focus-within:[outline-color:theme(colors.danger-700)] focus-within:[outline-offset:1px]'
+      : isDisabled
+        ? 'border-neutral-300'
+        : 'border-neutral-300 hover:border-neutral-400 focus-within:border-forest-500 focus-within:outline-2 focus-within:outline focus-within:[outline-color:theme(colors.forest-700)] focus-within:[outline-offset:1px]',
+    isDisabled ? 'bg-neutral-50 cursor-not-allowed' : '',
   ]
     .filter(Boolean)
     .join(' ');
 
-  const fieldClass = [styles.field, isMonospaced ? styles.monospaced : ''].filter(Boolean).join(' ');
+  const fieldClass = [
+    'flex-1 min-w-0 w-full border-0 bg-transparent font-[inherit] text-sm leading-5 text-neutral-800 placeholder:text-neutral-500 focus:outline-none disabled:text-neutral-400 disabled:cursor-not-allowed disabled:[-webkit-text-fill-color:theme(colors.neutral-400)] disabled:placeholder:text-neutral-400',
+    isCompact ? 'p-1.5 min-h-16' : 'p-2 min-h-20',
+    isMonospaced ? 'font-[var(--font-code)]' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
+  const messageClass =
+    tone === 'error'
+      ? 'flex items-start gap-1.5 text-xs leading-4 text-danger-700'
+      : tone === 'success'
+        ? 'flex items-start gap-1.5 text-xs leading-4 text-forest-500'
+        : 'flex items-start gap-1.5 text-xs leading-4 text-neutral-500';
 
   const describedBy =
     [helperText != null ? messageId : null, ariaDescribedby].filter(Boolean).join(' ') || undefined;
 
   return (
-    <div className={styles.root}>
+    <div className="flex flex-col gap-1 font-[var(--font-main)] w-full">
       {label != null && (
-        <label htmlFor={fieldId} className={styles.label}>
+        <label htmlFor={fieldId} className="text-xs leading-4 font-semibold text-neutral-600">
           {label}
           {isRequired && (
-            <span className={styles.required} aria-hidden="true">
+            <span className="text-danger-500" aria-hidden="true">
               {' '}
               *
             </span>
@@ -104,15 +120,15 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(function 
       {helperText != null && (
         <div
           id={messageId}
-          className={[styles.message, styles[tone]].join(' ')}
+          className={messageClass}
           role={tone === 'error' ? 'alert' : undefined}
         >
           {messageIcon && (
-            <span className={styles.messageIcon} aria-hidden="true">
+            <span className="inline-flex flex-shrink-0" aria-hidden="true">
               <Icon name={messageIcon} size={16} />
             </span>
           )}
-          <span className={styles.messageText}>{helperText}</span>
+          <span className="flex-1 min-w-0 break-words">{helperText}</span>
         </div>
       )}
     </div>

@@ -1,5 +1,5 @@
 import type { Preview } from '@storybook/react-vite';
-import '../src/tokens/tokens.css';
+import '../src/styles/tailwind.css';
 import athenaTheme from './theme';
 
 const preview: Preview = {

@@ -8,7 +8,6 @@ import {
 import { Button } from '../Button';
 import { Icon, type IconName } from '../Icon';
 import { ProgressBar } from '../ProgressBar';
-import styles from './FileUploader.module.css';
 
 /** A file being uploaded or already uploaded, rendered as a FileRow. */
 export interface UploadFile {
@@ -41,28 +40,35 @@ export function FileRow({ file, onRemove, icon = 'file', removeLabel }: FileRowP
   const pct = Math.round(Math.min(1, Math.max(0, file.progress ?? 1)) * 100);
   const isComplete = pct >= 100;
   return (
-    <div className={styles.row}>
-      <span className={styles.fileIcon} aria-hidden="true">
+    <div className="flex items-start gap-2 box-border w-full px-4 py-3 bg-white border border-neutral-300">
+      <span
+        className="inline-flex items-center justify-center flex-shrink-0 p-1 rounded-full bg-forest-50 text-forest-700"
+        aria-hidden="true"
+      >
         <Icon name={icon} size={20} />
       </span>
-      <div className={styles.rowContent}>
-        <div className={styles.rowText}>
-          <span className={styles.fileName}>{file.name}</span>
-          {file.size != null && <span className={styles.fileSize}>{file.size}</span>}
+      <div className="flex flex-col gap-1 flex-1 min-w-0">
+        <div className="flex flex-col">
+          <span className="text-sm leading-5 font-semibold text-neutral-800 break-words">{file.name}</span>
+          {file.size != null && (
+            <span className="text-xs leading-4 text-neutral-600">{file.size}</span>
+          )}
         </div>
-        <div className={styles.progressRow}>
-          <ProgressBar
-            value={(file.progress ?? 1)}
-            appearance={isComplete ? 'success' : 'default'}
-            label={`${file.name} upload`}
-          />
-          <span className={styles.percent}>{pct}%</span>
+        <div className="flex items-center gap-1 w-full">
+          <div className="flex-1 min-w-0">
+            <ProgressBar
+              value={(file.progress ?? 1)}
+              appearance={isComplete ? 'success' : 'default'}
+              label={`${file.name} upload`}
+            />
+          </div>
+          <span className="flex-shrink-0 text-xs leading-4 font-semibold text-forest-500">{pct}%</span>
         </div>
       </div>
       {onRemove && (
         <button
           type="button"
-          className={styles.remove}
+          className="appearance-none m-0 border-0 bg-transparent cursor-pointer flex-shrink-0 inline-flex items-center justify-center p-2 rounded-none text-neutral-600 transition-[background-color,color] duration-[120ms] ease-[ease] hover:bg-forest-100 hover:text-forest-700 active:bg-forest-200 focus-visible:outline-2 focus-visible:outline-forest-700 focus-visible:-outline-offset-2 motion-reduce:transition-none"
           aria-label={removeLabel ?? `Remove ${file.name}`}
           onClick={() => onRemove(file.id)}
         >
@@ -148,14 +154,18 @@ export function FileUploader({
     emit(e.dataTransfer.files);
   };
 
-  const zoneClass = [styles.dropzone, isDragging ? styles.dragging : '', isDisabled ? styles.disabled : '']
-    .filter(Boolean)
-    .join(' ');
+  const zoneClass = `box-border flex flex-col items-center justify-center gap-1 w-full px-2 py-4 border border-dashed transition-[background-color,border-color] duration-[120ms] ease-[ease] motion-reduce:transition-none focus-within:outline-none ${
+    isDisabled
+      ? 'cursor-not-allowed bg-neutral-50 border-neutral-300'
+      : isDragging
+        ? 'cursor-pointer bg-forest-50 border-forest-500 border-solid'
+        : 'cursor-pointer bg-white border-neutral-300 hover:bg-forest-50 hover:border-forest-500'
+  }`;
 
   return (
-    <div className={styles.root}>
+    <div className="flex flex-col gap-1 font-[var(--font-main)]">
       {label != null && (
-        <span id={labelId} className={styles.label}>
+        <span id={labelId} className="text-xs leading-4 font-semibold text-neutral-600">
           {label}
         </span>
       )}
@@ -169,7 +179,10 @@ export function FileUploader({
         onDrop={onDrop}
         aria-disabled={isDisabled || undefined}
       >
-        <span className={styles.placeholderIcon} aria-hidden="true">
+        <span
+          className={`inline-flex ${isDisabled ? 'text-neutral-400' : 'text-neutral-800'}`}
+          aria-hidden="true"
+        >
           <Icon name={icon} size={48} />
         </span>
         <Button
@@ -182,12 +195,14 @@ export function FileUploader({
         >
           {buttonLabel}
         </Button>
-        {message != null && <span className={styles.message}>{message}</span>}
+        {message != null && (
+          <span className="text-xs leading-4 text-neutral-500 text-center">{message}</span>
+        )}
         <input
           ref={inputRef}
           id={inputId}
           type="file"
-          className={styles.input}
+          className="absolute w-px h-px p-0 -m-px overflow-hidden [clip:rect(0,0,0,0)] whitespace-nowrap border-0"
           accept={accept}
           multiple={multiple}
           disabled={isDisabled}
@@ -200,7 +215,7 @@ export function FileUploader({
         />
       </div>
       {files.length > 0 && (
-        <ul className={styles.list}>
+        <ul className="list-none m-0 p-0 flex flex-col gap-2">
           {files.map((file) => (
             <li key={file.id}>
               <FileRow file={file} onRemove={onRemove} icon={fileIcon} />

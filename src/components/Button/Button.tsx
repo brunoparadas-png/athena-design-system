@@ -1,5 +1,4 @@
 import type { ButtonHTMLAttributes } from 'react';
-import styles from './Button.module.css';
 import { Icon, type IconName } from '../Icon';
 
 export type ButtonAppearance = 'primary' | 'neutral' | 'text' | 'danger';
@@ -34,6 +33,30 @@ export interface ButtonProps
   loading?: boolean;
 }
 
+// Base classes shared by all variants and sizes
+const BASE =
+  'appearance-none m-0 inline-flex items-center justify-center relative border border-transparent cursor-pointer rounded-none font-semibold text-sm leading-5 whitespace-nowrap px-3 transition-[background-color,border-color,color] duration-[120ms] ease-[ease] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-forest-700 focus-visible:outline-offset-2 disabled:bg-neutral-100 disabled:text-neutral-400 disabled:border-transparent disabled:cursor-not-allowed';
+
+const SIZE_CLASSES: Record<ButtonSize, string> = {
+  default: 'min-h-10',
+  small: 'min-h-8',
+};
+
+// Variant classes (hover/active use enabled: modifier so disabled state is unaffected)
+const VARIANT_CLASSES: Record<ButtonAppearance, string> = {
+  primary:
+    'bg-forest-500 text-white hover:enabled:bg-forest-700 active:enabled:bg-forest-900',
+  neutral:
+    'bg-white text-neutral-600 border-neutral-300 hover:enabled:bg-forest-100 hover:enabled:border-forest-500 hover:enabled:text-forest-700 active:enabled:bg-forest-200 active:enabled:border-forest-500 active:enabled:text-forest-700',
+  text: 'bg-transparent text-neutral-600 disabled:bg-transparent hover:enabled:bg-forest-100 hover:enabled:text-forest-700 active:enabled:bg-forest-200 active:enabled:text-forest-700',
+  danger:
+    'bg-danger-700 text-white hover:enabled:bg-danger-800 active:enabled:bg-danger-900',
+};
+
+// Selected state overrides variant colours (forest tint across all appearances)
+const SELECTED_CLASSES =
+  'bg-forest-50 border-forest-700 text-forest-700 hover:enabled:bg-forest-50 hover:enabled:border-forest-700 hover:enabled:text-forest-700 active:enabled:bg-forest-50 active:enabled:border-forest-700 active:enabled:text-forest-700';
+
 export function Button({
   appearance = 'neutral',
   size = 'default',
@@ -46,15 +69,7 @@ export function Button({
   type = 'button',
   ...rest
 }: ButtonProps) {
-  const className = [
-    styles.button,
-    styles[appearance],
-    styles[size],
-    isSelected ? styles.selected : '',
-    loading ? styles.loading : '',
-  ]
-    .filter(Boolean)
-    .join(' ');
+  const className = `${BASE} ${SIZE_CLASSES[size]} ${isSelected ? SELECTED_CLASSES : VARIANT_CLASSES[appearance]}`;
 
   return (
     <button
@@ -65,16 +80,21 @@ export function Button({
       aria-pressed={isSelected || undefined}
       {...rest}
     >
-      {loading && <span className={styles.spinner} aria-hidden="true" />}
-      <span className={styles.content} aria-live="polite">
+      {loading && (
+        <span
+          className="absolute size-4 border-2 border-current border-r-transparent rounded-full [animation:spin_0.6s_linear_infinite] motion-reduce:[animation-duration:1.5s]"
+          aria-hidden="true"
+        />
+      )}
+      <span className={`inline-flex items-center gap-1.5${loading ? ' opacity-0' : ''}`} aria-live="polite">
         {iconBefore && (
-          <span className={styles.icon} aria-hidden="true">
+          <span className="inline-flex size-4" aria-hidden="true">
             <Icon name={iconBefore} size={16} />
           </span>
         )}
         {children}
         {iconAfter && (
-          <span className={styles.icon} aria-hidden="true">
+          <span className="inline-flex size-4" aria-hidden="true">
             <Icon name={iconAfter} size={16} />
           </span>
         )}

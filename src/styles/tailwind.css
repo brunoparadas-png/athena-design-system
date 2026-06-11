@@ -1,0 +1,75 @@
+@import 'tailwindcss';
+@import '../tokens/tokens.css';
+
+@theme {
+  /* ── Forest (brand) ── */
+  --color-forest-25: #f4faf9;
+  --color-forest-50: #e9f7f3;
+  --color-forest-100: #ceeee6;
+  --color-forest-200: #a1ded0;
+  --color-forest-300: #6bc7b1;
+  --color-forest-400: #40a08a;
+  --color-forest-500: #2e7061;
+  --color-forest-600: #255b4e;
+  --color-forest-700: #1d443b;
+  --color-forest-800: #152e28;
+  --color-forest-900: #0d1c18;
+
+  /* ── Neutral ── */
+  --color-neutral-0: #ffffff;
+  --color-neutral-25: #fafafa;
+  --color-neutral-50: #f5f5f5;
+  --color-neutral-100: #e8e8e8;
+  --color-neutral-200: #d4d4d4;
+  --color-neutral-300: #b8b8b8;
+  --color-neutral-400: #a1a1a1;
+  --color-neutral-500: #737373;
+  --color-neutral-600: #525252;
+  --color-neutral-700: #3b3b3b;
+  --color-neutral-800: #252525;
+  --color-neutral-900: #141414;
+
+  /* ── Danger ── */
+  --color-danger-25: #fff7f6;
+  --color-danger-50: #ffece9;
+  --color-danger-100: #ffd2cd;
+  --color-danger-200: #ffa89f;
+  --color-danger-300: #ff7e73;
+  --color-danger-400: #ff5c4e;
+  --color-danger-500: #fe3d2e;
+  --color-danger-600: #e52f22;
+  --color-danger-700: #c42419;
+  --color-danger-800: #921a12;
+  --color-danger-900: #5e100a;
+
+  /* ── Blue ── */
+  --color-blue-50: #eaf0ff;
+  --color-blue-100: #d5e1ff;
+  --color-blue-200: #b0c7ff;
+  --color-blue-400: #5989ff;
+  --color-blue-500: #2f68ff;
+  --color-blue-700: #214bb3;
+  --color-blue-800: #1a3b8c;
+
+  /* ── Teal ── */
+  --color-teal-100: #ccf1ea;
+  --color-teal-200: #9ee4d7;
+  --color-teal-300: #68d5c2;
+  --color-teal-500: #00b796;
+  --color-teal-700: #008069;
+  --color-teal-800: #00705c;
+
+  /* ── Purple ── */
+  --color-purple-50: #f4eafc;
+  --color-purple-100: #e8d5f9;
+  --color-purple-200: #d4aff4;
+  --color-purple-400: #a557e8;
+  --color-purple-700: #63209e;
+
+  /* ── Orange ── */
+  --color-orange-50: #fef0eb;
+  --color-orange-100: #fce1d8;
+  --color-orange-200: #fac7b5;
+  --color-orange-400: #f48962;
+  --color-orange-700: #a94b29;
+}

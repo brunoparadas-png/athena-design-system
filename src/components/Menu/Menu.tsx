@@ -8,7 +8,6 @@ import {
   type ReactNode,
 } from 'react';
 import { Icon, type IconName } from '../Icon';
-import styles from './Menu.module.css';
 
 export type MenuItemType = 'action' | 'checkbox' | 'radio';
 
@@ -88,10 +87,15 @@ function flattenItems(nodes: MenuNode[]): MenuItem[] {
 const roleFor = (type: MenuItemType): string =>
   type === 'checkbox' ? 'menuitemcheckbox' : type === 'radio' ? 'menuitemradio' : 'menuitem';
 
-const RadioDot = () => <span className={styles.radioDot} aria-hidden="true" />;
+const RadioDot = () => (
+  <span
+    className="block w-2 h-2 rounded-full bg-forest-500"
+    aria-hidden="true"
+  />
+);
 
 const CheckMark = () => (
-  <svg className={styles.checkMark} viewBox="0 0 14 14" aria-hidden="true" focusable="false">
+  <svg className="block w-3.5 h-3.5" viewBox="0 0 14 14" aria-hidden="true" focusable="false">
     <path
       d="M3 7.5l2.5 2.5L11 4.5"
       fill="none"
@@ -177,6 +181,12 @@ export function Menu({
     focusIndex(enabledIndices[nextPos]);
   };
 
+  // Base item classes shared across all rows
+  const itemBase =
+    'appearance-none m-0 border-0 bg-transparent cursor-pointer box-border w-full flex items-center gap-3 px-4 font-[inherit] text-sm leading-5 text-neutral-600 text-left transition-[background-color,color] duration-[120ms] ease-[ease] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-forest-700 focus-visible:outline-offset-[-2px] disabled:text-neutral-400 disabled:cursor-not-allowed';
+
+  const itemSizeClass = spacing === 'compact' ? 'min-h-8 py-1.5' : 'min-h-10 py-2';
+
   // Walk the original nodes, threading a running interactive-item index so refs
   // and roving tabindex line up with the flattened list.
   let cursor = -1;
@@ -187,9 +197,11 @@ export function Menu({
     const id = item.id ?? String(index);
     const isInteractiveSelected = type !== 'action' && item.isSelected;
 
-    const className = [styles.item, item.isSelected ? styles.selected : '']
-      .filter(Boolean)
-      .join(' ');
+    const selectedClass = item.isSelected
+      ? 'bg-forest-50 text-forest-700 hover:enabled:bg-forest-100 active:enabled:bg-forest-200'
+      : 'hover:enabled:bg-neutral-100 active:enabled:bg-neutral-200';
+
+    const itemClassName = `${itemBase} ${itemSizeClass} ${selectedClass}`;
 
     return (
       <li key={id} role="none">
@@ -199,7 +211,7 @@ export function Menu({
           }}
           type="button"
           role={roleFor(type)}
-          className={className}
+          className={itemClassName}
           disabled={item.isDisabled}
           tabIndex={index === activeIndex ? 0 : -1}
           aria-checked={type === 'action' ? undefined : Boolean(item.isSelected)}
@@ -207,32 +219,46 @@ export function Menu({
           onMouseEnter={() => !item.isDisabled && setActiveIndex(index)}
         >
           {type === 'radio' && (
-            <span className={styles.indicator} aria-hidden="true">
-              <span className={[styles.radio, isInteractiveSelected ? styles.indicatorOn : ''].filter(Boolean).join(' ')}>
+            <span className="inline-flex items-center justify-center flex-shrink-0 w-5 h-5" aria-hidden="true">
+              <span
+                className={`box-border inline-flex items-center justify-center w-3.5 h-3.5 border rounded-full ${
+                  isInteractiveSelected
+                    ? 'bg-white border-forest-500'
+                    : 'bg-white border-neutral-300'
+                } disabled:border-neutral-300 disabled:bg-neutral-100`}
+              >
                 {isInteractiveSelected && <RadioDot />}
               </span>
             </span>
           )}
           {type === 'checkbox' && (
-            <span className={styles.indicator} aria-hidden="true">
-              <span className={[styles.checkbox, isInteractiveSelected ? styles.indicatorOn : ''].filter(Boolean).join(' ')}>
+            <span className="inline-flex items-center justify-center flex-shrink-0 w-5 h-5" aria-hidden="true">
+              <span
+                className={`box-border inline-flex items-center justify-center w-3.5 h-3.5 border rounded-none ${
+                  isInteractiveSelected
+                    ? 'bg-forest-500 border-forest-500 text-white'
+                    : 'bg-white border-neutral-300 text-white'
+                } disabled:border-neutral-300 disabled:bg-neutral-100`}
+              >
                 {isInteractiveSelected && <CheckMark />}
               </span>
             </span>
           )}
           {type === 'action' && item.iconBefore && (
-            <span className={styles.icon}>
+            <span className="inline-flex flex-shrink-0 text-current">
               <Icon name={item.iconBefore} size={20} />
             </span>
           )}
-          <span className={styles.content}>
-            <span className={styles.label}>{item.label}</span>
+          <span className="flex flex-col gap-0.5 flex-1 min-w-0">
+            <span className="break-words">{item.label}</span>
             {item.description != null && (
-              <span className={styles.description}>{item.description}</span>
+              <span className="text-xs leading-4 text-neutral-500 disabled:text-neutral-400">
+                {item.description}
+              </span>
             )}
           </span>
           {type === 'action' && item.iconAfter && (
-            <span className={styles.icon}>
+            <span className="inline-flex flex-shrink-0 text-current">
               <Icon name={item.iconAfter} size={20} />
             </span>
           )}
@@ -243,7 +269,13 @@ export function Menu({
 
   const renderNode = (node: MenuNode, key: number): ReactNode => {
     if (isSeparator(node)) {
-      return <li key={node.id ?? `sep-${key}`} role="separator" className={styles.separator} />;
+      return (
+        <li
+          key={node.id ?? `sep-${key}`}
+          role="separator"
+          className="h-px my-1 bg-neutral-100"
+        />
+      );
     }
     if (isGroup(node)) {
       const groupId = node.id ?? `group-${key}`;
@@ -251,13 +283,16 @@ export function Menu({
       return (
         <li key={groupId} role="none">
           {node.label != null && (
-            <span id={labelId} className={styles.groupLabel}>
+            <span
+              id={labelId}
+              className="block px-4 pt-1.5 pb-0.5 text-xs leading-4 font-semibold text-neutral-500"
+            >
               {node.label}
             </span>
           )}
           <ul
             role="group"
-            className={styles.group}
+            className="list-none m-0 p-0"
             aria-labelledby={node.label != null ? labelId : undefined}
           >
             {node.items.map((item) => renderItem(item))}
@@ -268,17 +303,17 @@ export function Menu({
     return renderItem(node);
   };
 
+  const menuClassName = `box-border min-w-[180px] bg-white border border-neutral-200 rounded shadow-[0_8px_16px_-4px_rgba(9,30,66,0.25),0_0_0_1px_rgba(9,30,66,0.06)] py-1 font-[var(--font-main)]${maxHeight != null ? ' overflow-y-auto [scrollbar-gutter:stable]' : ''}`;
+
   return (
     <div
-      className={[styles.menu, styles[spacing], maxHeight != null ? styles.scrollable : '']
-        .filter(Boolean)
-        .join(' ')}
+      className={menuClassName}
       style={maxHeight != null ? { maxHeight } : undefined}
       onKeyDown={handleKeyDown}
     >
       <ul
         role="menu"
-        className={styles.list}
+        className="list-none m-0 p-0"
         aria-label={ariaLabelledby ? undefined : label}
         aria-labelledby={ariaLabelledby}
       >

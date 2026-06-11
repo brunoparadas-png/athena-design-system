@@ -9,7 +9,6 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { Icon, type IconName } from '../Icon';
-import styles from './Modal.module.css';
 
 export type ModalAppearance = 'default' | 'danger';
 export type ModalSize = 'small' | 'medium' | 'large' | 'x-large' | 'full-screen';
@@ -132,15 +131,25 @@ export function Modal({
     bodyId: `${baseId}-body`,
   };
 
-  const overlayClass = [
-    styles.overlay,
-    size === 'full-screen' ? styles.overlayFull : '',
-    shouldScrollInViewport ? styles.viewportScroll : '',
-  ]
-    .filter(Boolean)
-    .join(' ');
+  const isFullScreen = size === 'full-screen';
 
-  const dialogClass = [styles.dialog, styles[sizeClass(size)]].filter(Boolean).join(' ');
+  // Overlay: fixed blanket, centers the dialog. viewport-scroll mode aligns top and scrolls.
+  const overlayClass = `fixed inset-0 z-[1000] flex items-center justify-content bg-[rgba(5,12,31,0.46)] ${
+    isFullScreen ? 'p-0' : 'p-8'
+  } ${shouldScrollInViewport ? 'items-start overflow-y-auto' : ''}`.trim();
+
+  // Dialog: sizing variants
+  const sizeClass = {
+    small: 'max-w-[400px]',
+    medium: 'max-w-[600px]',
+    large: 'max-w-[760px]',
+    'x-large': 'max-w-[968px]',
+    'full-screen': 'max-w-none w-full h-full max-h-screen shadow-none',
+  }[size];
+
+  const dialogMaxHeight = shouldScrollInViewport ? '' : isFullScreen ? '' : 'max-h-[calc(100vh-64px)]';
+
+  const dialogClass = `box-border flex flex-col w-full bg-white rounded-none outline-none font-[var(--font-main)] shadow-[0_8px_16px_-4px_rgba(9,30,66,0.25),0_0_0_1px_rgba(9,30,66,0.06)] ${sizeClass} ${dialogMaxHeight}`.trim();
 
   return createPortal(
     <div
@@ -169,15 +178,6 @@ export function Modal({
   );
 }
 
-const sizeClass = (size: ModalSize): string =>
-  ({
-    small: 'small',
-    medium: 'medium',
-    large: 'large',
-    'x-large': 'xlarge',
-    'full-screen': 'fullscreen',
-  })[size];
-
 export interface ModalHeaderProps {
   /** Heading text (Inter bold 20/24). Sets the dialog's accessible name. */
   title: ReactNode;
@@ -196,23 +196,26 @@ export function ModalHeader({ title, icon, onClose, closeLabel = 'Close' }: Moda
   const close = onClose === null ? null : (onClose ?? ctx?.onClose);
 
   return (
-    <div className={styles.header}>
-      <div className={styles.titleRow}>
+    <div className="flex items-start gap-4 flex-shrink-0 px-6 pt-6 pb-4">
+      <div className="flex items-center gap-2 flex-1 min-w-0 min-h-8">
         {resolvedIcon && (
           <span
-            className={[styles.headerIcon, ctx?.appearance === 'danger' ? styles.dangerIcon : '']
-              .filter(Boolean)
-              .join(' ')}
+            className={`inline-flex flex-shrink-0 ${ctx?.appearance === 'danger' ? 'text-danger-500' : 'text-neutral-600'}`}
           >
             <Icon name={resolvedIcon} size={20} />
           </span>
         )}
-        <h2 id={ctx?.titleId} className={styles.title}>
+        <h2 id={ctx?.titleId} className="m-0 flex-1 min-w-0 break-words text-xl leading-6 font-bold text-neutral-800">
           {title}
         </h2>
       </div>
       {close && (
-        <button type="button" className={styles.close} aria-label={closeLabel} onClick={close}>
+        <button
+          type="button"
+          className="appearance-none m-0 border-0 bg-transparent cursor-pointer flex-shrink-0 inline-flex items-center justify-center p-1 rounded-none text-neutral-600 transition-[background-color,color] duration-[120ms] ease-[ease] hover:bg-forest-100 hover:text-forest-700 active:bg-forest-200 focus-visible:outline-2 focus-visible:outline-forest-700 focus-visible:outline-offset-2 motion-reduce:transition-none"
+          aria-label={closeLabel}
+          onClick={close}
+        >
           <Icon name="close" size={24} />
         </button>
       )}
@@ -229,7 +232,11 @@ export function ModalBody({ children }: ModalBodyProps) {
   const ctx = useModalContext();
   // tabIndex makes the scroll region reachable by keyboard (axe: scrollable-region-focusable).
   return (
-    <div id={ctx?.bodyId} className={styles.body} tabIndex={0}>
+    <div
+      id={ctx?.bodyId}
+      className="flex-1 overflow-y-auto px-6 py-0 text-sm leading-5 text-neutral-800 focus-visible:outline-2 focus-visible:outline-forest-700 focus-visible:[-outline-offset:2px]"
+      tabIndex={0}
+    >
       {children}
     </div>
   );
@@ -241,5 +248,9 @@ export interface ModalFooterProps {
 
 /** Actions row, right-aligned (e.g. Cancel + Confirm). (Figma: <ModalFooter>) */
 export function ModalFooter({ children }: ModalFooterProps) {
-  return <div className={styles.footer}>{children}</div>;
+  return (
+    <div className="flex-shrink-0 flex items-center justify-end gap-2 px-6 pt-4 pb-6 bg-white">
+      {children}
+    </div>
+  );
 }

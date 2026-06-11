@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react';
-import styles from './Breadcrumbs.module.css';
 
 export interface BreadcrumbItem {
   /** Visible text. */
@@ -34,27 +33,42 @@ export function Breadcrumbs({
     ? ({ ['--bc-max-item-width' as string]: `${maxItemWidth}px` } as React.CSSProperties)
     : undefined;
 
+  const truncateItemClasses = maxItemWidth
+    ? 'inline-block overflow-hidden text-ellipsis whitespace-nowrap align-bottom'
+    : '';
+  const truncateItemStyle = maxItemWidth
+    ? { maxWidth: 'var(--bc-max-item-width, none)' }
+    : undefined;
+
   return (
-    <nav aria-label={label} className={styles.nav}>
-      <ol className={[styles.list, maxItemWidth ? styles.truncate : ''].filter(Boolean).join(' ')} style={style}>
+    <nav aria-label={label} className="font-[var(--font-main)] text-sm leading-5">
+      <ol
+        className="flex flex-wrap items-center gap-2 m-0 p-0 list-none"
+        style={style}
+      >
         {items.map((item, index) => {
           const isLast = index === items.length - 1;
           return (
-            <li key={index} className={styles.item}>
+            <li key={index} className="inline-flex items-center gap-2 min-h-6">
               {index > 0 && (
-                <span className={styles.separator} aria-hidden="true">
+                <span className="text-neutral-500 select-none" aria-hidden="true">
                   {separator}
                 </span>
               )}
               {isLast || !item.href ? (
                 <span
-                  className={isLast ? styles.current : styles.text}
+                  className={`${isLast ? 'text-neutral-800' : 'text-neutral-600'} ${truncateItemClasses}`}
+                  style={truncateItemStyle}
                   aria-current={isLast ? 'page' : undefined}
                 >
                   {item.label}
                 </span>
               ) : (
-                <a className={styles.link} href={item.href}>
+                <a
+                  className={`text-neutral-600 no-underline cursor-pointer rounded-none transition-colors duration-[120ms] ease-[ease] hover:text-neutral-800 hover:underline hover:[text-underline-offset:2px] active:text-neutral-800 focus-visible:outline-2 focus-visible:outline-forest-700 focus-visible:outline-offset-2 motion-reduce:transition-none ${truncateItemClasses}`}
+                  style={truncateItemStyle}
+                  href={item.href}
+                >
                   {item.label}
                 </a>
               )}

@@ -1,5 +1,4 @@
 import type { HTMLAttributes } from 'react';
-import styles from './Spinner.module.css';
 
 export type SpinnerSize = 'xsmall' | 'small' | 'medium' | 'large' | 'xlarge';
 
@@ -28,13 +27,19 @@ export function Spinner({ size = 'medium', label = 'Loading', ...rest }: Spinner
   const px = SIZE_PX[size];
   return (
     <span
-      className={styles.root}
+      className="inline-flex items-center justify-center color-inherit flex-shrink-0 leading-none"
       role="status"
       aria-label={label}
       style={{ width: px, height: px }}
       {...rest}
     >
-      <svg className={styles.svg} viewBox="0 0 16 16" width={px} height={px} aria-hidden="true">
+      <svg
+        className="block [transform-origin:center] [animation:spin_0.7s_linear_infinite] motion-reduce:[animation-duration:2s]"
+        viewBox="0 0 16 16"
+        width={px}
+        height={px}
+        aria-hidden="true"
+      >
         {/* ~75% arc with round caps; the SVG spins via CSS. */}
         <circle
           cx="8"

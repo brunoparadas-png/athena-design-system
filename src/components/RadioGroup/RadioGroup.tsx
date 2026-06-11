@@ -1,6 +1,5 @@
 import { useId, useState, type ReactNode } from 'react';
 import { Radio } from '../Radio';
-import styles from './RadioGroup.module.css';
 
 export interface RadioGroupOption {
   /** Submitted value, unique within the group. */
@@ -75,24 +74,24 @@ export function RadioGroup({
   return (
     <div
       role="radiogroup"
-      className={styles.root}
+      className="flex flex-col gap-2"
       aria-labelledby={labelledBy}
       aria-label={labelledBy ? undefined : ariaLabel}
       aria-required={isRequired || undefined}
       aria-invalid={isInvalid || undefined}
     >
       {label != null && (
-        <span id={labelId} className={styles.legend}>
+        <span id={labelId} className="font-[var(--font-main)] text-sm leading-5 font-semibold text-neutral-800">
           {label}
           {isRequired && (
-            <span className={styles.required} aria-hidden="true">
+            <span className="text-danger-500 text-xs font-normal" aria-hidden="true">
               {' '}
               *
             </span>
           )}
         </span>
       )}
-      <div className={orientation === 'horizontal' ? styles.optionsRow : styles.optionsColumn}>
+      <div className={orientation === 'horizontal' ? 'flex flex-row flex-wrap gap-4' : 'flex flex-col gap-1'}>
         {options.map((option) => (
           <Radio
             key={option.value}

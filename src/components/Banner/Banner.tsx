@@ -1,6 +1,5 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 import { Icon, type IconName } from '../Icon';
-import styles from './Banner.module.css';
 
 export type BannerAppearance = 'info' | 'error';
 
@@ -28,19 +27,28 @@ const DEFAULT_ICON: Record<BannerAppearance, IconName | null> = {
   info: 'info',
 };
 
+const appearanceClasses: Record<BannerAppearance, string> = {
+  info: 'bg-neutral-50 text-neutral-800',
+  error: 'bg-danger-700 text-white',
+};
+
 export function Banner({ appearance = 'info', children, icon, role, ...rest }: BannerProps) {
   const iconName = icon === undefined ? DEFAULT_ICON[appearance] : icon;
   // error interrupts (assertive); info is polite.
   const resolvedRole = role ?? (appearance === 'error' ? 'alert' : 'status');
 
   return (
-    <div className={[styles.banner, styles[appearance]].join(' ')} role={resolvedRole} {...rest}>
+    <div
+      className={`flex items-start gap-1 w-full box-border p-3 rounded-none font-[var(--font-main)] text-sm leading-5 font-normal ${appearanceClasses[appearance]}`}
+      role={resolvedRole}
+      {...rest}
+    >
       {iconName && (
-        <span className={styles.icon} aria-hidden="true">
+        <span className="inline-flex items-center justify-center flex-shrink-0 size-5" aria-hidden="true">
           <Icon name={iconName} size={20} />
         </span>
       )}
-      <span className={styles.text}>{children}</span>
+      <span className="flex-1 min-w-0 break-words">{children}</span>
     </div>
   );
 }

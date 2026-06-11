@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react';
-import styles from './PageHeader.module.css';
 
 export interface PageHeaderProps {
   /** The page title (Heading/L — Inter bold 24/28). */
@@ -33,17 +32,25 @@ export function PageHeader({
   const Heading = `h${headingLevel}` as 'h1' | 'h2' | 'h3';
 
   return (
-    <div className={styles.root}>
-      <div className={styles.content}>
+    <div className="flex flex-col w-full pt-8 font-[var(--font-main)]">
+      <div className="flex flex-col gap-1 w-full">
         {breadcrumbs}
-        <div className={styles.main}>
-          <Heading className={[styles.title, truncateTitle ? styles.truncate : ''].filter(Boolean).join(' ')}>
+        <div className="flex items-start justify-between gap-4 w-full">
+          <Heading className={`m-0 min-w-0 text-2xl leading-7 font-bold text-neutral-800${truncateTitle ? ' truncate' : ''}`}>
             {children}
           </Heading>
-          {actions && <div className={styles.actions}>{actions}</div>}
+          {actions && (
+            <div className="flex items-start gap-2 flex-shrink-0">
+              {actions}
+            </div>
+          )}
         </div>
       </div>
-      {bottomBar && <div className={styles.bottomBar}>{bottomBar}</div>}
+      {bottomBar && (
+        <div className="flex items-start gap-2 w-full pt-4">
+          {bottomBar}
+        </div>
+      )}
     </div>
   );
 }

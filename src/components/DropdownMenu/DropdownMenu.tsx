@@ -9,7 +9,6 @@ import {
 } from 'react';
 import { Icon, type IconName } from '../Icon';
 import { Menu, type MenuItem, type MenuNode } from '../Menu';
-import styles from './DropdownMenu.module.css';
 
 export type DropdownMenuPlacement = 'bottom-start' | 'bottom-end';
 
@@ -49,8 +48,15 @@ export interface DropdownMenuProps {
   closeOnSelect?: boolean;
 }
 
-const ChevronDown = () => (
-  <svg className={styles.chevron} viewBox="0 0 24 24" width={16} height={16} aria-hidden="true" focusable="false">
+const ChevronDown = ({ open }: { open: boolean }) => (
+  <svg
+    viewBox="0 0 24 24"
+    width={16}
+    height={16}
+    aria-hidden="true"
+    focusable="false"
+    className={`block flex-shrink-0 transition-transform duration-[120ms] ease-[ease] motion-reduce:transition-none${open ? ' rotate-180' : ''}`}
+  >
     <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
@@ -138,19 +144,28 @@ export function DropdownMenu({
 
   const menuId = `${baseId}-menu`;
 
+  // Trigger base classes — mirrors the neutral Button
+  const triggerBase =
+    'appearance-none m-0 cursor-pointer inline-flex items-center justify-center gap-1.5 border rounded-none font-semibold text-sm leading-5 whitespace-nowrap px-3 transition-[background-color,border-color,color] duration-[120ms] ease-[ease] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-forest-700 focus-visible:outline-offset-2 font-[var(--font-main)]';
+
+  const triggerStateClasses = open
+    ? 'bg-forest-50 border-forest-700 text-forest-700'
+    : 'bg-white border-neutral-300 text-neutral-600 hover:bg-forest-100 hover:border-forest-500 hover:text-forest-700 active:bg-forest-200 active:border-forest-500 active:text-forest-700';
+
+  const triggerSizeClass = buttonSpacing === 'compact' ? 'min-h-8' : 'min-h-10';
+
+  const triggerIconClass = triggerType === 'icon' ? 'px-0 aspect-square' : '';
+
+  const triggerClassName = `${triggerBase} ${triggerStateClasses} ${triggerSizeClass} ${triggerIconClass}`.trim();
+
+  const popoverAlignClass = placement === 'bottom-end' ? 'right-0' : 'left-0';
+
   return (
-    <div ref={wrapperRef} className={styles.wrapper}>
+    <div ref={wrapperRef} className="relative inline-block">
       <button
         ref={triggerRef}
         type="button"
-        className={[
-          styles.trigger,
-          styles[buttonSpacing],
-          triggerType === 'icon' ? styles.iconTrigger : '',
-          open ? styles.open : '',
-        ]
-          .filter(Boolean)
-          .join(' ')}
+        className={triggerClassName}
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls={open ? menuId : undefined}
@@ -162,8 +177,8 @@ export function DropdownMenu({
           <Icon name={triggerIcon} size={20} />
         ) : (
           <>
-            <span className={styles.triggerLabel}>{triggerLabel}</span>
-            <ChevronDown />
+            <span className="inline-block">{triggerLabel}</span>
+            <ChevronDown open={open} />
           </>
         )}
       </button>
@@ -171,9 +186,7 @@ export function DropdownMenu({
       {open && (
         <div
           id={menuId}
-          className={[styles.popover, placement === 'bottom-end' ? styles.end : styles.start]
-            .filter(Boolean)
-            .join(' ')}
+          className={`absolute top-[calc(100%+4px)] z-20 ${popoverAlignClass}`}
         >
           <Menu
             items={items}

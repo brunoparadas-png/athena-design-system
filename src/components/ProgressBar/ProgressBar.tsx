@@ -1,5 +1,4 @@
 import type { HTMLAttributes } from 'react';
-import styles from './ProgressBar.module.css';
 
 export type ProgressBarAppearance = 'default' | 'success' | 'inverse';
 
@@ -24,6 +23,18 @@ export interface ProgressBarProps extends Omit<HTMLAttributes<HTMLDivElement>, '
 
 const clamp01 = (n: number) => Math.min(1, Math.max(0, n));
 
+const trackClasses: Record<ProgressBarAppearance, string> = {
+  default: '[background-color:rgba(5,21,36,0.06)]',
+  success: '[background-color:rgba(5,21,36,0.06)]',
+  inverse: '[background-color:rgba(0,0,0,0.16)]',
+};
+
+const fillClasses: Record<ProgressBarAppearance, string> = {
+  default: 'bg-forest-500',
+  success: 'bg-forest-500',
+  inverse: 'bg-white',
+};
+
 export function ProgressBar({
   value = 0,
   appearance = 'default',
@@ -33,11 +44,9 @@ export function ProgressBar({
   const fraction = clamp01(value);
   const pct = Math.round(fraction * 100);
 
-  const className = [styles.track, styles[appearance]].join(' ');
-
   return (
     <div
-      className={className}
+      className={`relative w-full h-1.5 rounded-full overflow-hidden ${trackClasses[appearance]}`}
       role="progressbar"
       aria-label={label}
       aria-valuenow={pct}
@@ -45,7 +54,10 @@ export function ProgressBar({
       aria-valuemax={100}
       {...rest}
     >
-      <div className={styles.bar} style={{ width: `${pct}%` }} />
+      <div
+        className={`h-full rounded-full transition-[width] duration-200 ease-[ease] motion-reduce:transition-none ${fillClasses[appearance]}`}
+        style={{ width: `${pct}%` }}
+      />
     </div>
   );
 }

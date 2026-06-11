@@ -1,6 +1,5 @@
 import { forwardRef, useId, type InputHTMLAttributes, type ReactNode } from 'react';
 import { Icon, type IconName } from '../Icon';
-import styles from './TextField.module.css';
 
 /**
  * Prop names mirror the Figma "❖ Text field" properties: label, placeholder,
@@ -59,35 +58,46 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
   const messageIcon: IconName | null =
     tone === 'error' ? 'warning' : tone === 'success' ? 'check-circle' : null;
 
-  const inputClass = [
-    styles.input,
-    isCompact ? styles.compact : '',
-    isInvalid ? styles.invalid : '',
-    isDisabled ? styles.disabled : '',
+  // Build container class from state conditions
+  const containerClass = [
+    'box-border flex items-center gap-2 w-full px-2 bg-white border rounded-none transition-[border-color,box-shadow] duration-[120ms] motion-reduce:transition-none',
+    isCompact ? 'min-h-8' : 'min-h-10',
+    isDisabled
+      ? 'bg-neutral-50 border-neutral-300 cursor-not-allowed'
+      : isInvalid
+        ? 'border-danger-500 hover:border-danger-500 focus-within:border-danger-500 focus-within:outline-2 focus-within:outline-danger-700 [focus-within:outline-offset:1px]'
+        : 'border-neutral-300 hover:border-neutral-400 focus-within:border-forest-500 focus-within:outline-2 focus-within:outline-forest-700 [focus-within:outline-offset:1px]',
   ]
     .filter(Boolean)
     .join(' ');
+
+  const iconClass = `inline-flex flex-shrink-0 ${isDisabled ? 'text-neutral-400' : 'text-neutral-500'}`;
+
+  const messageClass = [
+    'flex items-start gap-1.5 text-xs leading-4',
+    tone === 'error' ? 'text-danger-700' : tone === 'success' ? 'text-forest-500' : 'text-neutral-500',
+  ].join(' ');
 
   const describedBy = [helperText != null ? messageId : null, ariaDescribedby]
     .filter(Boolean)
     .join(' ') || undefined;
 
   return (
-    <div className={styles.root}>
+    <div className="flex flex-col gap-1 font-[var(--font-main)] w-full">
       {label != null && (
-        <label htmlFor={inputId} className={styles.label}>
+        <label htmlFor={inputId} className="text-xs leading-4 font-semibold text-neutral-600">
           {label}
           {isRequired && (
-            <span className={styles.required} aria-hidden="true">
+            <span className="text-danger-500" aria-hidden="true">
               {' '}
               *
             </span>
           )}
         </label>
       )}
-      <div className={inputClass}>
+      <div className={containerClass}>
         {iconBefore && (
-          <span className={styles.icon} aria-hidden="true">
+          <span className={iconClass} aria-hidden="true">
             <Icon name={iconBefore} size={20} />
           </span>
         )}
@@ -95,7 +105,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
           ref={ref}
           id={inputId}
           type="text"
-          className={styles.field}
+          className="flex-1 min-w-0 border-0 p-0 bg-transparent text-sm leading-5 text-neutral-800 placeholder:text-neutral-500 focus:outline-none disabled:text-neutral-400 disabled:cursor-not-allowed disabled:[-webkit-text-fill-color:theme(colors.neutral-400)]"
           disabled={isDisabled}
           required={isRequired}
           aria-invalid={isInvalid || undefined}
@@ -103,7 +113,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
           {...rest}
         />
         {iconAfter && (
-          <span className={styles.icon} aria-hidden="true">
+          <span className={iconClass} aria-hidden="true">
             <Icon name={iconAfter} size={20} />
           </span>
         )}
@@ -111,15 +121,15 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
       {helperText != null && (
         <div
           id={messageId}
-          className={[styles.message, styles[tone]].join(' ')}
+          className={messageClass}
           role={tone === 'error' ? 'alert' : undefined}
         >
           {messageIcon && (
-            <span className={styles.messageIcon} aria-hidden="true">
+            <span className="inline-flex flex-shrink-0" aria-hidden="true">
               <Icon name={messageIcon} size={16} />
             </span>
           )}
-          <span className={styles.messageText}>{helperText}</span>
+          <span className="flex-1 min-w-0 break-words">{helperText}</span>
         </div>
       )}
     </div>

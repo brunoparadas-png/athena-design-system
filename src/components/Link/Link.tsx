@@ -1,6 +1,5 @@
 import type { AnchorHTMLAttributes, ReactNode } from 'react';
 import { Icon } from '../Icon';
-import styles from './Link.module.css';
 
 export type LinkAppearance = 'default' | 'subtle' | 'inverse';
 
@@ -20,6 +19,18 @@ export interface LinkProps extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>,
   children: ReactNode;
 }
 
+const appearanceClasses: Record<LinkAppearance, string> = {
+  default: 'text-blue-500 hover:text-blue-700 active:text-blue-800',
+  subtle: 'text-neutral-500 active:text-neutral-800',
+  inverse: 'text-white hover:text-blue-100 active:text-blue-100',
+};
+
+const focusClasses: Record<LinkAppearance, string> = {
+  default: 'focus-visible:outline-2 focus-visible:outline-forest-700 focus-visible:outline-offset-2',
+  subtle: 'focus-visible:outline-2 focus-visible:outline-forest-700 focus-visible:outline-offset-2',
+  inverse: 'focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2',
+};
+
 export function Link({
   appearance = 'default',
   isExternal = false,
@@ -28,9 +39,16 @@ export function Link({
   rel,
   ...rest
 }: LinkProps) {
-  const className = [styles.link, styles[appearance], isExternal ? styles.external : '']
-    .filter(Boolean)
-    .join(' ');
+  const baseClasses =
+    'inline-flex items-center gap-1 font-[var(--font-main)] text-sm leading-5 font-normal cursor-pointer rounded-none transition-[color] duration-[120ms] ease-[ease] motion-reduce:transition-none';
+
+  const className = `${baseClasses} ${appearanceClasses[appearance]} ${focusClasses[appearance]}`;
+
+  // Underline lives on the text span so the external icon stays un-underlined.
+  const textClasses =
+    appearance === 'subtle'
+      ? 'no-underline hover:underline underline-offset-[2px] break-words [a:active_&]:underline'
+      : 'underline underline-offset-[2px] break-words';
 
   // External links open in a new tab and need safe rel defaults (overridable).
   const resolvedTarget = target ?? (isExternal ? '_blank' : undefined);
@@ -39,13 +57,15 @@ export function Link({
 
   return (
     <a className={className} target={resolvedTarget} rel={resolvedRel} {...rest}>
-      <span className={styles.text}>{children}</span>
+      <span className={textClasses}>{children}</span>
       {isExternal && (
         <>
-          <span className={styles.icon} aria-hidden="true">
+          <span className="inline-flex flex-shrink-0 w-[14px] h-[14px]" aria-hidden="true">
             <Icon name="external-link" size={14} />
           </span>
-          <span className={styles.srOnly}>(opens in a new tab)</span>
+          <span className="absolute w-px h-px p-0 -m-px overflow-hidden [clip:rect(0,0,0,0)] whitespace-nowrap border-0">
+            (opens in a new tab)
+          </span>
         </>
       )}
     </a>

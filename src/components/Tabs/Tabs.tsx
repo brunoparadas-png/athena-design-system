@@ -1,5 +1,4 @@
 import { useId, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
-import styles from './Tabs.module.css';
 
 export interface TabItem {
   /** Stable id; falls back to the index. */
@@ -82,8 +81,12 @@ export function Tabs({ tabs, selectedId, defaultSelectedId, onChange, label }: T
   };
 
   return (
-    <div className={styles.tabs}>
-      <div className={styles.tablist} role="tablist" aria-label={label}>
+    <div className="font-[var(--font-main)]">
+      <div
+        className="flex relative border-b border-[rgba(11,18,40,0.14)]"
+        role="tablist"
+        aria-label={label}
+      >
         {tabs.map((tab, index) => {
           const id = idOf(tab, index);
           const isSelected = id === activeId;
@@ -100,7 +103,11 @@ export function Tabs({ tabs, selectedId, defaultSelectedId, onChange, label }: T
               aria-controls={`${baseId}-panel-${id}`}
               tabIndex={isSelected ? 0 : -1}
               disabled={tab.isDisabled}
-              className={[styles.tab, isSelected ? styles.selected : ''].filter(Boolean).join(' ')}
+              className={`appearance-none m-0 border-0 bg-transparent cursor-pointer relative inline-flex items-center justify-center min-h-8 px-2 py-1.5 font-[inherit] text-sm leading-5 font-medium whitespace-nowrap transition-colors duration-[120ms] ease-[ease] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-forest-700 focus-visible:outline-offset-[-2px] disabled:text-neutral-400 disabled:cursor-not-allowed ${
+                isSelected
+                  ? 'text-forest-500 after:content-[""] after:absolute after:left-2 after:right-2 after:bottom-[-1px] after:h-[3px] after:bg-forest-500'
+                  : 'text-neutral-500 hover:enabled:text-neutral-600'
+              }`}
               onClick={() => select(id)}
               onKeyDown={handleKeyDown}
             >
@@ -120,7 +127,7 @@ export function Tabs({ tabs, selectedId, defaultSelectedId, onChange, label }: T
             aria-labelledby={`${baseId}-tab-${id}`}
             hidden={!isSelected}
             tabIndex={0}
-            className={styles.panel}
+            className="pt-4 text-sm leading-5 text-neutral-800 focus-visible:outline-2 focus-visible:outline-forest-700 focus-visible:outline-offset-2"
           >
             {tab.content}
           </div>
