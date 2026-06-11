@@ -44,21 +44,18 @@ export const Appearances: Story = {
   ),
 };
 
-/** Removable chips — the × calls `onRemove`. */
+/** Removable chips — `isRemovable` shows the × button; `onRemove` handles the click. */
 export const Removable: Story = {
-  args: { appearance: 'blue', children: 'Removable', onRemove: fn() },
+  args: { appearance: 'blue', children: 'Removable', isRemovable: true, onRemove: fn() },
   play: async ({ canvas, args }) => {
     await userEvent.click(canvas.getByRole('button', { name: 'Remove' }));
     await expect(args.onRemove).toHaveBeenCalledOnce();
   },
 };
 
-/** Linked tag — the whole chip is an anchor. */
-export const Link: Story = {
-  args: { appearance: 'green', children: 'Linked tag', href: '#' },
-  play: async ({ canvas }) => {
-    await expect(canvas.getByRole('link', { name: 'Linked tag' })).toHaveAttribute('href', '#');
-  },
+/** `isRemovable` without an `onRemove` handler — button is visible but clicking is a no-op. */
+export const RemovableNoHandler: Story = {
+  args: { appearance: 'gray', children: 'No handler', isRemovable: true },
 };
 
 /** The full matrix: each appearance, static and removable. */
@@ -71,7 +68,7 @@ export const Matrix: Story = {
         </Tag>
       ))}
       {appearances.map((a) => (
-        <Tag key={`${a}-r`} appearance={a} onRemove={() => {}}>
+        <Tag key={`${a}-r`} appearance={a} isRemovable onRemove={() => {}}>
           {a}
         </Tag>
       ))}

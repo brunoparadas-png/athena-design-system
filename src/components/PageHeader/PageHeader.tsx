@@ -9,9 +9,20 @@ export interface PageHeaderProps {
   actions?: ReactNode;
   /** A row below the title for search / filters. (Figma: bottomBar) */
   bottomBar?: ReactNode;
-  /** Truncate the title to one line with an ellipsis instead of wrapping. (Figma: truncateTitle) */
+  /**
+   * Truncate the title to one line with an ellipsis instead of wrapping.
+   * CODE-ONLY — not represented in the Figma PageHeader component set (truncation
+   * exists only on the child BreadcrumbItem variant, not at the PageHeader level).
+   * Intentionally kept as a layout/UX convenience prop.
+   */
   truncateTitle?: boolean;
-  /** Override the heading level for document outline (visual size is unchanged). Defaults to h1. */
+  /**
+   * Override the semantic heading level for the document outline.
+   * Visual size is always Heading/L (24 px bold) regardless of this value.
+   * CODE-ONLY — Figma exposes no heading-level control on the PageHeader component
+   * set. Kept as an accessibility-only prop so the page outline can be correct
+   * without changing the visual design.
+   */
   headingLevel?: 1 | 2 | 3;
 }
 

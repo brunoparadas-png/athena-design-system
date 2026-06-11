@@ -23,8 +23,10 @@ export interface MenuItem {
   description?: ReactNode;
   /** Leading icon — action rows only (checkbox/radio render their indicator here). (Figma: iconBefore) */
   iconBefore?: IconName;
-  /** Trailing icon — action rows only. (Figma: iconAfter) */
+  /** First trailing icon — action rows only. (Figma: iconAfter-1) */
   iconAfter?: IconName;
+  /** Second trailing icon — action rows only. (Figma: iconAfter-2) */
+  iconAfter2?: IconName;
   /** Selected/checked. Drives the forest tint and the checkbox/radio indicator. (Figma: isSelected) */
   isSelected?: boolean;
   /** Disable just this row. (Figma: isDisabled) */
@@ -39,6 +41,12 @@ export interface MenuGroup {
   /** Section heading shown above the rows (neutral.500, 12px). */
   label?: ReactNode;
   items: MenuItem[];
+  /**
+   * Render a separator line after this group's rows.
+   * Mirrors Figma's per-section `hasSeparator` BOOLEAN prop.
+   * The standalone `MenuSeparator` node is an alternative; both approaches work.
+   */
+  hasSeparator?: boolean;
 }
 
 /** A horizontal divider between rows. */
@@ -52,7 +60,7 @@ export type MenuNode = MenuItem | MenuGroup | MenuSeparator;
 export interface MenuProps {
   /** Rows to render, in order. Items, groups, and separators may be mixed. */
   items: MenuNode[];
-  /** `default` rows are 40px tall, `compact` are 32px. (Figma: spacing) */
+  /** `default` rows are 40px tall, `compact` are 32px. Code-only extension — no corresponding Figma variant. */
   spacing?: 'default' | 'compact';
   /** Cap the height and scroll the rows past it (the Figma "Scrollable" variant). */
   maxHeight?: number;
@@ -262,6 +270,11 @@ export function Menu({
               <Icon name={item.iconAfter} size={20} />
             </span>
           )}
+          {type === 'action' && item.iconAfter2 && (
+            <span className="inline-flex flex-shrink-0 text-current">
+              <Icon name={item.iconAfter2} size={20} />
+            </span>
+          )}
         </button>
       </li>
     );
@@ -297,6 +310,9 @@ export function Menu({
           >
             {node.items.map((item) => renderItem(item))}
           </ul>
+          {node.hasSeparator && (
+            <div role="separator" aria-hidden="true" className="h-px my-1 bg-neutral-100" />
+          )}
         </li>
       );
     }

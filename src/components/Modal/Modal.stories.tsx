@@ -142,6 +142,50 @@ export const BlanketClickCloses: Story = {
   },
 };
 
+/** Blanket is hidden — the dialog appears without a dimmed backdrop. (Figma: isBlanketHidden) */
+export const BlanketHidden: Story = {
+  args: { isBlanketHidden: true },
+  render: (args) => {
+    const [open, setOpen] = useState(false);
+    return (
+      <>
+        <Button appearance="primary" onClick={() => setOpen(true)}>Open (no blanket)</Button>
+        <Modal {...args} isOpen={open} onClose={() => setOpen(false)}>
+          <ModalHeader title="No backdrop" />
+          <ModalBody>
+            <p>This modal renders without the dimmed overlay behind it.</p>
+          </ModalBody>
+          <ModalFooter>
+            <Button appearance="text" onClick={() => setOpen(false)}>Cancel</Button>
+            <Button appearance="primary" onClick={() => setOpen(false)}>OK</Button>
+          </ModalFooter>
+        </Modal>
+      </>
+    );
+  },
+};
+
+/** Close button is explicitly hidden via hasCloseButton=false. (Figma: hasCloseButton) */
+export const NoCloseButton: Story = {
+  render: (args) => {
+    const [open, setOpen] = useState(false);
+    return (
+      <>
+        <Button appearance="primary" onClick={() => setOpen(true)}>Open modal</Button>
+        <Modal {...args} isOpen={open} onClose={() => setOpen(false)}>
+          <ModalHeader title="No close button" hasCloseButton={false} />
+          <ModalBody>
+            <p>The header close button is hidden. The user must use a footer action to dismiss.</p>
+          </ModalBody>
+          <ModalFooter>
+            <Button appearance="primary" onClick={() => setOpen(false)}>Got it</Button>
+          </ModalFooter>
+        </Modal>
+      </>
+    );
+  },
+};
+
 export const CssCheck: Story = {
   parameters: { docs: { disable: true } },
   args: { appearance: 'danger' },

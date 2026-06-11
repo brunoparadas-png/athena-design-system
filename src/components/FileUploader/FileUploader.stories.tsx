@@ -18,7 +18,6 @@ const meta = {
   argTypes: {
     icon: { control: 'inline-radio', options: ['image', 'cloud-upload', 'file'] },
     multiple: { control: 'boolean' },
-    isDisabled: { control: 'boolean' },
   },
   args: {
     label: 'Attachment',
@@ -51,16 +50,32 @@ export const WithFiles: Story = {
   },
 };
 
-export const Disabled: Story = {
-  args: { isDisabled: true },
-};
-
 /** A standalone FileRow (the Figma `isEmpty=false` part) — uploading vs complete. */
 export const Rows: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       <FileRow file={{ id: 'a', name: 'Tech design requirements.pdf', size: '200 KB', progress: 0.4 }} onRemove={() => {}} />
       <FileRow file={{ id: 'b', name: 'Final report.pdf', size: '820 KB', progress: 1 }} onRemove={() => {}} />
+    </div>
+  ),
+};
+
+/** Mirrors the Figma `isSelected=true` variant — forest-tinted border and background. */
+export const RowSelected: Story = {
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <FileRow file={{ id: 'a', name: 'Selected file.pdf', size: '200 KB', progress: 0.6 }} onRemove={() => {}} isSelected />
+      <FileRow file={{ id: 'b', name: 'Normal file.pdf', size: '820 KB', progress: 1 }} onRemove={() => {}} />
+    </div>
+  ),
+};
+
+/** Mirrors the Figma `isCompleted=true` variant — explicit completed state regardless of progress value. */
+export const RowCompleted: Story = {
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <FileRow file={{ id: 'a', name: 'Force-completed.pdf', size: '200 KB', progress: 0.5 }} onRemove={() => {}} isCompleted />
+      <FileRow file={{ id: 'b', name: 'Progress-derived complete.pdf', size: '820 KB', progress: 1 }} onRemove={() => {}} />
     </div>
   ),
 };

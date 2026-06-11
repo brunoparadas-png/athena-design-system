@@ -46,6 +46,11 @@ export interface ModalProps {
   shouldCloseOnBlanketClick?: boolean;
   /** Close on Escape. Defaults to true. */
   shouldCloseOnEscape?: boolean;
+  /**
+   * When true, the dimmed blanket overlay is not rendered. The dialog appears
+   * without a backdrop. (Figma: isBlanketHidden)
+   */
+  isBlanketHidden?: boolean;
   /** Accessible label when there is no ModalHeader title to point at. */
   'aria-label'?: string;
 }
@@ -65,6 +70,7 @@ export function Modal({
   shouldScrollInViewport = false,
   shouldCloseOnBlanketClick = true,
   shouldCloseOnEscape = true,
+  isBlanketHidden = false,
   'aria-label': ariaLabel,
 }: ModalProps) {
   const baseId = useId();
@@ -134,9 +140,11 @@ export function Modal({
   const isFullScreen = size === 'full-screen';
 
   // Overlay: fixed blanket, centers the dialog. viewport-scroll mode aligns top and scrolls.
-  const overlayClass = `fixed inset-0 z-[1000] flex items-center justify-content bg-[rgba(5,12,31,0.46)] ${
-    isFullScreen ? 'p-0' : 'p-8'
-  } ${shouldScrollInViewport ? 'items-start overflow-y-auto' : ''}`.trim();
+  // When isBlanketHidden, the overlay is transparent and pointer-events are disabled on it
+  // so only the dialog itself receives clicks.
+  const overlayClass = `fixed inset-0 z-[1000] flex items-center justify-content ${
+    isBlanketHidden ? 'bg-transparent pointer-events-none' : 'bg-[rgba(5,12,31,0.46)]'
+  } ${isFullScreen ? 'p-0' : 'p-8'} ${shouldScrollInViewport ? 'items-start overflow-y-auto' : ''}`.trim();
 
   // Dialog: sizing variants
   const sizeClass = {
@@ -149,7 +157,7 @@ export function Modal({
 
   const dialogMaxHeight = shouldScrollInViewport ? '' : isFullScreen ? '' : 'max-h-[calc(100vh-64px)]';
 
-  const dialogClass = `box-border flex flex-col w-full bg-white rounded-none outline-none font-[var(--font-main)] shadow-[0_8px_16px_-4px_rgba(9,30,66,0.25),0_0_0_1px_rgba(9,30,66,0.06)] ${sizeClass} ${dialogMaxHeight}`.trim();
+  const dialogClass = `box-border flex flex-col w-full bg-white rounded-none outline-none font-[var(--font-main)] shadow-[0_8px_16px_-4px_rgba(9,30,66,0.25),0_0_0_1px_rgba(9,30,66,0.06)] ${isBlanketHidden ? 'pointer-events-auto' : ''} ${sizeClass} ${dialogMaxHeight}`.trim();
 
   return createPortal(
     <div
@@ -185,15 +193,23 @@ export interface ModalHeaderProps {
   icon?: IconName;
   /** Override the close handler (defaults to the Modal's onClose). Pass null to hide the close button. */
   onClose?: (() => void) | null;
+  /**
+   * Explicitly show or hide the close button. When false the button is hidden regardless
+   * of whether onClose is set. When true (default) the button is shown if a close handler
+   * is available. (Figma: hasCloseButton)
+   */
+  hasCloseButton?: boolean;
   /** Accessible label for the close button. */
   closeLabel?: string;
 }
 
 /** Title row with an optional leading icon and a close button. (Figma: <ModalHeader>) */
-export function ModalHeader({ title, icon, onClose, closeLabel = 'Close' }: ModalHeaderProps) {
+export function ModalHeader({ title, icon, onClose, hasCloseButton = true, closeLabel = 'Close' }: ModalHeaderProps) {
   const ctx = useModalContext();
   const resolvedIcon = icon ?? (ctx?.appearance === 'danger' ? 'warning' : undefined);
-  const close = onClose === null ? null : (onClose ?? ctx?.onClose);
+  const resolvedClose = onClose === null ? null : (onClose ?? ctx?.onClose);
+  // hasCloseButton=false hides the button regardless of whether a handler is available.
+  const close = hasCloseButton ? resolvedClose : null;
 
   return (
     <div className="flex items-start gap-4 flex-shrink-0 px-6 pt-6 pb-4">

@@ -1,4 +1,3 @@
-import React from 'react'
 import { Tag } from './Tag'
 import figma from '@figma/code-connect'
 
@@ -33,7 +32,7 @@ figma.connect(
     variant: { isRemovable: 'True' },
     props: sharedProps,
     example: ({ appearance, text }) => (
-      <Tag appearance={appearance} onRemove={() => {}}>{text}</Tag>
+      <Tag appearance={appearance} isRemovable onRemove={() => {}}>{text}</Tag>
     ),
   },
 )

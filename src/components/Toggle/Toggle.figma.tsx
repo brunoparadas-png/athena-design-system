@@ -1,4 +1,3 @@
-import React from "react";
 import { Toggle } from "./Toggle";
 import figma from "@figma/code-connect";
 
@@ -8,7 +7,7 @@ figma.connect(
   {
     props: {
       size: figma.enum("size", {
-        default: "default",
+        "regular (default)": "regular",
         large: "large",
       }),
       isChecked: figma.boolean("isChecked"),

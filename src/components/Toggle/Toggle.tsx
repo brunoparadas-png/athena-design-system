@@ -13,8 +13,8 @@ export interface ToggleProps
     InputHTMLAttributes<HTMLInputElement>,
     'type' | 'className' | 'size' | 'checked' | 'disabled' | 'role'
   > {
-  /** Track + dot size. `default` is 32×16, `large` is 40×20. (Figma: size) */
-  size?: 'default' | 'large';
+  /** Track + dot size. `regular` is 32×16, `large` is 40×20. (Figma: size) */
+  size?: 'regular' | 'large';
   /** Controlled on/off state. Leave undefined and use `defaultChecked` for uncontrolled. (Figma: isChecked) */
   isChecked?: boolean;
   /** Disabled state. (Figma: isDisabled) */
@@ -27,7 +27,7 @@ export interface ToggleProps
 }
 
 export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(function Toggle(
-  { size = 'default', isChecked, isDisabled = false, label, onChange, readOnly, ...rest },
+  { size = 'regular', isChecked, isDisabled = false, label, onChange, readOnly, ...rest },
   forwardedRef,
 ) {
   // A controlled toggle (isChecked set) with no handler is read-only by intent —

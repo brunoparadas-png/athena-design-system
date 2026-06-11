@@ -29,6 +29,16 @@ export interface FileRowProps {
   icon?: IconName;
   /** Accessible label for the remove button. Defaults to `Remove {name}`. */
   removeLabel?: string;
+  /**
+   * Whether this row is in the selected/highlighted state. Mirrors the Figma
+   * `isSelected` top-level variant on the FileUploader component set.
+   */
+  isSelected?: boolean;
+  /**
+   * Explicitly force the completed state. When omitted, completion is derived
+   * from `file.progress >= 1`. Mirrors the Figma `isCompleted` top-level variant.
+   */
+  isCompleted?: boolean;
 }
 
 /**
@@ -36,11 +46,11 @@ export interface FileRowProps {
  * bar with percent, and a remove button. At progress ≥ 1 the bar reads as the
  * success (completed) state. Mirrors the Figma File Uploader `isEmpty=false` row.
  */
-export function FileRow({ file, onRemove, icon = 'file', removeLabel }: FileRowProps) {
+export function FileRow({ file, onRemove, icon = 'file', removeLabel, isSelected = false, isCompleted }: FileRowProps) {
   const pct = Math.round(Math.min(1, Math.max(0, file.progress ?? 1)) * 100);
-  const isComplete = pct >= 100;
+  const isComplete = isCompleted ?? pct >= 100;
   return (
-    <div className="flex items-start gap-2 box-border w-full px-4 py-3 bg-white border border-neutral-300">
+    <div className={`flex items-start gap-2 box-border w-full px-4 py-3 border ${isSelected ? 'bg-forest-50 border-forest-500' : 'bg-white border-neutral-300'}`}>
       <span
         className="inline-flex items-center justify-center flex-shrink-0 p-1 rounded-full bg-forest-50 text-forest-700"
         aria-hidden="true"
@@ -98,8 +108,6 @@ export interface FileUploaderProps {
   onFilesAdded?: (files: File[]) => void;
   /** Fires with a file id when its remove button is pressed. */
   onRemove?: (id: string) => void;
-  /** Disable the dropzone. */
-  isDisabled?: boolean;
   /** Icon for each file row's leading pill. Defaults to `file`. */
   fileIcon?: IconName;
 }
@@ -120,7 +128,6 @@ export function FileUploader({
   multiple = false,
   onFilesAdded,
   onRemove,
-  isDisabled = false,
   fileIcon = 'file',
 }: FileUploaderProps) {
   const inputId = useId();
@@ -129,7 +136,7 @@ export function FileUploader({
   const [isDragging, setIsDragging] = useState(false);
 
   const openPicker = () => {
-    if (!isDisabled) inputRef.current?.click();
+    inputRef.current?.click();
   };
 
   const emit = (list: FileList | null) => {
@@ -138,7 +145,6 @@ export function FileUploader({
   };
 
   const onDragOver = (e: DragEvent) => {
-    if (isDisabled) return;
     e.preventDefault();
     setIsDragging(true);
   };
@@ -148,18 +154,15 @@ export function FileUploader({
     setIsDragging(false);
   };
   const onDrop = (e: DragEvent) => {
-    if (isDisabled) return;
     e.preventDefault();
     setIsDragging(false);
     emit(e.dataTransfer.files);
   };
 
   const zoneClass = `box-border flex flex-col items-center justify-center gap-1 w-full px-2 py-4 border border-dashed transition-[background-color,border-color] duration-[120ms] ease-[ease] motion-reduce:transition-none focus-within:outline-none ${
-    isDisabled
-      ? 'cursor-not-allowed bg-neutral-50 border-neutral-300'
-      : isDragging
-        ? 'cursor-pointer bg-forest-50 border-forest-500 border-solid'
-        : 'cursor-pointer bg-white border-neutral-300 hover:bg-forest-50 hover:border-forest-500'
+    isDragging
+      ? 'cursor-pointer bg-forest-50 border-forest-500 border-solid'
+      : 'cursor-pointer bg-white border-neutral-300 hover:bg-forest-50 hover:border-forest-500'
   }`;
 
   return (
@@ -177,17 +180,15 @@ export function FileUploader({
         onDragOver={onDragOver}
         onDragLeave={onDragLeave}
         onDrop={onDrop}
-        aria-disabled={isDisabled || undefined}
       >
         <span
-          className={`inline-flex ${isDisabled ? 'text-neutral-400' : 'text-neutral-800'}`}
+          className="inline-flex text-neutral-800"
           aria-hidden="true"
         >
           <Icon name={icon} size={48} />
         </span>
         <Button
           appearance="neutral"
-          isDisabled={isDisabled}
           onClick={(e) => {
             e.stopPropagation();
             openPicker();
@@ -205,7 +206,6 @@ export function FileUploader({
           className="absolute w-px h-px p-0 -m-px overflow-hidden [clip:rect(0,0,0,0)] whitespace-nowrap border-0"
           accept={accept}
           multiple={multiple}
-          disabled={isDisabled}
           aria-labelledby={label != null ? labelId : undefined}
           onChange={(e) => {
             emit(e.target.files);

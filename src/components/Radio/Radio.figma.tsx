@@ -1,4 +1,3 @@
-import React from "react"
 import { Radio } from "./Radio"
 import figma from "@figma/code-connect"
 

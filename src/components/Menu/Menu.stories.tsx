@@ -37,6 +37,17 @@ const actionItems: MenuNode[] = [
   { id: 'archive', label: 'Archive', isDisabled: true },
 ];
 
+/** Action row with both trailing icon slots (Figma: iconAfter-1 + iconAfter-2). */
+export const DualTrailingIcons: Story = {
+  args: {
+    items: [
+      { id: 'a', label: 'Edit', iconBefore: 'edit', iconAfter: 'chevron-right', iconAfter2: 'info' },
+      { id: 'b', label: 'Share', iconAfter: 'external-link' },
+      { id: 'c', label: 'Delete', iconBefore: 'trash' },
+    ],
+  },
+};
+
 export const Default: Story = {
   args: { items: actionItems },
 };
@@ -93,6 +104,29 @@ export const Grouped: Story = {
     items: [
       {
         label: 'Sort by',
+        items: [
+          { id: 'name', type: 'radio', label: 'Name', isSelected: true },
+          { id: 'date', type: 'radio', label: 'Date modified' },
+        ],
+      },
+      {
+        label: 'Filters',
+        items: [
+          { id: 'open', type: 'checkbox', label: 'Open', isSelected: true },
+          { id: 'closed', type: 'checkbox', label: 'Closed' },
+        ],
+      },
+    ],
+  },
+};
+
+/** Groups with `hasSeparator` — each section renders a divider below its rows (Figma: hasSeparator). */
+export const GroupedWithSeparators: Story = {
+  args: {
+    items: [
+      {
+        label: 'Sort by',
+        hasSeparator: true,
         items: [
           { id: 'name', type: 'radio', label: 'Name', isSelected: true },
           { id: 'date', type: 'radio', label: 'Date modified' },

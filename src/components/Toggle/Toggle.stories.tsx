@@ -15,7 +15,7 @@ const meta = {
     },
   },
   argTypes: {
-    size: { control: 'inline-radio', options: ['default', 'large'], description: 'Track size' },
+    size: { control: 'inline-radio', options: ['regular', 'large'], description: 'Track size' },
     isChecked: { control: 'boolean', description: 'Controlled on/off state' },
     isDisabled: { control: 'boolean', description: 'Disabled state' },
     label: { control: 'text', description: 'Optional text after the switch' },
@@ -60,12 +60,12 @@ export const NoLabel: Story = {
 export const States: Story = {
   render: () => (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, max-content)', gap: 16, alignItems: 'center' }}>
-      <Toggle size="default" label="Default, off" />
-      <Toggle size="default" label="Default, on" isChecked />
+      <Toggle size="regular" label="Default, off" />
+      <Toggle size="regular" label="Default, on" isChecked />
       <Toggle size="large" label="Large, off" />
       <Toggle size="large" label="Large, on" isChecked />
-      <Toggle size="default" label="Disabled, off" isDisabled />
-      <Toggle size="default" label="Disabled, on" isDisabled isChecked />
+      <Toggle size="regular" label="Disabled, off" isDisabled />
+      <Toggle size="regular" label="Disabled, on" isDisabled isChecked />
     </div>
   ),
 };

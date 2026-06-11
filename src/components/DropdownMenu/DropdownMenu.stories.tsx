@@ -100,6 +100,15 @@ export const MultiSelect: Story = {
   args: { items: [] },
 };
 
+/**
+ * When `isLoading` is true the trigger is disabled and rendered with a muted
+ * appearance. Mirrors the Figma `isLoading` variant prop (visual spec not yet
+ * finalised; this story will update once Figma completes the loading variant).
+ */
+export const Loading: Story = {
+  args: { items: actionItems, menuLabel: 'Actions', isLoading: true },
+};
+
 export const Scrollable: Story = {
   args: {
     menuLabel: 'Pick one',

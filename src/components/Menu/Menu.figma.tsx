@@ -1,4 +1,3 @@
-import React from 'react'
 import { Menu } from './Menu'
 import figma from '@figma/code-connect'
 
@@ -10,8 +9,8 @@ figma.connect(
     example: () => (
       <Menu
         items={[
-          { id: 'edit', label: 'Edit', iconBefore: 'pencil' },
-          { id: 'duplicate', label: 'Duplicate', iconBefore: 'copy' },
+          { id: 'edit', label: 'Edit', iconBefore: 'edit' },
+          { id: 'duplicate', label: 'Duplicate', iconBefore: 'add' },
           { type: 'separator' },
           { id: 'delete', label: 'Delete', iconBefore: 'trash' },
         ]}

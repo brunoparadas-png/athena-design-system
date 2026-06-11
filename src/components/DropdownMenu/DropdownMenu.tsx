@@ -46,6 +46,12 @@ export interface DropdownMenuProps {
    * stays open after toggling a `checkbox` row (matching native multi-select).
    */
   closeOnSelect?: boolean;
+  /**
+   * When true, the trigger is disabled and rendered in a loading state.
+   * Mirrors the Figma `isLoading` variant prop (currently stubbed; visual spec
+   * is not finalised — defaults to `false` and disables the trigger for now).
+   */
+  isLoading?: boolean;
 }
 
 const ChevronDown = ({ open }: { open: boolean }) => (
@@ -83,6 +89,7 @@ export function DropdownMenu({
   onOpenChange,
   onSelect,
   closeOnSelect,
+  isLoading = false,
 }: DropdownMenuProps) {
   const baseId = useId();
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -148,9 +155,11 @@ export function DropdownMenu({
   const triggerBase =
     'appearance-none m-0 cursor-pointer inline-flex items-center justify-center gap-1.5 border rounded-none font-semibold text-sm leading-5 whitespace-nowrap px-3 transition-[background-color,border-color,color] duration-[120ms] ease-[ease] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-forest-700 focus-visible:outline-offset-2 font-[var(--font-main)]';
 
-  const triggerStateClasses = open
-    ? 'bg-forest-50 border-forest-700 text-forest-700'
-    : 'bg-white border-neutral-300 text-neutral-600 hover:bg-forest-100 hover:border-forest-500 hover:text-forest-700 active:bg-forest-200 active:border-forest-500 active:text-forest-700';
+  const triggerStateClasses = isLoading
+    ? 'bg-white border-neutral-300 text-neutral-400 cursor-not-allowed opacity-60'
+    : open
+      ? 'bg-forest-50 border-forest-700 text-forest-700'
+      : 'bg-white border-neutral-300 text-neutral-600 hover:bg-forest-100 hover:border-forest-500 hover:text-forest-700 active:bg-forest-200 active:border-forest-500 active:text-forest-700';
 
   const triggerSizeClass = buttonSpacing === 'compact' ? 'min-h-8' : 'min-h-10';
 
@@ -170,7 +179,9 @@ export function DropdownMenu({
         aria-expanded={open}
         aria-controls={open ? menuId : undefined}
         aria-label={triggerType === 'icon' ? ariaLabel : undefined}
-        onClick={() => setOpen(!open)}
+        aria-disabled={isLoading || undefined}
+        disabled={isLoading}
+        onClick={() => !isLoading && setOpen(!open)}
         onKeyDown={handleTriggerKeyDown}
       >
         {triggerType === 'icon' ? (

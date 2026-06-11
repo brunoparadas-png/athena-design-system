@@ -2,13 +2,16 @@ import { forwardRef, useId, type TextareaHTMLAttributes, type ReactNode } from '
 import { Icon, type IconName } from '../Icon';
 
 /**
- * Prop names mirror the Figma "❖ Text area" properties: label, placeholder,
- * isCompact, isDisabled, isInvalid, isMonospaced, plus the helper `<Message>`
- * (helperText + its error/valid tone).
+ * Prop names mirror the Figma "❖ Text area" properties where possible.
+ * Figma variant props: hasLabel, placeholder, isCompact, isDisabled, isInvalid, isMonospaced.
  *
  * The multi-line sibling of TextField. Like Button/TextField, the Figma `state`
  * property (default/hover/focus/typing/filled) is NOT a prop — those are real
  * CSS states (:hover, :focus-within, and the value the user types).
+ *
+ * Code-only props (no Figma variant): isValid, isRequired, resize.
+ * These provide intentional UX behaviours not yet modelled in the Figma component set.
+ * Track Figma updates separately.
  */
 export interface TextAreaProps
   extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'className' | 'disabled' | 'required'> {
@@ -18,17 +21,31 @@ export interface TextAreaProps
   helperText?: ReactNode;
   /** Error state — danger.500 border, danger message with a warning icon, `aria-invalid`. (Figma: isInvalid) */
   isInvalid?: boolean;
-  /** Success tone for the helper message — forest text + check icon. */
+  /**
+   * Success tone for the helper message — forest text + check icon.
+   * Code-only: Figma does not model a success/valid state variant.
+   * Error (isInvalid) takes precedence when both are true.
+   */
   isValid?: boolean;
   /** Tighter vertical padding. (Figma: isCompact) */
   isCompact?: boolean;
   /** Disabled state. (Figma: isDisabled) */
   isDisabled?: boolean;
-  /** Appends a danger asterisk to the label and sets `required`. */
+  /**
+   * Appends a danger asterisk to the label and sets the native `required` attribute.
+   * Code-only: Figma does not model an isRequired variant prop.
+   */
   isRequired?: boolean;
-  /** Render the value in the code font (IBM Plex Mono). (Figma: isMonospaced) */
+  /**
+   * Render the value in the code font (IBM Plex Mono). (Figma: isMonospaced)
+   * Note: the Figma component set only defines isMonospaced=false; the true variant
+   * is not yet built in Figma. The code implementation is complete for both states.
+   */
   isMonospaced?: boolean;
-  /** How the textarea may be resized. Defaults to `vertical`. */
+  /**
+   * How the textarea may be resized by the user. Defaults to `vertical`.
+   * Code-only: resize behaviour has no visual analog in Figma.
+   */
   resize?: 'vertical' | 'horizontal' | 'both' | 'none';
 }
 

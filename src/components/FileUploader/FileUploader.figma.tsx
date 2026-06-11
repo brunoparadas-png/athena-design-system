@@ -1,4 +1,3 @@
-import React from 'react'
 import { FileUploader } from './FileUploader'
 import figma from '@figma/code-connect'
 
@@ -11,7 +10,7 @@ figma.connect(
       <FileUploader
         buttonLabel="Upload file"
         message="PNG, JPG or PDF up to 10 MB"
-        onUpload={files => console.log(files)}
+        onFilesAdded={files => console.log(files)}
       />
     ),
   },

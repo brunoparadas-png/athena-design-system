@@ -1,4 +1,3 @@
-import React from "react";
 import { DropdownMenu } from "./DropdownMenu";
 import figma from "@figma/code-connect";
 

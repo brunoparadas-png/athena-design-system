@@ -18,13 +18,24 @@ export interface TextFieldProps
   helperText?: ReactNode;
   /** Error state — danger.500 border, danger message with a warning icon, `aria-invalid`. (Figma: isInvalid) */
   isInvalid?: boolean;
-  /** Success tone for the helper message — forest text + check icon. */
+  /**
+   * Success tone for the helper message — forest text + check icon.
+   * @code-extension Not yet reflected in Figma. The Figma Parts/<Message>
+   * component only exposes valid='false'; there is no valid='true' variant in
+   * the design spec. Add a valid='true' variant to Parts/<Message> in Figma
+   * before relying on this prop in production.
+   */
   isValid?: boolean;
   /** Shorter input (32px instead of 40px). (Figma: isCompact) */
   isCompact?: boolean;
   /** Disabled state. (Figma: isDisabled) */
   isDisabled?: boolean;
-  /** Appends a danger asterisk to the label and sets `required`. */
+  /**
+   * Appends a danger asterisk to the label and sets `required`.
+   * @code-extension Not yet reflected in Figma. The Figma component set has no
+   * 'isRequired' property. Add an isRequired variant to the Figma component
+   * before relying on this prop in production.
+   */
   isRequired?: boolean;
   /** Leading icon, by name. (Figma: iconBefore) */
   iconBefore?: IconName;
