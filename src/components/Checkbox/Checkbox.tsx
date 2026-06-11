@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useRef, type InputHTMLAttributes, type ReactNode } from 'react';
+import { forwardRef, useLayoutEffect, useRef, type InputHTMLAttributes, type ReactNode } from 'react';
 
 /**
  * Prop names mirror the Figma "❖ Checkbox" component properties:
@@ -62,7 +62,10 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
   const resolvedReadOnly = readOnly ?? (isChecked !== undefined && !onChange);
 
   // `indeterminate` is a DOM property only — it cannot be set via JSX attribute.
-  useEffect(() => {
+  // useLayoutEffect (not useEffect) so it runs synchronously after the DOM
+  // commits and before the browser paints — guaranteeing the property is set
+  // before Storybook/Chromatic play functions read it.
+  useLayoutEffect(() => {
     if (innerRef.current) innerRef.current.indeterminate = isIndeterminate;
   }, [isIndeterminate]);
 
