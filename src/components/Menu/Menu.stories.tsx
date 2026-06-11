@@ -175,7 +175,9 @@ export const KeyboardNav: Story = {
 
 /**
  * CSS proof: a selected row resolves to the forest.50 tint (#e9f7f3 =
- * rgb(233, 247, 243)). If tokens.css failed to load this falls back and fails.
+ * rgb(233, 247, 243)) and carries the 2px forest.700 (#1d443b =
+ * rgb(29, 68, 59)) left border. If tokens.css failed to load this falls
+ * back and fails.
  */
 export const CssCheck: Story = {
   args: {
@@ -184,6 +186,9 @@ export const CssCheck: Story = {
   play: async ({ canvas }) => {
     const row = canvas.getByRole('menuitemcheckbox', { name: 'Selected' });
     await expect(row).toHaveAttribute('aria-checked', 'true');
-    await expect(getComputedStyle(row).backgroundColor).toBe('rgb(233, 247, 243)');
+    const style = getComputedStyle(row);
+    await expect(style.backgroundColor).toBe('rgb(233, 247, 243)');
+    await expect(style.borderLeftWidth).toBe('2px');
+    await expect(style.borderLeftColor).toBe('rgb(29, 68, 59)');
   },
 };

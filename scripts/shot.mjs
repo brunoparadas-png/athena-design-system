@@ -8,7 +8,9 @@ const base = `http://localhost:${port}/iframe.html`;
 
 // [storyId, outName, optionalButtonTextToClickFirst]
 const shots = [
-  ['components-dropdownmenu--default', 'dropdown-default'],
+  ['components-menu--default', 'menu-default'],
+  ['components-menu--grouped', 'menu-grouped'],
+  ['components-menu--checkboxes', 'menu-checkboxes'],
 ];
 
 const browser = await chromium.launch();

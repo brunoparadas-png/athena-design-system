@@ -38,7 +38,7 @@ export interface MenuItem {
 /** A labelled section of rows (the Figma "Category" heading + its items). */
 export interface MenuGroup {
   id?: string;
-  /** Section heading shown above the rows (neutral.500, 12px). */
+  /** Section heading shown above the rows (neutral.600, 14px semibold). */
   label?: ReactNode;
   items: MenuItem[];
   /**
@@ -191,7 +191,7 @@ export function Menu({
 
   // Base item classes shared across all rows
   const itemBase =
-    'appearance-none m-0 border-0 cursor-pointer box-border w-full flex items-center gap-3 px-4 font-[inherit] text-sm leading-5 text-neutral-600 text-left transition-[background-color,color] duration-[120ms] ease-[ease] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-forest-700 focus-visible:outline-offset-[-2px] disabled:text-neutral-400 disabled:cursor-not-allowed';
+    'group appearance-none m-0 border-0 cursor-pointer box-border w-full flex items-center gap-3 px-4 font-[inherit] text-sm leading-5 text-neutral-600 text-left transition-[background-color,color] duration-[120ms] ease-[ease] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-forest-700 focus-visible:outline-offset-[-2px] disabled:text-neutral-400 disabled:cursor-not-allowed';
 
   const itemSizeClass = spacing === 'compact' ? 'min-h-8 py-1.5' : 'min-h-10 py-2';
 
@@ -205,9 +205,11 @@ export function Menu({
     const id = item.id ?? String(index);
     const isInteractiveSelected = type !== 'action' && item.isSelected;
 
+    // Selected rows carry a 2px forest.700 left border (Figma 113:774); hover/press
+    // tint every row forest.100/forest.200 and deepen the text to forest.800.
     const selectedClass = item.isSelected
-      ? 'bg-forest-50 text-forest-700 hover:enabled:bg-forest-100 active:enabled:bg-forest-200'
-      : 'bg-transparent hover:enabled:bg-neutral-100 active:enabled:bg-neutral-200';
+      ? 'bg-forest-50 text-forest-700 border-l-2 border-forest-700 hover:enabled:bg-forest-100 hover:enabled:text-forest-800 active:enabled:bg-forest-200 active:enabled:text-forest-800'
+      : 'bg-transparent hover:enabled:bg-forest-100 hover:enabled:text-forest-800 active:enabled:bg-forest-200 active:enabled:text-forest-800';
 
     const itemClassName = `${itemBase} ${itemSizeClass} ${selectedClass}`;
 
@@ -258,9 +260,15 @@ export function Menu({
             </span>
           )}
           <span className="flex flex-col gap-0.5 flex-1 min-w-0">
-            <span className="break-words">{item.label}</span>
+            <span className="break-words font-semibold">{item.label}</span>
             {item.description != null && (
-              <span className="text-xs leading-4 text-neutral-500 disabled:text-neutral-400">
+              <span
+                className={`text-xs leading-4 group-disabled:text-neutral-400 ${
+                  item.isSelected
+                    ? 'text-current'
+                    : 'text-neutral-500 group-hover:group-enabled:text-current group-active:group-enabled:text-current'
+                }`}
+              >
                 {item.description}
               </span>
             )}
@@ -298,7 +306,7 @@ export function Menu({
           {node.label != null && (
             <span
               id={labelId}
-              className="block px-4 pt-1.5 pb-0.5 text-xs leading-4 font-semibold text-neutral-500"
+              className="block px-4 pt-3 pb-1.5 text-sm leading-5 font-semibold text-neutral-600"
             >
               {node.label}
             </span>

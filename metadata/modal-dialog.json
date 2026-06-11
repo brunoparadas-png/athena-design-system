@@ -26,7 +26,7 @@
     "size": {
       "small": "max-width 400px",
       "medium": "max-width 600px (default)",
-      "large": "max-width 760px",
+      "large": "max-width 752px",
       "x-large": "max-width 968px",
       "full-screen": "fills the viewport (width/height 100%, no shadow, no gutter)"
     },

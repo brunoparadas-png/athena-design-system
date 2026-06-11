@@ -33,7 +33,7 @@ export interface ModalProps {
   onClose?: () => void;
   /** `default` confirms; `danger` is for destructive confirmation. (Figma: appearance) */
   appearance?: ModalAppearance;
-  /** Width preset: small 400 / medium 600 / large 760 / x-large 968 / full-screen. (Figma: size) */
+  /** Width preset: small 400 / medium 600 / large 752 / x-large 968 / full-screen. (Figma: size) */
   size?: ModalSize;
   /** Modal contents — typically ModalHeader, ModalBody, ModalFooter. */
   children: ReactNode;
@@ -150,7 +150,7 @@ export function Modal({
   const sizeClass = {
     small: 'max-w-[400px]',
     medium: 'max-w-[600px]',
-    large: 'max-w-[760px]',
+    large: 'max-w-[752px]',
     'x-large': 'max-w-[968px]',
     'full-screen': 'max-w-none w-full h-full max-h-screen shadow-none',
   }[size];

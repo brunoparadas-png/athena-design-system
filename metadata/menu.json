@@ -7,7 +7,7 @@
     "figmaNode": "677:5752",
     "variants": ["default", "compact", "scrollable"],
     "modifiers": ["maxHeight", "autoFocusFirst"],
-    "note": "White surface, 1px neutral.200 border, radius-sm (4px), shadow-overlay, min-width 180px. Rows are action / checkbox / radio; selected rows take the forest tint (forest.50 fill, forest.700 text + indicator). Owns roving-tabindex arrow-key navigation. Hover/press/focus are real CSS pseudo-states (no `state` prop), matching Button/Checkbox. Synced to Figma '❖ Menu' and its DropdownItem parts (677:5552)."
+    "note": "White surface, 1px neutral.200 border, radius-sm (4px), shadow-overlay, min-width 180px. Rows are action / checkbox / radio; selected rows take the forest tint (forest.50 fill, forest.700 text + indicator) plus a 2px forest.700 left border; hovering/pressing any row tints it forest.100/forest.200 with forest.800 text. Owns roving-tabindex arrow-key navigation. Hover/press/focus are real CSS pseudo-states (no `state` prop), matching Button/Checkbox. Synced to Figma '❖ Menu' and its DropdownItem parts (677:5552)."
   },
 
   "tokens": {
@@ -28,15 +28,16 @@
       "transition": "background-color & color 0.12s ease (disabled under prefers-reduced-motion)"
     },
     "background": {
-      "unselected": "transparent; hover → colors.background.neutral.weak.hovered (neutral.100); press → colors.background.neutral.weak.pressed (neutral.200)",
-      "selected": "colors.background.primary.weak (forest.50); hover → colors.background.primary.weak.hovered (forest.100); press → colors.background.primary.weak.pressed (forest.200)"
+      "unselected": "transparent; hover → colors.background.primary.weak.hovered (forest.100); press → colors.background.primary.weak.pressed (forest.200)",
+      "selected": "colors.background.primary.weak (forest.50); hover → colors.background.primary.weak.hovered (forest.100); press → colors.background.primary.weak.pressed (forest.200); 2px colors.border.primary.strong (forest.700) left border"
     },
     "text": {
-      "default": "colors.text.neutral.default (neutral.600)",
+      "default": "colors.text.neutral.default (neutral.600), label semibold",
+      "hover/press": "colors.text.primary.strongest (forest.800), label + description",
       "selected": "colors.text.primary.strong (forest.700)",
       "disabled": "colors.text.neutral.disabled (neutral.400)",
-      "description": "colors.text.neutral.weak (neutral.500), 12px / 16px",
-      "groupLabel": "colors.text.neutral.weak (neutral.500), 12px / 16px, semibold, padding 6 16 2"
+      "description": "colors.text.neutral.weak (neutral.500) at rest, 12px / 16px; follows the row state color on hover/press/selected",
+      "groupLabel": "colors.text.neutral.default (neutral.600), 14px / 20px, semibold, padding 12 16 6"
     },
     "indicators": {
       "checkbox": "14px sharp box (radius.none), 1px neutral.300 border; on → forest.500 fill + border, white check mark",
@@ -134,8 +135,8 @@
   "behavior": {
     "states": ["default", "hover", "press", "focus", "selected", "disabled", "scrollable"],
     "interactions": {
-      "hover": "unselected row → neutral.100 fill; selected row → forest.100 fill; also sets the active (roving-focus) row",
-      "press": "unselected row → neutral.200 fill; selected row → forest.200 fill",
+      "hover": "any row → forest.100 fill + forest.800 text; also sets the active (roving-focus) row",
+      "press": "any row → forest.200 fill + forest.800 text",
       "focus": "2px forest.700 outline, inset (-2px offset) so the ring stays within the row",
       "selected": "forest.50 fill, forest.700 text + indicator; checkbox shows white check, radio shows forest.500 dot",
       "disabled": "neutral.400 text, muted indicator, cursor not-allowed; row is skipped by keyboard navigation",
