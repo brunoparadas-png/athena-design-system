@@ -1,0 +1,169 @@
+{
+  "component": {
+    "name": "IconButton",
+    "category": "atom",
+    "type": "interactive",
+    "description": "A square, icon-only button that triggers an action with no text label; the compact sibling of Button for toolbars, rows, and adornments.",
+    "figmaNode": "31:2137",
+    "variants": ["primary", "neutral", "text", "danger"],
+    "sizes": ["default (40×40px)", "small (32×32px)"],
+    "note": "Square (radius.none); default renders a 20px icon, small a 16px icon. Shares Button's appearance tokens and selected/disabled treatment, but is icon-only so aria-label is required. Synced to Figma '❖ Icon Button'."
+  },
+
+  "tokens": {
+    "background": {
+      "primary": "forest.500; hover → forest.700; press → forest.900",
+      "neutral": "neutral.0 (white); hover → forest.100; press → forest.200",
+      "text": "transparent; hover → forest.100; press → forest.200",
+      "danger": "danger.700; hover → danger.800; press → danger.900",
+      "selected": "forest.50",
+      "disabled": "neutral.100"
+    },
+    "text": {
+      "primary": "neutral.0 (white icon)",
+      "neutral": "neutral.600; hover → forest.700",
+      "text": "neutral.600; hover → forest.700",
+      "danger": "neutral.0 (white icon)",
+      "selected": "forest.700",
+      "disabled": "neutral.400"
+    },
+    "border": {
+      "neutral": "neutral.300; hover/press → forest.500",
+      "selected": "forest.700",
+      "primary": "transparent",
+      "text": "transparent",
+      "danger": "transparent"
+    },
+    "icon": ["20px (default) / 16px (small), inherits currentColor"],
+    "radius": "radius.none",
+    "spacing": ["spacing.none (no inner padding — icon centered in a square box)"],
+    "typography": [],
+    "focusRing": "2px forest.700 outline, offset 2px",
+    "shadow": ""
+  },
+
+  "usage": {
+    "useCases": [
+      "Compact actions in a toolbar where text labels would crowd the bar (neutral)",
+      "Inline row controls in a table — edit, copy, more (small, text or neutral)",
+      "Adornment inside an input — clear, reveal password, search trigger (small)",
+      "Persistent toggles like bold/italic or an active filter (isSelected, aria-pressed)",
+      "Destructive affordance such as a delete/remove icon (danger)",
+      "A single icon-only primary moment, e.g. an add/compose action (primary)"
+    ],
+    "frequency": "multiple-per-view",
+    "requiredProps": ["icon", "aria-label"],
+    "commonPatterns": [
+      {
+        "name": "Toolbar of icon buttons",
+        "description": "A row of neutral icon buttons for formatting or view controls; each carries its own aria-label.",
+        "jsx": "<div style={{display:'flex',gap:4}}><IconButton icon='bold' aria-label='Bold' /><IconButton icon='italic' aria-label='Italic' /><IconButton icon='link' aria-label='Insert link' /></div>"
+      },
+      {
+        "name": "Inline row action",
+        "description": "A small icon button inside a table row or input adornment — minimal weight until hover.",
+        "jsx": "<IconButton appearance='text' size='small' icon='more-horizontal' aria-label='More actions' />"
+      },
+      {
+        "name": "Active toggle",
+        "description": "isSelected renders the forest tint and exposes aria-pressed; pair with onClick to flip state.",
+        "jsx": "<IconButton icon='filter' isSelected aria-label='Filter' onClick={toggleFilter} />"
+      },
+      {
+        "name": "Destructive delete affordance",
+        "description": "A danger icon button for removing an item; gate irreversible deletes behind a confirmation.",
+        "jsx": "<IconButton appearance='danger' size='small' icon='trash' aria-label='Delete item' />"
+      },
+      {
+        "name": "Icon-only compose action",
+        "description": "A single primary icon button as the lone forest.500 moment, e.g. a floating add control.",
+        "jsx": "<IconButton appearance='primary' icon='plus' aria-label='New article' />"
+      }
+    ],
+    "antiPatterns": [
+      {
+        "scenario": "Rendering an IconButton without aria-label",
+        "reason": "There is no visible text, so screen-reader users hear nothing — the action is unannounced and unusable.",
+        "alternative": "Always pass a clear, action-oriented aria-label (e.g. 'Delete article')."
+      },
+      {
+        "scenario": "Using an IconButton where the action would be clearer with a label",
+        "reason": "An ambiguous glyph forces users to guess; an icon-only control should only be used when the meaning is obvious.",
+        "alternative": "Use a Button with a text label (optionally with iconBefore) when the icon alone is unclear."
+      },
+      {
+        "scenario": "Two primary icon buttons on the same view (or a primary IconButton competing with a Button primary)",
+        "reason": "Breaks the one forest.500 moment per view rule — they compete for the primary action.",
+        "alternative": "Keep one primary across the whole view; demote the rest to neutral or text."
+      },
+      {
+        "scenario": "Wrapping a bare clickable <Icon> in an onClick instead of using IconButton",
+        "reason": "A clickable Icon has no button semantics, no focus ring, no keyboard activation, and no accessible name.",
+        "alternative": "Use IconButton, which renders a real <button> with role, focus, keyboard support, and aria-label."
+      }
+    ]
+  },
+
+  "composition": {
+    "slots": {
+      "icon": "Required — the glyph to render, by IconName; sized to 20px (default) or 16px (small)"
+    },
+    "nestedComponents": ["Icon (20px default / 16px small, aria-hidden)"],
+    "commonPartners": ["IconButton (siblings in a toolbar)", "Button", "TextField (adornment)", "Table row", "Page Header", "Menu"],
+    "parentConstraints": ["Toolbar", "Table row", "Input adornment", "Page header", "Segmented control (isSelected)"]
+  },
+
+  "behavior": {
+    "states": ["default", "hover", "press", "focus", "selected", "disabled"],
+    "interactions": {
+      "hover": "primary → forest.700 fill; neutral/text → forest.100 tint + forest.500 border + forest.700 icon; danger → danger.800",
+      "press": "primary → forest.900; neutral/text → forest.200 tint; danger → danger.900",
+      "focus": "2px forest.700 outline, 2px offset",
+      "selected": "forest.50 fill + forest.700 border + forest.700 icon across all appearances; sets aria-pressed",
+      "disabled": "neutral.100 fill (transparent for text), neutral.400 icon, transparent border, cursor not-allowed"
+    },
+    "sizes": {
+      "default": "40×40px square, 20px icon, no inner padding",
+      "small": "32×32px square, 16px icon, no inner padding"
+    }
+  },
+
+  "accessibility": {
+    "role": "button",
+    "minTargetHeight": "32px (small) / 40px (default)",
+    "focusRing": "2px forest.700 outline, 2px offset",
+    "selectedState": "aria-pressed reflects the isSelected prop",
+    "keyboardSupport": "Enter and Space activate; Tab moves focus in/out",
+    "screenReader": "Announces the required aria-label; isSelected announces 'pressed' via aria-pressed. The inner Icon is aria-hidden so only the label is read.",
+    "wcag": "AA",
+    "contrastNote": "Danger fill uses danger.700 (white icon 5.81:1) rather than Figma's danger.500 (3.54:1, fails AA), matching Button."
+  },
+
+  "athenaConstraints": {
+    "forestMoment": true,
+    "borderRadius": "radius.none",
+    "textCase": "sentence-case",
+    "contentWidth": "726px"
+  },
+
+  "figmaDivergences": [
+    {
+      "property": "danger fill",
+      "figma": "colors.background.danger.default (danger.500, #FE3D2E)",
+      "implementation": "colors.background.danger.button (danger.700, #C42419)",
+      "reason": "Figma's danger.500 + white icon is 3.54:1, failing WCAG AA. danger.700 is 5.81:1. Same AA-first approach as Button."
+    }
+  ],
+
+  "aiHints": {
+    "priority": "high",
+    "keywords": ["icon button", "icon-only", "toolbar", "action", "toggle", "aria-label", "delete", "edit", "more", "adornment", "selected", "square"],
+    "context": "Reach for IconButton when an action is best represented by a single, unambiguous glyph and space is tight — toolbars, table rows, input adornments, and toggles. Always supply aria-label. Default to neutral; use text for the lowest weight, danger for destructive icons, isSelected (aria-pressed) for persistent toggles. Reserve primary for the single forest.500 moment on the view.",
+    "neverUseWhen": [
+      "You cannot give a clear aria-label — an unlabeled icon button is unusable",
+      "The icon's meaning is not obvious — use a Button with a text label instead",
+      "The surface already has a primary action — use neutral or text, never a second primary",
+      "You only need a static or clickable glyph — never wrap a bare <Icon>; use IconButton for real button semantics"
+    ]
+  }
+}

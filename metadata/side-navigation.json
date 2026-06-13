@@ -1,0 +1,198 @@
+{
+  "component": {
+    "name": "SideNavigation",
+    "category": "organism",
+    "type": "navigation",
+    "description": "The global app shell rail down the left edge of the layout: a Huffpost logo header with a collapse toggle, a scrollable list of collapsible sections of leaf nav items, and a pinned user footer. Driven declaratively by a `sections: NavSection[]` array; controlled via `activeItemId` + `onNavigate`. Exactly one per app layout.",
+    "figmaNode": "70:6093",
+    "variants": ["expanded", "collapsed"],
+    "modifiers": ["isCollapsed", "appTitle", "onAdd"],
+    "note": "White rail (neutral.0), 1px neutral.200 right border, sharp corners (radius.none). 280px expanded vs 56px (w-14) icon-only collapsed, with a width transition. Three regions: header (logo + appTitle + collapse toggle), scrollable sections, pinned user footer. Only leaf items carry the active state — forest.50 fill, forest.700 text, bold, 2px forest.700 right border + aria-current='page'; section headings are never active but inherit the active tint on their icon in collapsed mode when they contain the active leaf. Composes the Icon component for chevrons, section/leaf glyphs, add, and more-horizontal."
+  },
+
+  "tokens": {
+    "rail": {
+      "background": "color.neutral.0 (white)",
+      "border": "1px solid color.neutral.200 (right border only)",
+      "radius": "borderRadius.none (sharp — DS convention)",
+      "width": "280px expanded / 56px (w-14) collapsed, with a width transition 0.2s ease-in-out",
+      "layout": "flex column, full height; header and footer flex-shrink 0, sections flex-1 overflow-y auto",
+      "fontFamily": "font.main (Inter)"
+    },
+    "header": {
+      "height": "56px (h-14)",
+      "layout": "flex row, align-items center; gap spacing.base (8px) + px spacing.sm (12px) expanded / centered, no padding collapsed",
+      "logo": "24px Huffpost logo mark (forest.500 ground), aria-hidden",
+      "title": "Inter bold 14px / 20px, color.neutral.800; truncates; hidden when collapsed",
+      "toggle": "24px icon button (chevron-left expanded / chevron-right collapsed), color.neutral.500 → color.neutral.800 on hover, hover bg color.neutral.50"
+    },
+    "section": {
+      "heading": "full-width button, Inter semibold 14px / 20px, min-height 32px; gap spacing.base (8px), px spacing.md (16px), py spacing.base (8px) expanded / centered collapsed",
+      "text": "color.neutral.800 at rest; hover bg color.neutral.50",
+      "icon": "20px Icon, color.neutral.500 at rest; color.forest.700 when the section is active-tinted in collapsed mode",
+      "chevron": "16px chevron-down / chevron-up, color.neutral.500 (expanded only)",
+      "add": "16px 'add' glyph, color.neutral.500 → color.neutral.800 on hover, hover bg color.neutral.100 (expanded only, when onAdd is set)",
+      "collapsedActiveTint": "color.forest.50 fill, color.forest.700 text/icon, bold, 2px color.forest.700 right border — only when the collapsed section contains the active leaf"
+    },
+    "leaf": {
+      "layout": "full-width button in a role='list' <ul>, gap spacing.base (8px), pl spacing.7xl (48px) / pr spacing.md (16px), py spacing.base (8px), min-height 32px",
+      "text": "Inter 14px / 20px, color.neutral.800 semibold at rest; hover bg color.neutral.50",
+      "icon": "20px Icon, color.neutral.500 at rest; color.forest.700 when active",
+      "active": "color.forest.50 fill, color.forest.700 text + icon, bold, 2px color.forest.700 right border, aria-current='page'"
+    },
+    "footer": {
+      "border": "1px solid color.neutral.200 (top border)",
+      "layout": "flex row, align-items center; gap spacing.base (8px), px spacing.md (16px), py spacing.sm (12px) expanded / centered collapsed",
+      "avatar": "20px forest.500 circle (radius.pill), white initials 10px semibold (auto-derived from name when initials omitted)",
+      "name": "Inter semibold 14px / 20px, color.neutral.800; truncates",
+      "email": "Inter 12px / 16px, color.neutral.500; truncates",
+      "overflow": "24px 'more-horizontal' icon button, color.neutral.500 → color.neutral.800 on hover (expanded only, when onUserMenuOpen is set)"
+    },
+    "spacing": ["spacing.base (8px row gap / py)", "spacing.sm (12px header px / footer py)", "spacing.md (16px section px / leaf pr)", "spacing.7xl (48px leaf indent)"],
+    "transition": "width 0.2s ease-in-out (rail); background-color & color 0.12s (rows, disabled under prefers-reduced-motion)",
+    "focusRing": "2px color.forest.500 outline, inset (offset -2px so the ring stays within the row)"
+  },
+
+  "usage": {
+    "useCases": [
+      "The global left rail of an authenticated app layout — the navigation shell paired with the main content area",
+      "Switch between top-level destinations (Dashboard, Articles, Settings) via leaf items, with the current page tinted",
+      "Group destinations under collapsible sections so a large nav stays scannable",
+      "Collapse to a 56px icon-only rail to reclaim horizontal space on a content-heavy view",
+      "Expose a per-section add (+) affordance for 'new item in this group' (e.g. add a collection)",
+      "Show the signed-in user in a pinned footer with an overflow menu for account actions"
+    ],
+    "frequency": "once-per-page",
+    "requiredProps": ["sections", "activeItemId (to mark the current page)", "onNavigate (to respond to clicks)"],
+    "commonPatterns": [
+      {
+        "name": "App-shell rail with an active page",
+        "description": "The standard shell: two or three sections of leaf items, the current leaf marked via activeItemId, navigation handled by onNavigate.",
+        "jsx": "<SideNavigation activeItemId={page} onNavigate={setPage} sections={[{ id: 'main', label: 'Workspace', icon: 'home', items: [{ id: 'dashboard', label: 'Dashboard', icon: 'grid' }, { id: 'articles', label: 'Articles', icon: 'file-text' }] }, { id: 'admin', label: 'Admin', icon: 'settings', items: [{ id: 'members', label: 'Members' }, { id: 'billing', label: 'Billing' }] }]} />"
+      },
+      {
+        "name": "Controlled collapse / expand",
+        "description": "Drive the 56px icon-only rail from your own state; the toggle button flips its aria-label between 'Collapse sidebar' and 'Expand sidebar'.",
+        "jsx": "<SideNavigation isCollapsed={collapsed} onToggleCollapse={() => setCollapsed((c) => !c)} activeItemId={page} onNavigate={setPage} sections={sections} />"
+      },
+      {
+        "name": "Section with an add (+) affordance",
+        "description": "Pass onAdd on a section to render a trailing '+' on its heading row for creating a new item in that group (shown only when expanded).",
+        "jsx": "<SideNavigation activeItemId={page} onNavigate={setPage} sections={[{ id: 'collections', label: 'Collections', icon: 'folder', onAdd: createCollection, items: collections.map((c) => ({ id: c.id, label: c.name })) }]} />"
+      },
+      {
+        "name": "User footer with an overflow menu",
+        "description": "Pass user to pin a footer block; initials auto-derive from the name, and onUserMenuOpen fires from the '…' button to open an account menu.",
+        "jsx": "<SideNavigation activeItemId={page} onNavigate={setPage} user={{ name: 'Ada Lovelace', email: 'ada@huffpost.com' }} onUserMenuOpen={openAccountMenu} sections={sections} />"
+      }
+    ],
+    "antiPatterns": [
+      {
+        "scenario": "Marking a section heading as the active item",
+        "reason": "Section headings only expand/collapse their leaf list; activeItemId resolves to a leaf, and headings never take aria-current.",
+        "alternative": "Point activeItemId at a leaf item's id; in collapsed mode the containing section icon inherits the active tint automatically."
+      },
+      {
+        "scenario": "Using SideNavigation for in-page section switching",
+        "reason": "It is a global landmark rail for app destinations, not a control for tabbing between panels within a single page.",
+        "alternative": "Use Tabs for in-page section switching; reserve SideNavigation for the app shell."
+      },
+      {
+        "scenario": "Rendering more than one SideNavigation per layout",
+        "reason": "It is the single global nav landmark; a second rail produces competing landmarks and a confusing shell.",
+        "alternative": "Use one SideNavigation per layout; group additional destinations into more sections."
+      },
+      {
+        "scenario": "Putting page-level actions (Create, Save, Export) on the rail",
+        "reason": "Those are scoped to the current page, not global navigation, and crowd the nav with non-destination controls.",
+        "alternative": "Place page-level actions in PageHeader's actions slot; keep the rail for destinations and the per-section onAdd affordance."
+      }
+    ]
+  },
+
+  "composition": {
+    "slots": {
+      "header": "The Huffpost logo mark + appTitle text + the collapse/expand toggle button; the logo and toggle persist when collapsed, the title hides",
+      "sections": "The scrollable middle region — a list of collapsible NavSection groups, each a heading button over a role='list' of leaf item buttons",
+      "footer": "The pinned user block at the bottom — avatar initials + name + email + an overflow '…' button; rendered only when user is passed"
+    },
+    "nestedComponents": ["Icon (chevrons, section/leaf glyphs, add, more-horizontal)"],
+    "commonPartners": ["PageHeader (the top of the paired content area)", "Menu (the surface opened by the footer overflow button)"],
+    "parentConstraints": ["Sits as the left rail of the app layout shell, paired with the main content area to its right", "Full height of the layout; the content column (typically led by a PageHeader) fills the remaining width"]
+  },
+
+  "behavior": {
+    "states": ["expanded", "collapsed", "section-expanded", "section-collapsed", "leaf-active", "hover", "focus"],
+    "interactions": {
+      "navigate": "Clicking a leaf item fires onNavigate(itemId); the leaf whose id === activeItemId takes the forest active visual and aria-current='page'",
+      "toggleSection": "Clicking a section heading expands/collapses its leaf list (aria-expanded + aria-controls); defaultExpanded seeds the initial open state (defaults to open)",
+      "collapse": "isCollapsed switches to the 56px icon-only rail with a width transition; leaf lists are hidden and the toggle's aria-label flips to 'Expand sidebar'",
+      "collapsedActive": "In collapsed mode a section icon shows the active tint only if it contains the active leaf — the active state bubbles up from leaf to section",
+      "add": "A section with onAdd renders a trailing '+' on its heading row (expanded only) that fires onAdd without toggling the section",
+      "userMenu": "The footer '…' button fires onUserMenuOpen (typically opening a Menu); avatar initials auto-derive from the user's name when initials is omitted",
+      "hover": "Section headings and leaf items at rest tint to neutral.50 background on hover",
+      "focus": "2px forest.500 outline, inset (-2px offset) on every interactive control"
+    },
+    "controlled": "Navigation is fully controlled: pass activeItemId and update it in onNavigate. Collapse is controlled via isCollapsed + onToggleCollapse. Section open/closed state is held internally (seeded by defaultExpanded); the component owns no navigation or collapse state of its own.",
+    "responsive": {
+      "expanded": "280px fixed width",
+      "collapsed": "56px (w-14) icon-only — leaf lists hidden, title and footer text hidden, controls centered",
+      "scroll": "the sections region is the only scroll area (flex-1, overflow-y auto); header and footer stay pinned"
+    }
+  },
+
+  "accessibility": {
+    "role": "navigation — a <nav> landmark named by aria-label (the appTitle); leaf list is a role='list' of buttons",
+    "ariaCurrent": "the active leaf carries aria-current='page'; section headings never do",
+    "ariaExpanded": "section heading buttons expose aria-expanded and aria-controls pointing at their leaf list id (omitted in collapsed mode, where leaf lists are hidden)",
+    "toggleLabel": "the collapse/expand button's aria-label flips between 'Collapse sidebar' (expanded) and 'Expand sidebar' (collapsed); the add affordance is labelled 'Add to {section}' and the footer overflow is labelled 'User menu'",
+    "focusManagement": "natural tab order through header toggle, then each section heading and its visible leaves, then the footer controls; no roving tabindex — every control is tabbable",
+    "keyboardSupport": "Tab / Shift+Tab move through the controls; Enter/Space toggle a section heading or activate a leaf item, toggle collapse, or open the user menu",
+    "screenReader": "Announced as a navigation landmark named by the appTitle; section headings announce their expanded/collapsed state, and the active leaf announces as the current page",
+    "focusRing": "2px forest.500, inset (-2px offset)",
+    "wcag": "AA",
+    "contrastNote": "neutral.800 labels on white, forest.700 active text on the forest.50 tint, and the white avatar initials on forest.500 all meet AA."
+  },
+
+  "athenaConstraints": {
+    "railBackground": "color.neutral.0 (white sidebar)",
+    "borderRadius": "radius.none (sharp corners, no rounded rows)",
+    "activeTint": "color.forest.50 fill + color.forest.700 text/icon + 2px forest.700 right border (single brand accent)",
+    "textCase": "sentence-case section and item labels",
+    "singlePerLayout": "exactly one SideNavigation per app layout",
+    "api": "declarative sections array, mirroring the Menu / Tabs array-driven convention"
+  },
+
+  "figmaDivergences": [
+    {
+      "property": "section open/closed state",
+      "figma": "static expanded and collapsed-section variants",
+      "implementation": "internal useState seeded by defaultExpanded, toggled on heading click",
+      "reason": "Sections must open and close at runtime, so open state is managed in the component rather than fixed per variant."
+    },
+    {
+      "property": "collapse toggle aria-label",
+      "figma": "no equivalent property",
+      "implementation": "the toggle button's aria-label flips between 'Collapse sidebar' and 'Expand sidebar'",
+      "reason": "Accessibility addition so the icon-only toggle has a meaningful name in both states."
+    },
+    {
+      "property": "avatar initials",
+      "figma": "explicit initials in the footer block",
+      "implementation": "initials auto-derive from the user's name when the initials prop is omitted",
+      "reason": "Convenience so callers can pass only name + email and still get an avatar."
+    }
+  ],
+
+  "aiHints": {
+    "priority": "high",
+    "keywords": ["side navigation", "side nav", "sidebar", "app shell", "navigation rail", "left nav", "global nav", "nav sections", "collapsible nav", "navigation landmark", "app layout", "leaf items"],
+    "context": "Reach for SideNavigation as the single global left rail of an authenticated app layout, paired with the main content area (whose top is usually a PageHeader). Drive it with a declarative sections array of collapsible groups of leaf items, control the current page with activeItemId + onNavigate, and optionally collapse it to a 56px icon rail via isCollapsed + onToggleCollapse. Only leaf items are active; add a per-section '+' via onAdd and a pinned account block via user + onUserMenuOpen.",
+    "neverUseWhen": [
+      "You need in-page section switching — use Tabs, not the global rail",
+      "You want to mark a section heading as the current page — only leaf items take aria-current",
+      "A layout already has a SideNavigation — use one per layout, not two",
+      "You need page-level actions (Create, Save, Export) — put those in PageHeader, not the nav"
+    ]
+  }
+}

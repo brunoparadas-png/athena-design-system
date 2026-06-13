@@ -1,0 +1,135 @@
+{
+  "component": {
+    "name": "Icon",
+    "category": "atom",
+    "type": "display",
+    "description": "Renders a single glyph from the Athena icon set as an inline SVG; the smallest visual unit, used to reinforce labels, signal status, or stand in for an action.",
+    "figmaNode": "391:3458",
+    "variants": ["chevron-down", "chevron-up", "chevron-left", "chevron-right", "arrow-right", "arrow-left", "arrow-up", "arrow-down", "close", "check", "add", "remove", "search", "trash", "edit", "external-link", "info", "warning", "check-circle", "file", "image", "cloud-upload", "bell", "book", "settings", "more-horizontal", "diamond"],
+    "sizes": ["16px (in buttons / dense controls)", "20px (default)", "24px (standalone emphasis)"],
+    "note": "Inline SVG drawn with currentColor — no color prop. size is the px square (default 20; buttons pass 16). 2px stroke, round caps/joins; filled where the source is solid. Normalized to a 24×24 viewBox; bell, book, image, file and settings keep their native 20×20 grid. Synced to the Figma 'Icons' page."
+  },
+
+  "tokens": {
+    "background": [],
+    "text": ["currentColor — the glyph inherits the parent's text color; choose it via the surrounding token, e.g. neutral.600 (body), neutral.400 (muted), forest.500 (brand accent), danger.700 (destructive), neutral.0 (on dark)"],
+    "border": [],
+    "icon": ["size in px (not a radius/spacing token); 16 = iconSize.xs, 20 = iconSize.sm, 24 = iconSize.md"],
+    "radius": "n/a (the SVG is not clipped or rounded)",
+    "spacing": [],
+    "typography": [],
+    "focusRing": "none — Icon is not focusable (focusable=\"false\"); the focus ring lives on the interactive parent (Button, IconButton, Link)",
+    "shadow": ""
+  },
+
+  "usage": {
+    "useCases": [
+      "Reinforce a button or link label (decorative, paired with text)",
+      "Trailing chevron on a menu/expand trigger",
+      "Status glyph in a banner or inline message (info, warning, check-circle)",
+      "Leading affordance in a list, menu item, or nav row",
+      "Standalone meaningful icon where no text is present (then set title)"
+    ],
+    "frequency": "multiple-per-view",
+    "requiredProps": ["name"],
+    "commonPatterns": [
+      {
+        "name": "Decorative icon beside a label",
+        "description": "Paired with visible text, so no title — the icon is aria-hidden and the text carries the meaning.",
+        "jsx": "<span style={{display:'inline-flex',gap:6,alignItems:'center'}}><Icon name='search' size={16} /> Search</span>"
+      },
+      {
+        "name": "Standalone meaningful icon",
+        "description": "No adjacent text, so title is required — exposes role='img' and an aria-label to screen readers.",
+        "jsx": "<Icon name='warning' title='Warning' />"
+      },
+      {
+        "name": "Color via context",
+        "description": "Set color on a wrapper; the glyph inherits currentColor — there is no color prop.",
+        "jsx": "<span style={{color:'var(--color-forest-500)'}}><Icon name='check-circle' /></span>"
+      },
+      {
+        "name": "Trailing chevron on a trigger",
+        "description": "Decorative chevron signalling an expandable menu; the trigger text labels the control.",
+        "jsx": "<button>Filter <Icon name='chevron-down' size={16} /></button>"
+      }
+    ],
+    "antiPatterns": [
+      {
+        "scenario": "Giving a title to an icon that already sits beside text",
+        "reason": "The icon and the visible label both get announced — screen readers read the meaning twice.",
+        "alternative": "Omit title so the icon stays aria-hidden; let the adjacent text carry the meaning."
+      },
+      {
+        "scenario": "Wrapping a bare Icon in an onClick to make a clickable control",
+        "reason": "An SVG is not focusable and has no button semantics or required label, so the control is unreachable by keyboard and screen readers.",
+        "alternative": "Use IconButton, which provides button role, keyboard activation, a focus ring and a required aria-label."
+      },
+      {
+        "scenario": "Setting a hard-coded fill that fights the surface",
+        "reason": "Icon is built to inherit currentColor so it adapts to any context.",
+        "alternative": "Set color on a wrapping element via a text-color token instead."
+      },
+      {
+        "scenario": "Encoding meaning by icon alone (e.g. a lone red 'warning')",
+        "reason": "An unlabelled glyph is ambiguous and not perceivable by all users.",
+        "alternative": "Pair it with text, or set a clear title describing the meaning."
+      }
+    ]
+  },
+
+  "composition": {
+    "slots": {},
+    "nestedComponents": [],
+    "commonPartners": ["Button (16px)", "IconButton", "Link", "Tag (close, 12px)", "Banner", "Menu", "Breadcrumbs"],
+    "parentConstraints": ["Button / IconButton", "Link", "Banner / inline message", "Menu item", "Table row", "Nav row"]
+  },
+
+  "behavior": {
+    "states": ["static"],
+    "interactions": {
+      "static": "Non-interactive — a presentational glyph; never receives focus or hover state of its own",
+      "color": "Tracks the parent's currentColor, so it follows hover/active/disabled color changes on the interactive ancestor"
+    }
+  },
+
+  "accessibility": {
+    "role": "img when title is set; otherwise none (decorative)",
+    "minTargetHeight": "n/a — not an interactive target (the parent control owns the hit area)",
+    "focusRing": "none — focusable=\"false\"; the parent control carries the 2px forest.700 ring",
+    "keyboardSupport": "Not focusable / not interactive",
+    "screenReader": "title set → role='img' + aria-label (a standalone, meaningful icon). title omitted → aria-hidden='true' + focusable='false' (decorative — correct when paired with a visible text label, as in a Button).",
+    "wcag": "AA",
+    "contrastNote": "Inherits currentColor; when the icon is meaningful (title set), ensure the inherited color meets ≥3:1 against its background as a non-text graphical indicator."
+  },
+
+  "athenaConstraints": {
+    "forestMoment": false,
+    "borderRadius": "radius.none",
+    "textCase": "sentence-case",
+    "contentWidth": "726px",
+    "colorInheritance": "currentColor — no color prop; set via the parent's text-color token",
+    "note": "Icon is non-interactive, so it does not itself consume the single forest.500 primary moment; the forest accent belongs to the interactive parent (e.g. a primary Button)."
+  },
+
+  "figmaDivergences": [
+    {
+      "property": "viewBox grid",
+      "figma": "all icons drawn on a 24×24 frame",
+      "implementation": "24×24 by default, but bell, book, image, file and settings keep their native 20×20 viewBox",
+      "reason": "Those five were exported straight from the Figma icon library; preserving the native grid keeps the vector geometry pixel-exact to the source."
+    }
+  ],
+
+  "aiHints": {
+    "priority": "medium",
+    "keywords": ["icon", "glyph", "svg", "symbol", "chevron", "arrow", "check", "close", "search", "warning", "info", "trash", "decorative"],
+    "context": "Reach for Icon to add a small glyph from the Athena set — beside a label, as a status indicator, or as a standalone meaningful symbol. Pass name (required) and size (16 inside buttons, 20 default). It inherits currentColor, so set color on the parent rather than the icon. Omit title when text already labels the context; set title only for a standalone meaningful icon. For a clickable icon-only control use IconButton, not a bare Icon.",
+    "neverUseWhen": [
+      "The icon is the only affordance of a clickable control — use IconButton, which adds button semantics, keyboard support and a required aria-label",
+      "You need a colored container, fill or border — Icon only inherits currentColor",
+      "The glyph would carry meaning with no text and no title — add a title or a visible label",
+      "An animated loading indicator is wanted — use Spinner"
+    ]
+  }
+}
