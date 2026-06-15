@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { ComponentProps } from 'react';
 import { expect } from 'storybook/test';
 import {
   Table,
@@ -9,7 +10,10 @@ import {
   TableCell,
 } from './Table';
 import { Tag } from '../Tag';
-import { IconButton } from '../IconButton';
+import { Icon, type IconName } from '../Icon';
+
+/** Real Table props plus story-only knobs for generating the demo grid. */
+type TableStoryArgs = ComponentProps<typeof Table> & { columns: number; rows: number };
 
 const meta = {
   title: 'Components/Table',
@@ -20,87 +24,83 @@ const meta = {
     docs: {
       description: {
         component:
-          'A data table built from native <table> semantics. Compose it from TableHead / TableBody / TableRow with TableHeaderCell (the neutral-weak column header) and TableCell. Cells come in three appearances — `text` (label, optional leading media and a mono subheading), `tag` (a status Tag), and `action` (trailing icon controls). Sharp corners; 40px row height; semantic neutral tokens throughout.',
+          'A data table built from native <table> semantics. Compose it from TableHead / TableBody / TableRow with TableHeaderCell (the neutral-weak column header) and TableCell. There are exactly three cell appearances — `text` (a label, with an optional leading media node and a mono subheading), `tag` (a status Tag), and `action` (trailing icon controls). The number of columns is whatever you render — drive it from your data. Sharp corners; 40px row height; semantic neutral tokens throughout.',
       },
     },
   },
   argTypes: {
+    columns: {
+      control: { type: 'number', min: 1, max: 8 },
+      description: 'Story-only: how many text columns to render before the Status and Actions columns.',
+    },
+    rows: { control: { type: 'number', min: 1, max: 12 } },
     isRowHoverable: { control: 'boolean' },
   },
-  args: { isRowHoverable: false, children: null },
-} satisfies Meta<typeof Table>;
+  args: { columns: 3, rows: 4, isRowHoverable: false, children: null },
+} satisfies Meta<TableStoryArgs>;
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<TableStoryArgs>;
 
-/** Mirrors the Figma "❖ Table" ready-made: four text columns + a trailing actions column. */
-export const Default: Story = {
-  render: (args) => (
-    <Table {...args}>
-      <TableHead>
-        <TableRow>
-          <TableHeaderCell>Title</TableHeaderCell>
-          <TableHeaderCell>Title</TableHeaderCell>
-          <TableHeaderCell>Title</TableHeaderCell>
-          <TableHeaderCell>Title</TableHeaderCell>
-          <TableHeaderCell align="end" width="96px">
-            Actions
-          </TableHeaderCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {Array.from({ length: 5 }).map((_, i) => (
-          <TableRow key={i}>
-            <TableCell>Cell label</TableCell>
-            <TableCell>Cell label</TableCell>
-            <TableCell>Cell label</TableCell>
-            <TableCell>Cell label</TableCell>
-            <TableCell appearance="action">
-              <IconButton icon="edit" appearance="text" size="small" aria-label="Edit row" />
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  ),
-};
+/** A 24px clickable icon for the `action` cell (Figma action cells host bare icons). */
+function ActionIcon({ icon, label }: { icon: IconName; label: string }) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      className="inline-flex cursor-pointer appearance-none items-center justify-center border-0 bg-transparent p-0 text-[var(--text-neutral-default)] hover:text-[var(--text-primary-strong)]"
+    >
+      <Icon name={icon} size={24} />
+    </button>
+  );
+}
 
-/** A richer table: leading media + mono subheading, a status Tag, and two trailing actions. */
-export const RichCells: Story = {
-  args: { isRowHoverable: true },
-  render: (args) => (
-    <Table {...args}>
-      <TableHead>
-        <TableRow>
-          <TableHeaderCell width="320px">Article</TableHeaderCell>
-          <TableHeaderCell>Author</TableHeaderCell>
-          <TableHeaderCell>Status</TableHeaderCell>
-          <TableHeaderCell align="end" width="112px">
-            Actions
-          </TableHeaderCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {[
-          { title: 'The Future of Local News', slug: '/the-future-of-local-news', author: 'Jane Doe', status: 'Published', tone: 'green' as const },
-          { title: 'Election Coverage 2026', slug: '/election-coverage-2026', author: 'Sam Rivera', status: 'Draft', tone: 'gray' as const },
-          { title: 'Op-Ed: Climate Policy', slug: '/op-ed-climate-policy', author: 'A. Patel', status: 'In review', tone: 'orange' as const },
-        ].map((row) => (
-          <TableRow key={row.slug}>
-            <TableCell subheading={row.slug}>{row.title}</TableCell>
-            <TableCell>{row.author}</TableCell>
-            <TableCell appearance="tag">
-              <Tag appearance={row.tone}>{row.status}</Tag>
-            </TableCell>
-            <TableCell appearance="action">
-              <IconButton icon="edit" appearance="text" size="small" aria-label={`Edit ${row.title}`} />
-              <IconButton icon="trash" appearance="text" size="small" aria-label={`Delete ${row.title}`} />
-            </TableCell>
+/**
+ * The configurable table. Use the `columns` control to add or remove text
+ * columns; the trailing Status (tag) and Actions columns demonstrate the other
+ * two cell appearances.
+ */
+export const Playground: Story = {
+  render: ({ columns, rows, ...args }) => {
+    const statuses = [
+      { label: 'Published', tone: 'green' as const },
+      { label: 'Draft', tone: 'gray' as const },
+      { label: 'In review', tone: 'orange' as const },
+    ];
+    return (
+      <Table {...args}>
+        <TableHead>
+          <TableRow>
+            {Array.from({ length: columns }).map((_, c) => (
+              <TableHeaderCell key={c}>Title</TableHeaderCell>
+            ))}
+            <TableHeaderCell>Status</TableHeaderCell>
+            <TableHeaderCell align="end" width="112px">
+              Actions
+            </TableHeaderCell>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  ),
+        </TableHead>
+        <TableBody>
+          {Array.from({ length: rows }).map((_, r) => (
+            <TableRow key={r}>
+              {Array.from({ length: columns }).map((_, c) => (
+                <TableCell key={c}>Cell label</TableCell>
+              ))}
+              <TableCell appearance="tag">
+                <Tag appearance={statuses[r % statuses.length].tone}>
+                  {statuses[r % statuses.length].label}
+                </Tag>
+              </TableCell>
+              <TableCell appearance="action">
+                <ActionIcon icon="edit" label={`Edit row ${r + 1}`} />
+                <ActionIcon icon="trash" label={`Delete row ${r + 1}`} />
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    );
+  },
 };
 
 /** Verifies the structural tokens: header fill, cell border, text color, and row height. */
