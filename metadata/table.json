@@ -1,0 +1,154 @@
+{
+  "component": {
+    "name": "Table",
+    "category": "organism",
+    "type": "container",
+    "description": "A data table built from native <table> semantics. Composed from TableHead / TableBody / TableRow with TableHeaderCell (the filled column header) and TableCell. Cells come in three appearances: 'text' (a label with optional leading media and a monospaced subheading), 'tag' (a status Tag), and 'action' (trailing icon controls, right-aligned). Sharp corners; 40px row height; neutral-weak header fill with 1px row separators.",
+    "figmaNode": "409:3926",
+    "variants": ["text", "tag", "action"],
+    "modifiers": ["isRowHoverable", "align", "width", "media", "subheading"],
+    "note": "Compositional native-table API (not data-driven), so callers keep full control over columns, spans, and accessibility. Built from the Figma 'Table' page parts: <Header> (TableHeaderCell) and <Cell> (TableCell, appearance text|tag|action). Consumes semantic tokens only (--bg-neutral-weak, --border-neutral-default, --text-neutral-default)."
+  },
+
+  "tokens": {
+    "root": {
+      "element": "<table> with border-collapse, full width",
+      "fontFamily": "--font-main (Inter)",
+      "rowHover": "off by default; isRowHoverable tints body rows with --bg-neutral-weak"
+    },
+    "headerCell": {
+      "element": "<th scope=\"col\">",
+      "fill": "colors.background.neutral.weak (--bg-neutral-weak, neutral.50 #f5f5f5)",
+      "minHeight": "40px",
+      "padding": "24px horizontal (spacing.xl) / 4px vertical (spacing.2xs)",
+      "typography": "Inter bold 12/16 (font-size.2xs / line-height.xxs)",
+      "color": "colors.text.neutral.default (--text-neutral-default, neutral.600 #525252)",
+      "align": "start (default) or end"
+    },
+    "cell": {
+      "element": "<td>",
+      "minHeight": "40px",
+      "border": "1px bottom border, colors.border.neutral.default (--border-neutral-default)",
+      "padding": "24px horizontal (spacing.xl) / 8px vertical (spacing.base)",
+      "typography": "Inter regular 14/20 (font-size.xs / line-height.xs)",
+      "color": "colors.text.neutral.default (--text-neutral-default, neutral.600)",
+      "subheading": "optional second line in IBM Plex Mono 12/16 (--font-code), same color",
+      "media": "optional leading node (e.g. thumbnail), 12px gap before the label"
+    },
+    "actionCell": {
+      "layout": "trailing icon controls, right-aligned, 8px gap (spacing.100)",
+      "content": "consumer-supplied IconButton(s) — typically appearance='text' size='small'"
+    }
+  },
+
+  "usage": {
+    "useCases": [
+      "List records with sortable / scannable columns (articles, authors, pages, staffers)",
+      "Show a status column as a colored Tag alongside text columns",
+      "Give each row trailing edit / delete icon controls",
+      "Pair a primary label with a secondary mono subheading (slug, id, path)"
+    ],
+    "frequency": "common",
+    "requiredProps": ["children"],
+    "commonPatterns": [
+      {
+        "name": "Basic table",
+        "description": "Header row of TableHeaderCell, then body rows of TableCell.",
+        "jsx": "<Table><TableHead><TableRow><TableHeaderCell>Title</TableHeaderCell></TableRow></TableHead><TableBody><TableRow><TableCell>Cell label</TableCell></TableRow></TableBody></Table>"
+      },
+      {
+        "name": "Status tag column",
+        "description": "Render a Tag inside a tag-appearance cell.",
+        "jsx": "<TableCell appearance='tag'><Tag appearance='green'>Published</Tag></TableCell>"
+      },
+      {
+        "name": "Trailing actions",
+        "description": "Right-aligned icon controls in an action-appearance cell.",
+        "jsx": "<TableCell appearance='action'><IconButton icon='edit' appearance='text' size='small' aria-label='Edit' /></TableCell>"
+      },
+      {
+        "name": "Label with subheading",
+        "description": "Primary label plus a monospaced secondary line.",
+        "jsx": "<TableCell subheading='/my-article-slug'>My Article</TableCell>"
+      },
+      {
+        "name": "Hoverable rows",
+        "description": "Tint rows on hover when they are clickable / selectable.",
+        "jsx": "<Table isRowHoverable>…</Table>"
+      }
+    ],
+    "antiPatterns": [
+      {
+        "scenario": "Using a table purely for visual layout of non-tabular content",
+        "reason": "Tables imply a row/column data relationship to assistive tech.",
+        "alternative": "Use CSS grid/flex layout for page structure; reserve Table for tabular data."
+      },
+      {
+        "scenario": "Putting a single key/value pair in a table",
+        "reason": "The header/row overhead adds no value for one datum.",
+        "alternative": "Render the value inline or in a definition list."
+      },
+      {
+        "scenario": "Cramming multiple unrelated controls into one action cell",
+        "reason": "Crowded trailing icons are hard to target and read.",
+        "alternative": "Keep to 1–2 primary actions; move the rest into a DropdownMenu (more-horizontal)."
+      }
+    ]
+  },
+
+  "composition": {
+    "slots": {
+      "children": "TableHead and TableBody (each containing TableRow → TableHeaderCell / TableCell)",
+      "media": "Optional leading node in a text cell",
+      "subheading": "Optional mono second line in a text cell"
+    },
+    "nestedComponents": ["Tag", "IconButton", "Icon"],
+    "commonPartners": ["Tag", "IconButton", "DropdownMenu", "PageHeader", "Checkbox"],
+    "parentConstraints": ["Renders full-width within its container"]
+  },
+
+  "behavior": {
+    "states": ["default", "row-hover (opt-in)"],
+    "interactions": {
+      "rowHover": "When isRowHoverable, body rows tint to --bg-neutral-weak on hover",
+      "actions": "Action cells host interactive IconButtons with their own hover/focus states"
+    },
+    "controlled": "Stateless. Sorting, selection, and pagination are owned by the consumer."
+  },
+
+  "accessibility": {
+    "role": "Native table semantics: table → rowgroup (thead/tbody) → row → columnheader / cell",
+    "columnHeaders": "TableHeaderCell renders <th scope=\"col\"> so each column is announced",
+    "actionLabels": "Action IconButtons require an aria-label (no visible text)",
+    "keyboardSupport": "Native: interactive controls inside cells are in the tab order",
+    "wcag": "AA",
+    "contrastNote": "neutral.600 text on white and on the neutral.50 header fill meets AA at these sizes."
+  },
+
+  "athenaConstraints": {
+    "borderRadius": "radius.none (sharp corners)",
+    "headerFill": "colors.background.neutral.weak (neutral.50)",
+    "rowSeparator": "1px colors.border.neutral.default bottom border per cell",
+    "rowHeight": "40px min-height for header and body cells",
+    "semanticTokensOnly": "Header fill, border, and text use semantic tokens (--bg-neutral-weak, --border-neutral-default, --text-neutral-default), never raw primitives"
+  },
+
+  "figmaDivergences": [
+    {
+      "what": "Row hover",
+      "detail": "The Figma Cell has no hover state; isRowHoverable is a code-only affordance for interactive rows, off by default."
+    }
+  ],
+
+  "aiHints": {
+    "priority": "high",
+    "keywords": ["table", "data table", "grid", "rows", "columns", "list", "tabular", "cell", "header", "status column", "actions column"],
+    "context": "Reach for Table to present tabular data with column headers and rows. Compose TableHead + TableBody from TableRow, using TableHeaderCell for the header and TableCell for data. Use appearance='tag' for a status column, appearance='action' for trailing edit/delete IconButtons, and a subheading for a secondary mono line. Set isRowHoverable for clickable rows.",
+    "neverUseWhen": [
+      "Laying out non-tabular page content — use grid/flex",
+      "Showing a single key/value — render inline",
+      "Presenting a list of navigation destinations — use SideNavigation",
+      "Offering a menu of actions detached from rows — use Menu or DropdownMenu"
+    ]
+  }
+}
