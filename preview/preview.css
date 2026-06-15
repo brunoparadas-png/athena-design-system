@@ -1,0 +1,3 @@
+@import '../src/styles/tailwind.css';
+@source '../src/**/*.{ts,tsx}';
+@source '../../mono/huffpost_cms_ui/client/athena/**/*.{ts,tsx}';

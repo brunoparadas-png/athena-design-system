@@ -5,6 +5,8 @@ const athenaTheme = create({
 
   // Branding
   brandTitle: 'Athena Design System',
+  brandImage: '/athena-brand.svg',
+  brandTarget: '_self',
 
   // Colors
   colorPrimary: '#2e7061',   // forest.500

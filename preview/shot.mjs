@@ -1,0 +1,15 @@
+import { chromium } from 'playwright'
+const browser = await chromium.launch()
+const page = await browser.newPage({ viewport: { width: 1440, height: 1024 }, deviceScaleFactor: 2 })
+const errors = [], failed = []
+page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()) })
+page.on('pageerror', (e) => errors.push('PAGEERROR: ' + e.message))
+page.on('response', (r) => { if (r.status() >= 400) failed.push(r.status() + ' ' + r.url()) })
+await page.goto('http://localhost:5180/', { waitUntil: 'networkidle', timeout: 30000 })
+await page.waitForTimeout(1500)
+await page.screenshot({ path: '/Users/brunopontes/coding/athena-design-system/preview/shot.png' })
+const rootLen = await page.evaluate(() => document.getElementById('root')?.innerHTML.length || 0)
+console.log('ERRORS:', JSON.stringify(errors))
+console.log('FAILED:', JSON.stringify(failed))
+console.log('ROOT_LEN:', rootLen)
+await browser.close()

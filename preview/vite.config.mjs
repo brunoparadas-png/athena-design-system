@@ -15,6 +15,10 @@ export default defineConfig({
       'athena-ds': path.resolve(dir, '../src'),
       '@cms': path.resolve(dir, '../../mono/huffpost_cms_ui/client/athena'),
     },
+    // The @cms pages live outside this project, so Node resolution from them
+    // never reaches the DS's node_modules. Force these shared deps to resolve
+    // from the DS root (also guarantees a single React copy).
+    dedupe: ['react', 'react-dom', 'react-router-dom'],
   },
   server: {
     port: 5180,

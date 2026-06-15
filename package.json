@@ -9,11 +9,15 @@
     "build-storybook": "storybook build",
     "chromatic": "chromatic",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "figma:parse": "figma connect parse",
+    "figma:publish": "figma connect publish",
+    "figma:unpublish": "figma connect unpublish"
   },
   "dependencies": {
     "react": "^19.2.6",
-    "react-dom": "^19.2.6"
+    "react-dom": "^19.2.6",
+    "react-router-dom": "^7.17.0"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^5.2.1",

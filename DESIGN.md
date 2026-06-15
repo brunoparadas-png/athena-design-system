@@ -487,7 +487,7 @@ The shape language is **sharp**. Buttons, input fields, text areas, and section 
 **Key Characteristics:**
 - Single accent: `{colors.forest.500}` (#2e7061) on all interactive active states, primary buttons, toggles, checkboxes, and the "H" brand mark. Used sparingly — most surfaces are neutral with one forest moment per view.
 - Active nav state uses `{colors.forest.25}` (#f4faf9) as a tint background with a `{colors.forest.700}` (#1d443b) left border — the only surface-level color departure in the sidebar.
-- Two-column shell: a collapsible sidebar for global navigation with grouped, expandable sections, and a centered body column with a persistent page header carrying breadcrumb context and a primary action button.
+- Two-column shell: a collapsible sidebar for global navigation with grouped, expandable sections, and a fluid body laid out on a 12-column grid, with a persistent page header carrying breadcrumb context and a primary action button.
 - Inter at 14px body with 8px base spacing (`{spacing.base}`) — dense enough for list-heavy editorial workflows without feeling cramped.
 - Status tags use small pill-shaped badges to categorize content type (e.g. "Push Alert", "Site Banner") — the primary scanning aid on list views.
 - Danger feedback (`{colors.danger.600}` — #e52f22) appears inline at the field level; no full-page error states.
@@ -535,7 +535,7 @@ The system runs **Inter** for everything — display, body, navigation, captions
 2. Never skip heading levels for visual effect. `heading-xs` → `heading-sm` → `heading-md` → `heading-l` follow a logical document structure.
 3. `heading-xl` and `heading-xxl` are for empty states and feature introductions only — not regular page content.
 4. Body text defaults to `{typography.fontWeight.regular}`. Use `semibold` only for emphasis within body copy (e.g. an inline label or a row action), never for full paragraphs.
-5. Line length for body copy should stay between 60–80 characters. The 726px body column with `body-m` at 14px naturally falls in this range — don't override it.
+5. Line length for body copy should stay between 60–80 characters. The **Fixed Narrow (864px)** grid with `body-m` at 14px naturally falls in this range — use it for form and reading pages.
 
 ## Components
 
@@ -587,15 +587,32 @@ Two states: **expanded** (280px) and **collapsed** (56px).
 
 Task-dense editorial tool. Every gap is purposeful — list rows are compact, form columns are narrow, nothing decorates.
 
+### Grid
+All page content lays out on a **12-column grid**, lifted directly from the Figma grid styles (`🌮 Grid/*`). Three values are shared by every grid type:
+
+| Property | Value | Token |
+|---|---|---|
+| Columns | **12** | — |
+| Gutter (between columns) | **16px** | `{spacing.md}` |
+| Margin (both outer edges) | **32px** | `{spacing.3xl}` |
+
+Columns are equal-width; the 16px gutter sits between every pair, and a 32px margin runs down both outer edges of the body (the area right of the sidebar). Three grid **types** share these values and differ only in how the column track is bounded:
+
+- **Fluid** — columns stretch to fill the body edge-to-edge, holding the 32px margins. **Default for the Athena tool pages** (lists, tables, dashboards). On the 1440px reference artboard (no sidebar) this yields 100px columns: `(1440 − 32×2 margin − 16×11 gutter) ÷ 12`.
+- **Fixed Wide** — column track capped at **1296px** max-width, centered; margins grow past the cap on wider viewports. For mixed-content pages that shouldn't sprawl on ultra-wide screens.
+- **Fixed Narrow** — column track capped at **864px** max-width, centered. For forms and long-form reading, where a narrow measure keeps body copy at 60–80 characters.
+
+Pick **one grid type per page** and lay every region — header, filters, list, form fields — on the same columns. Never hardcode a content width outside these three types.
+
 ### Shell
-- **Two-column**: 280px fixed sidebar + 1160px body. Content centers at **726px wide** inside the body, with equal 217px margins on each side.
-- **Viewport**: designed at 1440px. The 726px column lands at 60–80 chars of body-m at 14px — no override needed.
+- **Two-column**: 280px fixed sidebar + fluid body. Body content lays out on the 12-column grid above — there is no fixed centered content column.
+- **Viewport**: designed at 1440px. Lists and tables use the **Fluid** grid; forms and long-form reading use **Fixed Narrow (864px)** to hold body copy at 60–80 chars of body-m at 14px.
 - **Page background**: `{colors.neutral.50}` (#f5f5f5) behind both columns; sidebar and content panels sit on `{colors.neutral.0}` white.
 
 ### Page header
 - Fixed at the top of the body column, **64px tall**.
 - Top row: breadcrumb trail in `body-s`, `{colors.text.neutral.weak}` — hierarchy signal, zero visual weight.
-- Bottom row: page title in `heading-l` (24px bold) + primary action button(s) pinned to the right edge of the 726px column.
+- Bottom row: page title in `heading-l` (24px bold) + primary action button(s) pinned to the right edge of the content grid.
 - Gap from header bottom to first content block: `{spacing.md}` 16px.
 
 ### List pages
@@ -606,14 +623,14 @@ Task-dense editorial tool. Every gap is purposeful — list rows are compact, fo
 - **Toggle / action controls**: pinned to the right edge of the row.
 
 ### Form pages
-- **Field stack**: single column at 726px, fields gap at `{spacing.md}` 16px vertically.
-- **Two-column grid**: paired fields (e.g. Twitter + Facebook) split the 726px width into two equal columns with a `{spacing.md}` 16px gutter between them.
+- **Grid**: forms use the **Fixed Narrow (864px)** grid. The field stack is a single column; fields gap at `{spacing.md}` 16px vertically.
+- **Paired fields** (e.g. Twitter + Facebook) split the column track into two equal halves with the `{spacing.md}` 16px grid gutter between them.
 - **Section heading → first field**: `{spacing.base}` 8px gap.
 - **Between sections**: `{spacing.3xl}` 32px top padding on the incoming section heading; a 1px `{colors.border.neutral.default}` divider line precedes each new section.
 - **Labels live inside the field component** — never place a freestanding label above a field as a separate layout element.
 
 ### Rules
-1. **726px is the content width hardcap.** Form fields, list tables, and content panels never stretch to fill the full body.
+1. **Lay out on the 12-column grid.** Pick one grid type per page (Fluid / Fixed Wide / Fixed Narrow) and place every region on its columns — never hardcode a content width outside these types.
 2. **16px is the default inter-block gap.** Header → filters, filters → list, field → field, and button rows all use `{spacing.md}`.
 3. **24px horizontal cell padding on all list rows and table cells.** Don't reduce it for density.
 4. **No decorative whitespace.** Don't add padding to a section just to add breathing room — if the grid is right, the spacing takes care of itself.
@@ -654,7 +671,7 @@ Task-dense editorial tool. Every gap is purposeful — list rows are compact, fo
 - Apply `{radius.none}` to every interactive container — buttons, inputs, text areas, dropdowns, and section panels are all hard rectangles.
 - Set all visible text in **sentence case**: page titles, section headings, field labels, nav items, button labels, table headers.
 - Use `heading-l` exactly once per page for the main title. Use `heading-md` or `heading-sm` for section headings within the page.
-- Keep all content within the **726px column**. Form fields, tables, and panels all share this constraint.
+- Lay all content on the **12-column grid** — one grid type per page (Fluid for lists/tables, Fixed Narrow for forms). Header, filters, list, and form fields all share the same columns.
 - Use `neutral.50` (#f5f5f5) as the page background. Content panels, the sidebar, and forms sit on `neutral.0` white.
 - Pair every status tag with a visible text label — color fill alone is not enough.
 - Show error state with both a `{colors.border.danger.default}` field border **and** an inline error message below the field.

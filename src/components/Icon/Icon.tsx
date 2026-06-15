@@ -1,5 +1,5 @@
 import type { SVGProps } from 'react';
-import { icons, type IconName } from './icons';
+import { icons, iconViewBox, type IconName } from './icons';
 
 export interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'name'> {
   /** Icon name from the Athena set. */
@@ -17,7 +17,7 @@ export interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'name'> {
 export function Icon({ name, size = 20, title, ...rest }: IconProps) {
   return (
     <svg
-      viewBox="0 0 24 24"
+      viewBox={iconViewBox[name] ?? '0 0 24 24'}
       width={size}
       height={size}
       fill="none"

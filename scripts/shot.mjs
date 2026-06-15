@@ -8,13 +8,13 @@ const base = `http://localhost:${port}/iframe.html`;
 
 // [storyId, outName, optionalButtonTextToClickFirst]
 const shots = [
-  ['components-menu--default', 'menu-default'],
-  ['components-menu--grouped', 'menu-grouped'],
-  ['components-menu--checkboxes', 'menu-checkboxes'],
+  ['components-accordion--default', 'accordion-default'],
+  ['components-accordion--expanded', 'accordion-expanded'],
+  ['components-accordion--advanced-settings-example', 'accordion-advanced'],
 ];
 
 const browser = await chromium.launch();
-const page = await browser.newPage({ deviceScaleFactor: 2, viewport: { width: 760, height: 520 } });
+const page = await browser.newPage({ deviceScaleFactor: 2, viewport: { width: 760, height: 640 } });
 const out = [];
 for (const [id, name, clickText] of shots) {
   try {
