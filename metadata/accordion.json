@@ -1,0 +1,157 @@
+{
+  "component": {
+    "name": "Accordion",
+    "category": "molecule",
+    "type": "container",
+    "description": "A titled, collapsible section. The header row shows a title (with an optional leading icon) and a chevron that toggles between expanded (chevron-up) and collapsed (chevron-down); the content slot below is revealed when expanded. A divider is rendered at the end to separate it from the next section. Modelled on the 'Advanced Settings' disclosure in the article-create form.",
+    "figmaNode": null,
+    "variants": ["collapsed", "expanded"],
+    "modifiers": ["icon", "defaultExpanded", "headingLevel", "hideSeparator"],
+    "note": "Built from a product screenshot — no dedicated Figma node yet, so there is no .figma.tsx code-connect mapping. Controlled (isExpanded + onToggle) or uncontrolled (defaultExpanded). Follows the WAI-ARIA Accordion pattern: a <button> with aria-expanded / aria-controls wrapped in a heading, controlling a labelled region. Sharp corners; the trailing divider uses neutral.200."
+  },
+
+  "tokens": {
+    "root": {
+      "fontFamily": "--font-main (Inter)"
+    },
+    "header": {
+      "element": "a <button> wrapped in an h{headingLevel} (default h3)",
+      "layout": "full-width flex row, space-between, gap spacing.md (16px)",
+      "padding": "spacing.md (16px) top and bottom; flush horizontally to the container",
+      "title": "Inter bold 18/28 (font-size.md / line-height.md), colors.text.neutral.strong (--text-neutral-strong, neutral.800)",
+      "leadingIcon": "optional 20px Icon, colors.text.neutral.default (neutral.600)",
+      "chevron": "20px chevron-up when expanded / chevron-down when collapsed, colors.text.neutral.default (neutral.600); group-hover deepens to neutral.800",
+      "focusRing": "2px colors.border.primary.strong (forest.700), inset offset -2px"
+    },
+    "region": {
+      "padding": "spacing.md (16px) bottom; the slot owns its own internal layout",
+      "typography": "Inter 14/20 (font-size.xs / line-height.xs)",
+      "color": "colors.text.neutral.strong (neutral.800)",
+      "visibility": "native hidden attribute (display:none) when collapsed"
+    },
+    "separator": {
+      "height": "1px",
+      "background": "colors.neutral.200 (#d4d4d4)",
+      "role": "separator (a thematic break, like an <hr>; exposed to assistive tech)",
+      "note": "Rendered at the end of the accordion; removable via hideSeparator"
+    }
+  },
+
+  "usage": {
+    "useCases": [
+      "Tuck secondary or advanced settings under a labelled disclosure (e.g. 'Advanced Settings')",
+      "Group a long form into collapsible sections so the page stays scannable",
+      "Show or hide supplementary detail without navigating away",
+      "Stack several together (each with its trailing divider) to form a sectioned list"
+    ],
+    "frequency": "common",
+    "requiredProps": ["title", "children"],
+    "commonPatterns": [
+      {
+        "name": "Advanced settings disclosure",
+        "description": "A collapsed-by-default section holding optional settings; expanding reveals the controls.",
+        "jsx": "<Accordion title='Advanced Settings'><SettingsFields /></Accordion>"
+      },
+      {
+        "name": "Open by default",
+        "description": "Start expanded when the content is primary rather than supplementary.",
+        "jsx": "<Accordion title='Schedule' defaultExpanded>{body}</Accordion>"
+      },
+      {
+        "name": "Controlled",
+        "description": "Drive the open state from your own state and react to onToggle (e.g. single-open accordion groups).",
+        "jsx": "<Accordion title='Details' isExpanded={open} onToggle={setOpen}>{body}</Accordion>"
+      },
+      {
+        "name": "Leading icon",
+        "description": "Add a glyph before the title to signal the section's purpose.",
+        "jsx": "<Accordion title='Notifications' icon='info'>{body}</Accordion>"
+      },
+      {
+        "name": "Last item, no divider",
+        "description": "Drop the trailing divider when the accordion is the final item in a bordered group.",
+        "jsx": "<Accordion title='FAQ' hideSeparator>{body}</Accordion>"
+      }
+    ],
+    "antiPatterns": [
+      {
+        "scenario": "Hiding essential, always-needed content behind a collapsed accordion",
+        "reason": "Critical information should not require an extra click to discover.",
+        "alternative": "Show essential content inline; reserve the accordion for optional or advanced detail (or set defaultExpanded)."
+      },
+      {
+        "scenario": "Using an accordion as a navigation menu",
+        "reason": "Accordion expands in-place content; it is not a menu of destinations.",
+        "alternative": "Use SideNavigation for navigation, or DropdownMenu / Menu for action lists."
+      },
+      {
+        "scenario": "Putting a single short line of text in an accordion",
+        "reason": "The collapse affordance adds friction with no payoff for trivial content.",
+        "alternative": "Render the text inline."
+      },
+      {
+        "scenario": "Omitting a meaningful title",
+        "reason": "The header is the only thing visible when collapsed and is the region's accessible name.",
+        "alternative": "Always give the accordion a concise, descriptive title."
+      }
+    ]
+  },
+
+  "composition": {
+    "slots": {
+      "title": "Header label shown next to the chevron (and the region's accessible name)",
+      "icon": "Optional leading Icon before the title",
+      "children": "The collapsible content region — any nodes (fields, cards, prose, nested components)"
+    },
+    "nestedComponents": ["Icon"],
+    "commonPartners": ["Toggle", "TextField", "TextArea", "Button", "Select"],
+    "parentConstraints": ["Renders full-width; the header is flush to the container's horizontal edges"]
+  },
+
+  "behavior": {
+    "states": ["collapsed", "expanded", "hover", "focus-visible"],
+    "interactions": {
+      "toggle": "Clicking the header (or pressing Enter/Space on it) flips expanded; the chevron swaps between chevron-up and chevron-down",
+      "hover": "The chevron deepens from neutral.600 to neutral.800",
+      "uncontrolled": "Manages its own open state from defaultExpanded (default false)",
+      "controlled": "When isExpanded is provided the component is controlled; update it from onToggle(nextExpanded)"
+    },
+    "controlled": "Optional. Pass isExpanded + onToggle to control; otherwise uncontrolled via defaultExpanded."
+  },
+
+  "accessibility": {
+    "role": "The header is a button wrapped in a heading (h{headingLevel}); the content is a region",
+    "ariaExpanded": "aria-expanded on the trigger reflects the open state",
+    "ariaControls": "aria-controls links the trigger to the region's id",
+    "accessibleName": "The region is labelled by the trigger via aria-labelledby; the title is the accessible name",
+    "headingLevel": "headingLevel (default 3) sets the wrapping heading so the document outline stays correct",
+    "keyboardSupport": "Tab moves focus to the header button; Enter/Space toggles; the collapsed region is removed from the tab order and the a11y tree (native hidden)",
+    "focusManagement": "2px forest.700 focus-visible ring (inset) on the trigger",
+    "screenReader": "Announced as a collapsed/expanded button; the revealed content is exposed as a region named by the title",
+    "wcag": "AA",
+    "contrastNote": "neutral.800 title and body text on white and the forest.700 focus ring meet AA; the neutral.600 chevron is a non-essential decorative affordance."
+  },
+
+  "athenaConstraints": {
+    "borderRadius": "radius.none (sharp corners)",
+    "titleType": "Inter bold 18/28 (font-size.md / line-height.md), neutral.800",
+    "chevron": "20px chevron-up (expanded) / chevron-down (collapsed), neutral.600",
+    "separator": "1px neutral.200 divider at the end, removable via hideSeparator",
+    "noAnimation": "Collapse uses the native hidden attribute (no height animation) for predictable layout and a11y"
+  },
+
+  "figmaDivergences": [],
+
+  "aiHints": {
+    "priority": "medium",
+    "keywords": ["accordion", "disclosure", "collapsible", "expand", "collapse", "advanced settings", "show more", "section", "expander", "details"],
+    "context": "Reach for Accordion to tuck optional or advanced content behind a labelled, collapsible header — 'Advanced Settings', grouped form sections, supplementary detail. Pass title + children; add an icon for a section glyph, defaultExpanded to start open, hideSeparator for the last item in a group, and isExpanded + onToggle for controlled / single-open groups.",
+    "neverUseWhen": [
+      "The content is essential and always needed — show it inline (or defaultExpanded)",
+      "You need navigation between destinations — use SideNavigation",
+      "You need an action/option menu — use Menu or DropdownMenu",
+      "The content is a single trivial line — render it inline",
+      "The content must block the page for a decision — use Modal"
+    ]
+  }
+}
