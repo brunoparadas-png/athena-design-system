@@ -34,9 +34,13 @@ export interface SideNavigationProps {
   onNavigate?: (itemId: string) => void;
   /** Text beside the logo mark in the header. */
   appTitle?: string;
-  /** 56px icon-only collapsed mode vs 280px expanded. */
+  /**
+   * 56px icon-only collapsed mode vs 280px expanded. Optional: when omitted,
+   * the component manages its own collapse state (the toggle always works).
+   * Pass this to control the state externally.
+   */
   isCollapsed?: boolean;
-  /** Fired when the collapse / expand toggle button is clicked. */
+  /** Fired on every toggle. Optional — the toggle works without it. */
   onToggleCollapse?: () => void;
   /** Logged-in user shown in the pinned footer. */
   user?: SideNavigationUser;
@@ -81,7 +85,7 @@ export function SideNavigation({
   activeItemId,
   onNavigate,
   appTitle = 'Huffpost Athena',
-  isCollapsed = false,
+  isCollapsed: isCollapsedProp,
   onToggleCollapse,
   user,
   onUserMenuOpen,
@@ -93,6 +97,19 @@ export function SideNavigation({
     }
     return s;
   });
+
+  // The collapse toggle is intrinsic to the component, so it works with no
+  // wiring at all. `isCollapsed` controls it when provided (controlled);
+  // otherwise the component owns the state (uncontrolled). `onToggleCollapse`
+  // is an optional notification fired on every toggle.
+  const [internalCollapsed, setInternalCollapsed] = useState(false);
+  const isControlled = isCollapsedProp !== undefined;
+  const isCollapsed = isCollapsedProp ?? internalCollapsed;
+
+  const handleToggle = useCallback(() => {
+    if (!isControlled) setInternalCollapsed((c) => !c);
+    onToggleCollapse?.();
+  }, [isControlled, onToggleCollapse]);
 
   const toggleSection = useCallback((id: string) => {
     setExpandedSections((prev) => {
@@ -114,10 +131,10 @@ export function SideNavigation({
     >
       {/* Collapsed: floating circular toggle straddling the right edge.
           Lives outside the header flow so it can overflow the rail. */}
-      {isCollapsed && onToggleCollapse && (
+      {isCollapsed && (
         <button
           type="button"
-          onClick={onToggleCollapse}
+          onClick={handleToggle}
           aria-label="Expand sidebar"
           // Transform + shadow are set inline rather than via Tailwind utilities
           // so they survive in consumers whose Tailwind `content` globs do not
@@ -156,16 +173,14 @@ export function SideNavigation({
               {appTitle}
             </span>
 
-            {onToggleCollapse && (
-              <button
-                type="button"
-                onClick={onToggleCollapse}
-                aria-label="Collapse sidebar"
-                className={`flex-shrink-0 flex items-center justify-center w-6 h-6 appearance-none border-0 bg-transparent cursor-pointer text-neutral-600 hover:text-neutral-800 hover:bg-neutral-50 transition-colors duration-[120ms] ${focusRing}`}
-              >
-                <Icon name="sidebar-collapse" size={20} />
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={handleToggle}
+              aria-label="Collapse sidebar"
+              className={`flex-shrink-0 flex items-center justify-center w-6 h-6 appearance-none border-0 bg-transparent cursor-pointer text-neutral-600 hover:text-neutral-800 hover:bg-neutral-50 transition-colors duration-[120ms] ${focusRing}`}
+            >
+              <Icon name="sidebar-collapse" size={20} />
+            </button>
           </>
         )}
       </div>
