@@ -74,7 +74,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Global navigation shell. 280px expanded / 56px collapsed. Only leaf items carry the active state — section headings never do.',
+          'Global navigation shell on the dark forest surface (forest-700), white text/icons, forest-600 selected item. 280px expanded / 56px collapsed. Only leaf items carry the active state — section headings never do.',
       },
     },
   },

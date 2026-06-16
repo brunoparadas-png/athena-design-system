@@ -124,7 +124,7 @@ export function SideNavigation({
 
   return (
     <nav
-      className={`relative flex flex-col h-full bg-white border-r border-neutral-200 transition-[width] duration-200 ease-in-out font-[var(--font-main)] ${
+      className={`relative flex flex-col h-full bg-forest-700 border-r border-forest-500 transition-[width] duration-200 ease-in-out font-[var(--font-main)] ${
         isCollapsed ? 'w-14' : 'w-[280px]'
       }`}
       aria-label={appTitle}
@@ -169,7 +169,7 @@ export function SideNavigation({
 
         {!isCollapsed && (
           <>
-            <span className="flex-1 min-w-0 text-sm font-bold leading-5 text-neutral-800 truncate">
+            <span className="flex-1 min-w-0 text-sm font-bold leading-5 text-white truncate">
               {appTitle}
             </span>
 
@@ -177,7 +177,7 @@ export function SideNavigation({
               type="button"
               onClick={handleToggle}
               aria-label="Collapse sidebar"
-              className={`flex-shrink-0 flex items-center justify-center w-6 h-6 appearance-none border-0 bg-transparent cursor-pointer text-neutral-600 hover:text-neutral-800 hover:bg-neutral-50 transition-colors duration-[120ms] ${focusRing}`}
+              className={`flex-shrink-0 flex items-center justify-center w-6 h-6 appearance-none border-0 bg-transparent cursor-pointer text-white hover:bg-forest-600 transition-colors duration-[120ms] ${focusRing}`}
             >
               <Icon name="sidebar-collapse" size={20} />
             </button>
@@ -196,8 +196,8 @@ export function SideNavigation({
           const showSectionActive = isCollapsed && sectionHasActiveItem;
 
           const sectionActiveClass = showSectionActive
-            ? 'bg-forest-50 text-forest-700 font-bold border-r-2 border-forest-700'
-            : 'bg-transparent text-neutral-800 border-0 hover:bg-neutral-50';
+            ? 'bg-forest-600 text-white font-bold'
+            : 'bg-transparent text-white hover:bg-forest-600';
 
           return (
             <div key={section.id}>
@@ -210,18 +210,14 @@ export function SideNavigation({
                   isCollapsed ? undefined : `sidenav-section-${section.id}`
                 }
                 title={isCollapsed ? section.label : undefined}
-                className={`w-full flex items-center appearance-none m-0 cursor-pointer text-sm font-semibold leading-5 font-[inherit] text-left transition-colors duration-[120ms] ${focusRing} ${
+                className={`w-full flex items-center appearance-none m-0 cursor-pointer text-sm font-medium leading-5 font-[inherit] text-left transition-colors duration-[120ms] ${focusRing} ${
                   isCollapsed
                     ? 'justify-center px-0 py-2 min-h-8'
                     : 'gap-2 px-4 py-2 min-h-8'
                 } ${sectionActiveClass}`}
               >
                 {section.icon && (
-                  <span
-                    className={`flex-shrink-0 ${
-                      showSectionActive ? 'text-forest-700' : 'text-neutral-600'
-                    }`}
-                  >
+                  <span className="flex-shrink-0 text-white">
                     <Icon name={section.icon} size={20} />
                   </span>
                 )}
@@ -239,14 +235,14 @@ export function SideNavigation({
                           e.stopPropagation();
                           section.onAdd?.();
                         }}
-                        className="flex-shrink-0 flex items-center justify-center w-5 h-5 text-neutral-600 hover:text-neutral-800 hover:bg-neutral-100 cursor-pointer"
+                        className="flex-shrink-0 flex items-center justify-center w-5 h-5 text-white hover:bg-forest-500 cursor-pointer"
                         aria-label={`Add to ${section.label}`}
                       >
                         <Icon name="add" size={16} />
                       </span>
                     )}
 
-                    <span className="flex-shrink-0 text-neutral-500">
+                    <span className="flex-shrink-0 text-white">
                       <Icon
                         name={isExpanded ? 'chevron-up' : 'chevron-down'}
                         size={16}
@@ -266,8 +262,8 @@ export function SideNavigation({
                   {section.items.map((item) => {
                     const isActive = item.id === activeItemId;
                     const leafActiveClass = isActive
-                      ? 'bg-forest-50 text-forest-700 font-bold border-r-2 border-forest-700'
-                      : 'bg-transparent text-neutral-800 font-semibold border-0 hover:bg-neutral-50';
+                      ? 'bg-forest-600 text-white font-bold'
+                      : 'bg-transparent text-white font-medium border-0 hover:bg-forest-600';
 
                     return (
                       <li key={item.id}>
@@ -278,11 +274,7 @@ export function SideNavigation({
                           className={`w-full flex items-center gap-2 pl-12 pr-4 py-2 min-h-8 appearance-none m-0 cursor-pointer text-sm leading-5 font-[inherit] text-left transition-colors duration-[120ms] ${focusRing} ${leafActiveClass}`}
                         >
                           {item.icon && (
-                            <span
-                              className={`flex-shrink-0 ${
-                                isActive ? 'text-forest-700' : 'text-neutral-600'
-                              }`}
-                            >
+                            <span className="flex-shrink-0 text-white">
                               <Icon name={item.icon} size={20} />
                             </span>
                           )}
@@ -300,7 +292,7 @@ export function SideNavigation({
 
       {/* ── Footer ─────────────────────────────────────────── */}
       {user && (
-        <div className="flex-shrink-0 border-t border-neutral-200">
+        <div className="flex-shrink-0 border-t border-forest-500">
           <div
             className={`flex items-center ${
               isCollapsed ? 'justify-center px-0 py-3' : 'gap-2 px-4 py-3'
@@ -316,10 +308,10 @@ export function SideNavigation({
             {!isCollapsed && (
               <>
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-semibold leading-5 text-neutral-800 truncate">
+                  <div className="text-sm font-semibold leading-5 text-white truncate">
                     {user.name}
                   </div>
-                  <div className="text-xs leading-4 text-neutral-500 truncate">
+                  <div className="text-xs leading-4 text-white/70 truncate">
                     {user.email}
                   </div>
                 </div>
@@ -329,7 +321,7 @@ export function SideNavigation({
                     type="button"
                     onClick={onUserMenuOpen}
                     aria-label="User menu"
-                    className={`flex-shrink-0 flex items-center justify-center w-6 h-6 appearance-none border-0 bg-transparent cursor-pointer text-neutral-600 hover:text-neutral-800 transition-colors duration-[120ms] ${focusRing}`}
+                    className={`flex-shrink-0 flex items-center justify-center w-6 h-6 appearance-none border-0 bg-transparent cursor-pointer text-white hover:bg-forest-600 transition-colors duration-[120ms] ${focusRing}`}
                   >
                     <Icon name="more-horizontal" size={16} />
                   </button>
