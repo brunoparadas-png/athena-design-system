@@ -123,11 +123,15 @@ export const AllExpanded: Story = {
   },
 };
 
-/** Collapsed (56px) — icons only, active state bubbles to the section icon. */
+/**
+ * Collapsed (56px) — icons only, active state bubbles to the section icon.
+ * The expand affordance becomes a floating circular button on the right edge.
+ */
 export const Collapsed: Story = {
   args: {
     isCollapsed: true,
     activeItemId: 'alerts',
+    onToggleCollapse: () => {},
   },
 };
 

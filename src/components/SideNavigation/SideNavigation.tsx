@@ -107,14 +107,42 @@ export function SideNavigation({
 
   return (
     <nav
-      className={`relative flex flex-col h-full bg-white border-r border-neutral-200 overflow-hidden transition-[width] duration-200 ease-in-out font-[var(--font-main)] ${
+      className={`relative flex flex-col h-full bg-white border-r border-neutral-200 transition-[width] duration-200 ease-in-out font-[var(--font-main)] ${
         isCollapsed ? 'w-14' : 'w-[280px]'
       }`}
       aria-label={appTitle}
     >
+      {/* Collapsed: floating circular toggle straddling the right edge.
+          Lives outside the header flow so it can overflow the rail. */}
+      {isCollapsed && onToggleCollapse && (
+        <button
+          type="button"
+          onClick={onToggleCollapse}
+          aria-label="Expand sidebar"
+          // Transform + shadow are set inline rather than via Tailwind utilities
+          // so they survive in consumers whose Tailwind `content` globs do not
+          // scan this design-system source (e.g. cms_ui). translateX(50%) makes
+          // the button straddle the rail's right edge; the shadow is Figma's
+          // elevation.shadow.overlay.
+          style={{
+            transform: 'translateX(calc(50% + 4px))',
+            boxShadow:
+              '0 0 1px rgba(30, 31, 33, 0.31), 0 8px 12px rgba(30, 31, 33, 0.15)',
+          }}
+          className={`absolute top-3 right-0 z-10 flex items-center justify-center w-8 h-8 appearance-none rounded-full bg-white border border-neutral-200 cursor-pointer text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900 transition-colors ${focusRing}`}
+        >
+          {/* Mirror the collapse glyph so the arrow points right (expand). */}
+          <Icon
+            name="sidebar-collapse"
+            size={20}
+            style={{ transform: 'scaleX(-1)' }}
+          />
+        </button>
+      )}
+
       {/* ── Header ─────────────────────────────────────────── */}
       <div
-        className={`flex items-center flex-shrink-0 h-14 ${
+        className={`flex items-center flex-shrink-0 h-14 overflow-hidden ${
           isCollapsed ? 'justify-center px-0' : 'gap-2 px-3'
         }`}
       >
@@ -123,20 +151,22 @@ export function SideNavigation({
         </span>
 
         {!isCollapsed && (
-          <span className="flex-1 min-w-0 text-sm font-bold leading-5 text-neutral-800 truncate">
-            {appTitle}
-          </span>
-        )}
+          <>
+            <span className="flex-1 min-w-0 text-sm font-bold leading-5 text-neutral-800 truncate">
+              {appTitle}
+            </span>
 
-        {onToggleCollapse && (
-          <button
-            type="button"
-            onClick={onToggleCollapse}
-            aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            className={`flex-shrink-0 flex items-center justify-center w-6 h-6 appearance-none border-0 bg-transparent cursor-pointer text-neutral-600 hover:text-neutral-800 hover:bg-neutral-50 transition-colors duration-[120ms] ${focusRing}`}
-          >
-            <Icon name={isCollapsed ? 'chevron-right' : 'chevron-left'} size={16} />
-          </button>
+            {onToggleCollapse && (
+              <button
+                type="button"
+                onClick={onToggleCollapse}
+                aria-label="Collapse sidebar"
+                className={`flex-shrink-0 flex items-center justify-center w-6 h-6 appearance-none border-0 bg-transparent cursor-pointer text-neutral-600 hover:text-neutral-800 hover:bg-neutral-50 transition-colors duration-[120ms] ${focusRing}`}
+              >
+                <Icon name="sidebar-collapse" size={20} />
+              </button>
+            )}
+          </>
         )}
       </div>
 
