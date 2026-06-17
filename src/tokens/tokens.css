@@ -123,6 +123,10 @@
      and large/non-text uses. */
   --text-danger-strong: var(--danger-700);
   --text-link-default: var(--blue-500);
+  /* Success / published — Athena teal.700 (#008069), 4.89:1 on white (AA pass).
+     Literal, not var(--teal-700): consuming apps may ship a legacy Tailwind
+     palette that shadows the bare --teal-700 name (see ds-check token-collision). */
+  --text-success: #008069;
 
   /* ── Semantic: border ── */
   --border-primary-default: var(--forest-500);

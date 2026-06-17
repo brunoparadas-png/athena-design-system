@@ -74,10 +74,10 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
     'box-border flex items-center gap-2 w-full px-2 bg-white border rounded-none transition-[border-color,box-shadow] duration-[120ms] motion-reduce:transition-none',
     isCompact ? 'min-h-8' : 'min-h-10',
     isDisabled
-      ? 'bg-neutral-50 border-neutral-300 cursor-not-allowed'
+      ? 'bg-neutral-50 border-[var(--border-neutral-default)] cursor-not-allowed'
       : isInvalid
         ? 'border-danger-500 hover:border-danger-500 focus-within:border-danger-500 focus-within:outline-2 focus-within:outline-danger-700 [focus-within:outline-offset:1px]'
-        : 'border-neutral-300 hover:border-neutral-400 focus-within:border-forest-500 focus-within:outline-2 focus-within:outline-forest-700 [focus-within:outline-offset:1px]',
+        : 'border-[var(--border-neutral-default)] hover:border-neutral-400 focus-within:border-forest-500 focus-within:outline-2 focus-within:outline-forest-700 [focus-within:outline-offset:1px]',
   ]
     .filter(Boolean)
     .join(' ');
