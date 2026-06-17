@@ -15,7 +15,7 @@ import type { ReactNode, TableHTMLAttributes } from 'react';
  *
  * Semantic tokens only (never raw primitives):
  *   header fill  --bg-neutral-weak       (neutral.50  #f5f5f5)
- *   row border   --border-neutral-default
+ *   row border   --border-neutral-weak
  *   all text     --text-neutral-default  (neutral.600 #525252)
  * ------------------------------------------------------------------ */
 
@@ -104,7 +104,7 @@ export interface TableCellProps {
 }
 
 /**
- * Data cell — Figma "Parts / <Cell>". 1px neutral-default bottom border,
+ * Data cell — Figma "Parts / <Cell>". 1px neutral-weak bottom border,
  * 40px min-height, body 14/20 neutral-default text.
  */
 export function TableCell({
@@ -116,7 +116,7 @@ export function TableCell({
   width,
 }: TableCellProps) {
   const base =
-    'h-10 border-b border-[var(--border-neutral-default)] px-6 py-2 align-middle text-[14px] leading-5 text-[var(--text-neutral-default)]';
+    'h-10 border-b border-[var(--border-neutral-weak)] px-6 py-2 align-middle text-[14px] leading-5 text-[var(--text-neutral-default)]';
 
   // Action cell — trailing icon controls, right-aligned with 8px gaps.
   if (appearance === 'action') {

@@ -129,11 +129,11 @@ export const CssCheck: Story = {
     await expect(hStyle.fontSize).toBe('12px');
     await expect(hStyle.color).toBe('rgb(82, 82, 82)');
 
-    // Cell: 1px neutral-default bottom border, 14px neutral-default text, 40px row.
+    // Cell: 1px neutral-weak bottom border, 14px neutral-default text, 40px row.
     const cell = canvas.getByRole('cell', { name: 'Cell label' });
     const cStyle = getComputedStyle(cell);
     await expect(cStyle.borderBottomWidth).toBe('1px');
-    await expect(cStyle.borderBottomColor).toBe('rgb(184, 184, 184)');
+    await expect(cStyle.borderBottomColor).toBe('rgb(212, 212, 212)');
     await expect(cStyle.fontSize).toBe('14px');
     await expect(cStyle.color).toBe('rgb(82, 82, 82)');
     await expect(cStyle.height).toBe('40px');
