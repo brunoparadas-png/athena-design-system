@@ -42,6 +42,16 @@ const SIZE_CLASSES: Record<ButtonSize, string> = {
   small: 'min-h-8',
 };
 
+// Icon sizing per button size: 20px on default (medium), 16px on small.
+const ICON_SIZE: Record<ButtonSize, number> = {
+  default: 20,
+  small: 16,
+};
+const ICON_BOX: Record<ButtonSize, string> = {
+  default: 'size-5',
+  small: 'size-4',
+};
+
 // Variant classes (hover/active use enabled: modifier so disabled state is unaffected)
 const VARIANT_CLASSES: Record<ButtonAppearance, string> = {
   primary:
@@ -70,6 +80,8 @@ export function Button({
   ...rest
 }: ButtonProps) {
   const className = `${BASE} ${SIZE_CLASSES[size]} ${isSelected ? SELECTED_CLASSES : VARIANT_CLASSES[appearance]}`;
+  const iconSize = ICON_SIZE[size];
+  const iconBox = ICON_BOX[size];
 
   return (
     <button
@@ -88,14 +100,14 @@ export function Button({
       )}
       <span className={`inline-flex items-center gap-1.5${loading ? ' opacity-0' : ''}`} aria-live="polite">
         {iconBefore && (
-          <span className="inline-flex size-4" aria-hidden="true">
-            <Icon name={iconBefore} size={16} />
+          <span className={`inline-flex ${iconBox}`} aria-hidden="true">
+            <Icon name={iconBefore} size={iconSize} />
           </span>
         )}
         {children}
         {iconAfter && (
-          <span className="inline-flex size-4" aria-hidden="true">
-            <Icon name={iconAfter} size={16} />
+          <span className={`inline-flex ${iconBox}`} aria-hidden="true">
+            <Icon name={iconAfter} size={iconSize} />
           </span>
         )}
       </span>
