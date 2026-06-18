@@ -118,6 +118,27 @@ export const Scrollable: Story = {
 };
 
 /**
+ * Borderless trigger — use when the dropdown sits inside a toolbar or table row
+ * where a bordered button would add too much visual noise.
+ */
+export const TextTrigger: Story = {
+  args: {
+    items: actionItems,
+    menuLabel: 'Actions',
+    triggerAppearance: 'text',
+    triggerLabel: 'More',
+    defaultOpen: true,
+  },
+  play: async ({ canvas }) => {
+    const trigger = canvas.getByRole('button', { name: /more/i });
+    // Text appearance: no border (transparent), open state tints forest.50.
+    await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+    await expect(getComputedStyle(trigger).borderColor).toBe('rgba(0, 0, 0, 0)');
+    await expect(getComputedStyle(trigger).backgroundColor).toBe('rgb(233, 247, 243)');
+  },
+};
+
+/**
  * CSS proof: while open the trigger resolves to the forest.50 tint (#e9f7f3 =
  * rgb(233, 247, 243)). If tokens.css failed to load this falls back and fails.
  */
