@@ -1,0 +1,18 @@
+{
+  "projectId": "7f789ac8-aaad-4687-aa03-955f4fdd2b68",
+  "pkg": "athena-design-system",
+  "shape": "storybook",
+  "entry": "src/components/index.ts",
+  "storybookConfigDir": ".storybook",
+  "storybookStatic": ".design-sync/sb-reference",
+  "readmeHeader": ".design-sync/conventions.md",
+  "overrides": {
+    "Button": { "cardMode": "column" },
+    "FileUploader": { "cardMode": "column" },
+    "Icon": { "cardMode": "column" },
+    "Table": { "cardMode": "column" },
+    "Tabs": { "cardMode": "column" },
+    "TextArea": { "cardMode": "column" },
+    "Modal": { "cardMode": "single", "primaryStory": "BlanketClickCloses" }
+  }
+}

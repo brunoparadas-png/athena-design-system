@@ -35,3 +35,16 @@ chromatic.config.json
 
 # Local Netlify folder
 .netlify
+
+# design-sync (claude.ai/design) — transient build/verification artifacts.
+# Durable inputs under .design-sync/ (config.json, NOTES.md, conventions.md,
+# previews/, overrides/) are committed; the rest is regenerated each run.
+.design-sync/sb-reference/
+.design-sync/learnings/
+.design-sync/.cache/
+.design-sync/node_modules
+.ds-sync/
+ds-bundle/
+
+# Generated TypeScript declarations (emitted by the type build, not source).
+src/**/*.d.ts
