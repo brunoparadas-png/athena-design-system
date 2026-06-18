@@ -77,7 +77,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(function 
     tone === 'error' ? 'warning' : tone === 'success' ? 'check-circle' : null;
 
   const containerClass = [
-    'box-border flex w-full bg-white border rounded-none transition-[border-color,box-shadow] duration-[120ms] ease-[ease] motion-reduce:transition-none',
+    'box-border flex w-full bg-white border rounded-sm transition-[border-color,box-shadow] duration-[120ms] ease-[ease] motion-reduce:transition-none',
     // border color: invalid always danger, disabled neutral-300, default neutral-300
     isInvalid
       ? 'border-danger-500 focus-within:border-danger-500 focus-within:outline-2 focus-within:outline focus-within:[outline-color:theme(colors.danger-700)] focus-within:[outline-offset:1px]'

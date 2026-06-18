@@ -32,7 +32,7 @@ export interface IconButtonProps
 
 // Base classes — same as Button but square (aspect-square, p-0, explicit w/h)
 const BASE =
-  'appearance-none m-0 inline-flex items-center justify-center relative border cursor-pointer rounded-none transition-[background-color,border-color,color] duration-[120ms] ease-[ease] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-forest-700 focus-visible:outline-offset-2 disabled:bg-neutral-100 disabled:text-neutral-400 disabled:border-transparent disabled:cursor-not-allowed aspect-square p-0 shrink-0';
+  'appearance-none m-0 inline-flex items-center justify-center relative border cursor-pointer rounded-sm transition-[background-color,border-color,color] duration-[120ms] ease-[ease] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-forest-700 focus-visible:outline-offset-2 disabled:bg-neutral-100 disabled:text-neutral-400 disabled:border-transparent disabled:cursor-not-allowed aspect-square p-0 shrink-0';
 
 const SIZE_CLASSES: Record<ButtonSize, { button: string; iconSize: number }> = {
   default: { button: 'w-10 h-10', iconSize: 20 },

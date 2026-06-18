@@ -244,7 +244,7 @@ export function Menu({
           {type === 'checkbox' && (
             <span className="inline-flex items-center justify-center flex-shrink-0 w-5 h-5" aria-hidden="true">
               <span
-                className={`box-border inline-flex items-center justify-center w-3.5 h-3.5 border rounded-none ${
+                className={`box-border inline-flex items-center justify-center w-3.5 h-3.5 border rounded-xs ${
                   isInteractiveSelected
                     ? 'bg-forest-500 border-forest-500 text-white'
                     : 'bg-white border-neutral-300 text-white'
@@ -327,7 +327,7 @@ export function Menu({
     return renderItem(node);
   };
 
-  const menuClassName = `box-border min-w-[180px] bg-white border border-neutral-200 rounded shadow-[0_8px_16px_-4px_rgba(9,30,66,0.25),0_0_0_1px_rgba(9,30,66,0.06)] py-1 font-[var(--font-main)]${maxHeight != null ? ' overflow-y-auto [scrollbar-gutter:stable]' : ''}`;
+  const menuClassName = `box-border min-w-[180px] bg-white border border-neutral-200 rounded-sm shadow-[0_8px_16px_-4px_rgba(9,30,66,0.25),0_0_0_1px_rgba(9,30,66,0.06)] py-1 font-[var(--font-main)]${maxHeight != null ? ' overflow-y-auto [scrollbar-gutter:stable]' : ''}`;
 
   return (
     <div

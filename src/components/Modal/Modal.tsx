@@ -157,7 +157,7 @@ export function Modal({
 
   const dialogMaxHeight = shouldScrollInViewport ? '' : isFullScreen ? '' : 'max-h-[calc(100vh-64px)]';
 
-  const dialogClass = `box-border flex flex-col w-full bg-white rounded-none outline-none font-[var(--font-main)] shadow-[0_8px_16px_-4px_rgba(9,30,66,0.25),0_0_0_1px_rgba(9,30,66,0.06)] ${isBlanketHidden ? 'pointer-events-auto' : ''} ${sizeClass} ${dialogMaxHeight}`.trim();
+  const dialogClass = `box-border flex flex-col w-full bg-white rounded-md outline-none font-[var(--font-main)] shadow-[0_8px_16px_-4px_rgba(9,30,66,0.25),0_0_0_1px_rgba(9,30,66,0.06)] ${isBlanketHidden ? 'pointer-events-auto' : ''} ${sizeClass} ${dialogMaxHeight}`.trim();
 
   return createPortal(
     <div

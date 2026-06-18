@@ -39,7 +39,7 @@ export function Banner({ appearance = 'info', children, icon, role, ...rest }: B
 
   return (
     <div
-      className={`flex items-start gap-1 w-full box-border p-3 rounded-none font-[var(--font-main)] text-sm leading-5 font-normal ${appearanceClasses[appearance]}`}
+      className={`flex items-start gap-1 w-full box-border p-3 rounded-sm font-[var(--font-main)] text-sm leading-5 font-normal ${appearanceClasses[appearance]}`}
       role={resolvedRole}
       {...rest}
     >

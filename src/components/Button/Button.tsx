@@ -35,7 +35,7 @@ export interface ButtonProps
 
 // Base classes shared by all variants and sizes
 const BASE =
-  'appearance-none m-0 inline-flex items-center justify-center relative border cursor-pointer rounded-none font-semibold text-sm leading-5 whitespace-nowrap px-3 transition-[background-color,border-color,color] duration-[120ms] ease-[ease] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-forest-700 focus-visible:outline-offset-2 disabled:bg-neutral-100 disabled:text-neutral-400 disabled:border-transparent disabled:cursor-not-allowed';
+  'appearance-none m-0 inline-flex items-center justify-center relative border cursor-pointer rounded-sm font-semibold text-sm leading-5 whitespace-nowrap px-3 transition-[background-color,border-color,color] duration-[120ms] ease-[ease] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-forest-700 focus-visible:outline-offset-2 disabled:bg-neutral-100 disabled:text-neutral-400 disabled:border-transparent disabled:cursor-not-allowed';
 
 const SIZE_CLASSES: Record<ButtonSize, string> = {
   default: 'min-h-10',

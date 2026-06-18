@@ -65,7 +65,7 @@ const appearanceConfig: Record<TagAppearance, AppearanceConfig> = {
 
 // Base classes shared by all tag variants
 const baseClasses =
-  'box-border inline-flex items-center justify-center gap-1.5 h-5 px-1 border rounded-none text-xs leading-4 font-semibold whitespace-nowrap overflow-clip no-underline font-[var(--font-main)]';
+  'box-border inline-flex items-center justify-center gap-1.5 h-5 px-1 border rounded-pill text-xs leading-4 font-semibold whitespace-nowrap overflow-clip no-underline font-[var(--font-main)]';
 
 export function Tag({
   appearance = 'gray',
@@ -90,7 +90,7 @@ export function Tag({
       {isRemovable && (
         <button
           type="button"
-          className="appearance-none m-0 p-0 border-0 bg-transparent text-inherit inline-flex items-center justify-center w-4 h-4 flex-shrink-0 cursor-pointer rounded-none transition-[background-color] duration-[120ms] ease-[ease] motion-reduce:transition-none hover:bg-[var(--tag-bg-hover)] active:bg-[var(--tag-bg-press)] focus-visible:outline-2 focus-visible:outline-forest-700 focus-visible:outline-offset-[1px]"
+          className="appearance-none m-0 p-0 border-0 bg-transparent text-inherit inline-flex items-center justify-center w-4 h-4 flex-shrink-0 cursor-pointer rounded-pill transition-[background-color] duration-[120ms] ease-[ease] motion-reduce:transition-none hover:bg-[var(--tag-bg-hover)] active:bg-[var(--tag-bg-press)] focus-visible:outline-2 focus-visible:outline-forest-700 focus-visible:outline-offset-[1px]"
           onClick={onRemove}
           aria-label={removeLabel}
         >

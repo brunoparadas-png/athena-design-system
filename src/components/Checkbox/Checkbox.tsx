@@ -133,7 +133,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
           aria-hidden="true"
           className={[
             'box-border w-[14px] h-[14px] inline-flex items-center justify-center',
-            'bg-white border border-neutral-300 rounded-none text-white',
+            'bg-white border border-neutral-300 rounded-xs text-white',
             'transition-[background-color,border-color] duration-[120ms] ease-[ease] motion-reduce:transition-none',
             // Hover / active while unchecked — the box is a direct sibling of the
             // input, so peer-* applies here (unlike the nested mark spans above).

@@ -71,7 +71,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
 
   // Build container class from state conditions
   const containerClass = [
-    'box-border flex items-center gap-2 w-full px-2 bg-white border rounded-none transition-[border-color,box-shadow] duration-[120ms] motion-reduce:transition-none',
+    'box-border flex items-center gap-2 w-full px-2 bg-white border rounded-sm transition-[border-color,box-shadow] duration-[120ms] motion-reduce:transition-none',
     isCompact ? 'min-h-8' : 'min-h-10',
     isDisabled
       ? 'bg-neutral-50 border-[var(--border-neutral-default)] cursor-not-allowed'

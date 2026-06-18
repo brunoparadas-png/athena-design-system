@@ -159,7 +159,7 @@ export function DropdownMenu({
 
   // Trigger base classes — mirrors the neutral Button
   const triggerBase =
-    'appearance-none m-0 cursor-pointer inline-flex items-center justify-center gap-1.5 border rounded-none font-semibold text-sm leading-5 whitespace-nowrap px-3 transition-[background-color,border-color,color] duration-[120ms] ease-[ease] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-forest-700 focus-visible:outline-offset-2 font-[var(--font-main)]';
+    'appearance-none m-0 cursor-pointer inline-flex items-center justify-center gap-1.5 border rounded-sm font-semibold text-sm leading-5 whitespace-nowrap px-3 transition-[background-color,border-color,color] duration-[120ms] ease-[ease] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-forest-700 focus-visible:outline-offset-2 font-[var(--font-main)]';
 
   const triggerStateClasses =
     triggerAppearance === 'text'

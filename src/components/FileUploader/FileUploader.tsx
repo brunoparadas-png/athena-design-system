@@ -78,7 +78,7 @@ export function FileRow({ file, onRemove, icon = 'file', removeLabel, isSelected
       {onRemove && (
         <button
           type="button"
-          className="appearance-none m-0 border-0 bg-transparent cursor-pointer flex-shrink-0 inline-flex items-center justify-center p-2 rounded-none text-neutral-600 transition-[background-color,color] duration-[120ms] ease-[ease] hover:bg-forest-100 hover:text-forest-700 active:bg-forest-200 focus-visible:outline-2 focus-visible:outline-forest-700 focus-visible:-outline-offset-2 motion-reduce:transition-none"
+          className="appearance-none m-0 border-0 bg-transparent cursor-pointer flex-shrink-0 inline-flex items-center justify-center p-2 rounded-sm text-neutral-600 transition-[background-color,color] duration-[120ms] ease-[ease] hover:bg-forest-100 hover:text-forest-700 active:bg-forest-200 focus-visible:outline-2 focus-visible:outline-forest-700 focus-visible:-outline-offset-2 motion-reduce:transition-none"
           aria-label={removeLabel ?? `Remove ${file.name}`}
           onClick={() => onRemove(file.id)}
         >
