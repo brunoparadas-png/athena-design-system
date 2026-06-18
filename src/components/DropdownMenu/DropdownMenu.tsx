@@ -21,6 +21,11 @@ export interface DropdownMenuProps {
   triggerLabel?: ReactNode;
   /** Icon for `icon` triggers (e.g. `more-horizontal`); ignored for `button`. */
   triggerIcon?: IconName;
+  /**
+   * Trigger visual weight: bordered `neutral` (default) or borderless `text`.
+   * Mirrors the Button / IconButton appearance of the same names.
+   */
+  triggerAppearance?: 'neutral' | 'text';
   /** Accessible name for an `icon` trigger (required when there's no visible label). */
   'aria-label'?: string;
   /** Trigger height: `default` (40px) or `compact` (32px). (Figma: <Button> spacing) */
@@ -78,6 +83,7 @@ export function DropdownMenu({
   triggerType = 'button',
   triggerLabel = 'Select',
   triggerIcon = 'more-horizontal',
+  triggerAppearance = 'neutral',
   'aria-label': ariaLabel,
   buttonSpacing = 'default',
   placement = 'bottom-start',
@@ -155,11 +161,18 @@ export function DropdownMenu({
   const triggerBase =
     'appearance-none m-0 cursor-pointer inline-flex items-center justify-center gap-1.5 border rounded-none font-semibold text-sm leading-5 whitespace-nowrap px-3 transition-[background-color,border-color,color] duration-[120ms] ease-[ease] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-forest-700 focus-visible:outline-offset-2 font-[var(--font-main)]';
 
-  const triggerStateClasses = isLoading
-    ? 'bg-white border-neutral-300 text-neutral-400 cursor-not-allowed opacity-60'
-    : open
-      ? 'bg-forest-50 border-forest-700 text-forest-700'
-      : 'bg-white border-neutral-300 text-neutral-600 hover:bg-forest-100 hover:border-forest-500 hover:text-forest-700 active:bg-forest-200 active:border-forest-500 active:text-forest-700';
+  const triggerStateClasses =
+    triggerAppearance === 'text'
+      ? isLoading
+        ? 'bg-transparent border-transparent text-neutral-400 cursor-not-allowed opacity-60'
+        : open
+          ? 'bg-forest-50 border-transparent text-forest-700'
+          : 'bg-transparent border-transparent text-neutral-600 hover:bg-forest-100 hover:text-forest-700 active:bg-forest-200 active:text-forest-700'
+      : isLoading
+        ? 'bg-white border-[var(--border-neutral-default)] text-neutral-400 cursor-not-allowed opacity-60'
+        : open
+          ? 'bg-forest-50 border-forest-700 text-forest-700'
+          : 'bg-white border-[var(--border-neutral-default)] text-neutral-600 hover:bg-forest-100 hover:border-forest-500 hover:text-forest-700 active:bg-forest-200 active:border-forest-500 active:text-forest-700';
 
   const triggerSizeClass = buttonSpacing === 'compact' ? 'min-h-8' : 'min-h-10';
 
