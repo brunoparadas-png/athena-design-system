@@ -2,6 +2,12 @@
 @import '../tokens/tokens.css';
 
 @theme {
+  /* ── Border radius (DS tokens override Tailwind defaults) ── */
+  --radius-md: 0.5rem;   /* 8px  */
+  --radius-lg: 0.75rem;  /* 12px */
+  --radius-xl: 1rem;     /* 16px */
+  --radius-pill: 9999px;
+
   /* ── Forest (brand) ── */
   --color-forest-25: #f4faf9;
   --color-forest-50: #e9f7f3;
