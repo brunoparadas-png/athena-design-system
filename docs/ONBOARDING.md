@@ -188,6 +188,7 @@ You can drive this whole workflow without writing code.
 
 | You want to… | Open |
 |---|---|
+| Configure an agent working in this repo | **[AGENTS.md](../AGENTS.md)** (auto-loaded by AI agents) |
 | Understand the design language (color, type, spacing, a11y) | **[DESIGN.md](../DESIGN.md)** |
 | Know *when & how* to use a component | **[metadata/](../metadata/)** (one JSON per component) |
 | See the component catalogue & Figma nodes | **[README.md](../README.md)** → Components |

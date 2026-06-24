@@ -7,8 +7,36 @@ otherwise white/neutral canvas.
 
 Storybook is the development surface and the living documentation.
 
-New here? Start with the **[Onboarding guide](docs/ONBOARDING.md)** — how to build a
-screen with Athena and an AI agent.
+## Getting started — build a screen with an agent
+
+The fastest way to build a screen with Athena is to let an **AI coding agent** (Copilot,
+Cursor, Claude, …) compose the components for you. The repo is built for it: an agent
+auto-loads **[AGENTS.md](AGENTS.md)**, and you point it at the design language and
+per-component metadata so it composes screens correctly the first time.
+
+```bash
+git clone <repo-url> && cd athena-design-system && npm install
+```
+
+**The loop:**
+
+1. **Give the agent context** — have it read **[DESIGN.md](DESIGN.md)** (the design
+   language) and the relevant **[metadata/](metadata/)** files (when & how to use each
+   component). Agents pick up **[AGENTS.md](AGENTS.md)** automatically.
+2. **Describe the screen** in plain language — or paste a Figma frame. Component prop
+   names match the Figma properties, so the vocabulary lines up.
+3. **The agent composes** Athena components, importing from the `src/components` barrel.
+4. **Verify** — `npm run typecheck && npm run lint && npx vitest --project storybook run`.
+   The axe a11y gate fails the build on any WCAG AA violation.
+
+Two facts the agent needs for working code: **import from the barrel**
+(`import { Button } from '../components'`) and **`src/styles/tailwind.css` loads once**
+at the app root (tokens + utilities). One `primary` button per view, sentence case,
+sharp corners, AA contrast.
+
+> **For the full walkthrough** (copy-paste prompt, example output, designer path) see
+> **[docs/ONBOARDING.md](docs/ONBOARDING.md)**. For the agent-facing rules see
+> **[AGENTS.md](AGENTS.md)**.
 
 ## Quick start
 
@@ -29,6 +57,7 @@ npm run storybook        # dev surface at http://localhost:6006
 ## What's in here
 
 ```
+AGENTS.md                     # Agent-facing instructions (auto-loaded by AI coding agents)
 docs/ONBOARDING.md            # Getting started: build a screen with Athena + an AI agent
 DESIGN.md                     # The design system spec (tokens + rules) — source of truth for AI tools
 tokens.json                   # Primitive color/type/spacing tokens (Tokens Studio format)
