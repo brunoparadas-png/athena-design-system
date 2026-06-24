@@ -1,271 +1,196 @@
-# Onboarding — Athena Design System
+# Onboarding — Building a screen with Athena + an agent
 
-Welcome. This guide gets you from a fresh clone to rendering your first Athena
-component, then points you at the deeper docs. Athena is HuffPost's internal
-editorial tooling suite; this repo is its **design tokens, React components, and
-AI-consumable metadata**.
+Welcome. The fastest way to build a screen with the **Athena Design System** is to let
+an **AI coding agent** (Copilot, Cursor, Claude, etc.) compose the components for you —
+and Athena is built specifically so the agent gets it right.
 
-If you only read one other file, read **[DESIGN.md](../DESIGN.md)** — the design
-language (color rules, type scale, spacing, accessibility) is the source of truth.
+This guide teaches you that workflow: give the agent the right context, describe the
+screen, and let it assemble Athena components correctly the first time. Athena is
+HuffPost's internal editorial tooling suite; this repo is its **design tokens, React
+components, and AI-consumable metadata**.
 
-> **👋 Designer?** You don't need to install anything to explore Athena. Jump to
-> **[For designers](#9-for-designers)** at the bottom — it covers viewing the live
-> component library, how Figma maps to code, and where the tokens live.
-
----
-
-## 1. What you're working with
-
-- **React 19 + TypeScript** components, styled with **Tailwind CSS v4** utilities
-  that resolve to **design tokens** (forest-green brand, neutral canvas, sharp
-  corners, Inter type).
-- **Storybook is the dev surface and the living documentation** — there is no
-  separate app shell. You build, preview, and test components in Storybook.
-- **Tokens** live in two mirrored places: `tokens.json` (Figma side, Tokens Studio
-  format) and `src/tokens/tokens.css` (CSS custom properties + a semantic layer).
-- Every component is **synced to a Figma source**, ships a **story set**, and has an
-  **AI-metadata JSON** in `metadata/`.
+> **👋 Designer?** You don't have to write code. Jump to **[For designers](#6-for-designers)** —
+> the agent workflow works just as well from a Figma frame and a plain-language brief.
 
 ---
 
-## 2. Prerequisites
+## 1. The idea
 
-| Tool | Version |
+You don't memorise props or hand-wire components. Instead you point an agent at
+Athena's machine-readable context and tell it what screen you want. The repo ships
+three things so the agent composes screens correctly:
+
+| Asset | What it gives the agent |
 |---|---|
-| Node.js | 20+ (LTS recommended) |
-| npm | 10+ (ships with Node 20) |
-| Git | any recent |
+| **[DESIGN.md](../DESIGN.md)** | The whole design language — color rules, type scale, spacing, the *forest moment*, accessibility — written to be read by tools, not just people. |
+| **[metadata/](../metadata/)** (one JSON per component) | *When and how* to use each component: variants, required props, `commonPatterns` (with JSX), `antiPatterns`, accessibility, and `aiHints` (`keywords`, `context`, `neverUseWhen`). |
+| **[component barrel](../src/components/index.ts)** | Every component and its prop types, exported from one import path. |
 
-A Chromium browser is downloaded automatically by Playwright the first time you run
-the story tests.
+Because component **prop names match Figma** properties, a designer can describe a
+Figma frame and the vocabulary lines up end to end.
 
 ---
 
-## 3. Install & run
+## 2. One-time setup
 
 ```bash
 git clone <repo-url>
 cd athena-design-system
 npm install
-npm run storybook        # opens the dev surface at http://localhost:6006
 ```
 
-That's it — Storybook hot-reloads as you edit components and stories.
+That's all you need before involving the agent. (There's a live component preview —
+`npm run storybook` on http://localhost:6006 — if you ever want to *see* a component,
+but it's optional and not the focus here.)
 
-### The scripts you'll actually use
+**Two facts the agent must know to produce working code:**
 
-| Script | What it does |
-|---|---|
-| `npm run storybook` / `npm run dev` | Start Storybook on :6006 |
-| `npm run build-storybook` | Static Storybook build |
-| `npm run typecheck` | `tsc --noEmit` against `tsconfig.app.json` |
-| `npm run lint` | ESLint |
-| `npx vitest --project storybook run` | Run every story as a browser test (incl. axe a11y) |
-| `npm run chromatic` | Publish Storybook to Chromatic for visual review |
+- **Import from the barrel:** `import { Button, TextField } from '../components';`
+- **Styles load once:** components are Tailwind-utility styled against the Athena
+  token theme in `src/styles/tailwind.css`. Import that file **once** at your app root
+  so tokens and utilities resolve. (Don't re-import it per component.)
 
 ---
 
-## 4. Using the components
+## 3. The workflow
 
-> Athena is an **internal, unpublished** package (`"private": true`). You consume it
-> by working **inside this repo** (the Storybook surface) or by importing from
-> `src/components`, not via `npm install athena-design-system`.
+1. **Give the agent the context.** Tell it to read `DESIGN.md` and the relevant files
+   in `metadata/` *before* writing code.
+2. **Describe the screen** in plain language — or paste a Figma frame. Name the regions
+   (header, form, actions) and the data involved.
+3. **State the house rules** (section 4) — or just point the agent at them.
+4. **Let it compose, then verify** (section 5). The accessibility gate catches contrast
+   and markup mistakes automatically.
 
-### a. Import from the barrel
+### A prompt you can copy
 
-All components and their prop types are re-exported from a single barrel,
-`src/components/index.ts`:
+```text
+You are building a screen with the Athena design system (this repo).
 
-```tsx
-import { Button, Tag, Banner, type ButtonProps } from '../components';
+Before writing any code:
+1. Read docs/ONBOARDING.md and DESIGN.md for the design language and house rules.
+2. Read the relevant files in metadata/ for every component you plan to use —
+   follow their commonPatterns and respect every antiPattern and neverUseWhen.
+
+Task: Build an "Article settings" screen as a React component.
+- A PageHeader titled "Article settings" with a primary "Save changes" button
+  and a neutral "Cancel" button.
+- A form with: a TextField for the headline, a TextArea for the summary,
+  a RadioGroup for visibility (Public / Unlisted / Private), and a Toggle for
+  "Allow comments".
+- A Banner (info) at the top noting that unsaved changes are lost on exit.
+
+Constraints:
+- Import components from ../components.
+- Assume src/styles/tailwind.css is loaded at the app root (don't re-import per file).
+- Exactly one primary button on the view (the forest moment).
+- Sentence case, sharp corners, WCAG AA — no exceptions.
+
+When done, run: npm run typecheck && npm run lint && npx vitest --project storybook run
+and fix anything that fails.
 ```
 
-### b. Make sure the styles are loaded
-
-Components are styled with Tailwind utilities that depend on the Athena token theme.
-The single stylesheet that wires Tailwind + tokens together is
-`src/styles/tailwind.css`:
-
-```css
-/* src/styles/tailwind.css */
-@import 'tailwindcss';
-@import '../tokens/tokens.css';
-
-@theme {
-  --color-forest-500: #2e7061;
-  /* …the rest of the Athena palette… */
-}
-```
-
-In Storybook this is already imported once in `.storybook/preview.tsx`, so stories
-render correctly with zero setup. In any other surface, import
-`src/styles/tailwind.css` **once** at your app root so the tokens and utilities are
-available.
-
-### c. Render something
+### What the result should look like
 
 ```tsx
-import { Button } from '../components';
+import { PageHeader, Banner, TextField, TextArea, RadioGroup, Toggle, Button } from '../components';
 
-export function SaveBar() {
+export function ArticleSettings() {
   return (
-    <div style={{ display: 'flex', gap: 8 }}>
-      <Button appearance="neutral">Cancel</Button>
-      <Button appearance="primary" onClick={save}>Save changes</Button>
+    <div>
+      <PageHeader title="Article settings">
+        <Button appearance="neutral">Cancel</Button>
+        <Button appearance="primary">Save changes</Button>
+      </PageHeader>
+
+      <Banner appearance="info">Unsaved changes are lost when you leave this page.</Banner>
+
+      <TextField label="Headline" />
+      <TextArea label="Summary" />
+      <RadioGroup
+        label="Visibility"
+        options={[
+          { label: 'Public', value: 'public' },
+          { label: 'Unlisted', value: 'unlisted' },
+          { label: 'Private', value: 'private' },
+        ]}
+        defaultValue="public"
+      />
+      <Toggle label="Allow comments" defaultChecked />
     </div>
   );
 }
 ```
 
-A few more, straight from the component set:
-
-```tsx
-<Checkbox label="Email me updates" isChecked onChange={…} />
-<RadioGroup label="Plan" options={plans} defaultValue="free" />
-<Toggle label="Autosave" size="large" defaultChecked />
-<Tag appearance="green" onRemove={removeFilter}>Sports</Tag>
-<Link href="https://example.com" isExternal>Documentation</Link>
-<Spinner size="medium" />
-<ProgressBar value={0.4} label="Upload progress" />
-<Banner appearance="error">Payment failed. Update your billing details.</Banner>
-<Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Articles' }]} />
-<Tabs tabs={[{ id: 'a', label: 'Overview', content: <Overview /> }]} />
-```
-
-Browse every variant, prop, and copy-paste example live in Storybook → **Components**.
+*(Exact props vary per component — the agent gets them from the barrel's types and the
+`metadata/` files; treat this as the shape, not the spec.)*
 
 ---
 
-## 5. House rules (the conventions that matter)
+## 4. House rules the agent must follow
 
-These are enforced by review (and some by the test suite). Follow them and your code
-will look like the rest of the system:
+These keep a generated screen consistent with the rest of Athena. Most are also encoded
+in the `metadata/` files, so an agent that reads them will follow them — point it back
+there if it drifts.
 
-- **Storybook is the dev surface** — every component change comes with a story.
-- **Semantic tokens in components**, primitives only inside `tokens.css`. Reach for a
-  semantic alias (`--text-neutral-strong`, `--bg-primary-default`) before a raw scale.
-- **Prop names mirror Figma** component properties, so design and code share one
-  vocabulary (`appearance`, `size`, `isSelected`, …).
-- **Figma `state` → CSS pseudo-states** (`:hover` / `:active` / `:focus-visible`),
-  never a `state` prop.
-- **Native elements under the hood** — real `<button>`, `<input>`, `<a>`, with proper
-  `role`/`aria` wiring, for accessibility.
-- **Sentence case** everywhere; **sharp corners** (zero radius) on interactive
-  containers (pills only for toggles / spinner / progress).
-- A unified **2px forest.700 focus ring** across all components.
-- **One forest moment per view** — a single `primary` button (or the active nav),
-  never two.
+- **One forest moment per view** — a single `appearance="primary"` button (or the active
+  nav), never two competing greens. Everything else is `neutral` or `text`.
+- **Import from the barrel** (`../components`), never deep component paths.
+- **No hardcoded colors** — styling rides on the components and their tokens, not inline
+  hex. Semantic tokens only.
+- **Prop names mirror Figma** properties (`appearance`, `size`, `isSelected`, …), so the
+  design spec and the code share one vocabulary.
+- **Native elements under the hood** — real `<button>`, `<input>`, `<a>` with proper
+  `role`/`aria` wiring (the components already do this; don't re-wrap them).
+- **Sentence case** everywhere; **sharp corners** on interactive containers (pills only
+  for toggles / spinner / progress).
+- **WCAG AA is non-negotiable** — it's a build gate (section 5), so designs and code must
+  clear AA from the start.
 
 ---
 
-## 6. Accessibility is a gate, not a guideline
+## 5. Verify the screen
 
-Every story is a browser test, and the **a11y addon runs axe on each story with
-`test: 'error'`** — so a WCAG AA violation **fails the suite**. Before you push:
+Accessibility is enforced, not suggested: the test suite runs **axe on every story with
+`test: 'error'`**, so a WCAG AA violation **fails the build**. After the agent finishes:
 
 ```bash
-npm run typecheck
-npm run lint
-npx vitest --project storybook run
+npm run typecheck                          # types are correct
+npm run lint                               # style/rules pass
+npx vitest --project storybook run         # behaviour + a11y gate
 ```
 
-Interaction tests (`play` functions) cover real behaviour, and each component carries
-a `CssCheck` story that proves the tokens actually loaded in the preview.
+If the agent invents a prop, doubles up primary buttons, or hardcodes a color, point it
+at that component's `metadata/<name>.json` — the `antiPatterns` and `neverUseWhen`
+entries exist precisely to correct it.
+
+---
+
+## 6. For designers
+
+You can drive this whole workflow without writing code.
+
+- **Start from a Figma frame or a sentence.** Because Athena's component **prop names
+  match the Figma component properties**, you can describe what you designed and the
+  agent maps it straight onto real components.
+- **Hand the agent the brief**, the screenshot or frame, and tell it to read `DESIGN.md`
+  and `metadata/` first. Then ask it to build the screen using Athena components.
+- **The non-negotiables that keep specs and reality in sync:** sentence case, sharp
+  corners, one forest-green moment per view, a unified 2px forest focus ring, and WCAG
+  AA contrast (the build fails below AA).
+- **Want to see a component first?** Ask an engineer for the **Chromatic** link (every
+  component is published there for visual review), or run `npm run storybook` locally to
+  browse and play with props — no code required.
 
 ---
 
 ## 7. Where to go next
 
-| You want to… | Read |
-|---|---|
-| Understand the design language (color, type, spacing, a11y) | **[DESIGN.md](../DESIGN.md)** |
-| See the component catalogue & props | **[README.md](../README.md)** → Components, or Storybook |
-| Know *when* to use a component (AI metadata) | **[metadata/](../metadata/)** + `component-metadata-template.json` |
-| Change or add a token | `tokens.json` (Figma side) **and** `src/tokens/tokens.css` (code side) |
-| Set up visual regression | **[README.md](../README.md)** → Visual testing (Chromatic) |
-
----
-
-## 8. Troubleshooting
-
-- **Components render unstyled** — `src/styles/tailwind.css` isn't imported at your
-  app root, so the Tailwind utilities and token theme never load. In Storybook this is
-  handled in `.storybook/preview.tsx`.
-- **A `CssCheck` story fails** — tokens didn't resolve in the preview; confirm
-  `tokens.css` is imported via `tailwind.css`.
-- **`npm run storybook` port clash** — Storybook runs on `:6006`; stop the other
-  process or pass `-p <port>`.
-- **a11y test failures** — open the failing story in Storybook, check the **A11y**
-  panel for the axe rule, and fix the markup/contrast rather than disabling the rule.
-
-Welcome aboard. Spin up Storybook, poke at the Button stories, and you'll have the
-shape of the whole system in a few minutes.
-
----
-
-## 9. For designers
-
-You don't have to write code to work with Athena. Here's the short path.
-
-### See every component, live
-
-The whole library is browsable in **Storybook**. If you can run two commands:
-
-```bash
-npm install
-npm run storybook        # opens http://localhost:6006
-```
-
-Then open **Components** in the left sidebar. Each component has:
-
-- a **Docs** page (description, all props, do/don't notes), and
-- interactive **Controls** — change `appearance`, `size`, text, etc. and watch the
-  component update live, no code required.
-
-Prefer not to run anything locally? Ask an engineer for the **Chromatic** link — every
-story is published there for visual review, so you can browse the same catalogue in
-the browser.
-
-### Figma ↔ code share one vocabulary
-
-Athena is built to keep design and code in sync, so the words you use in Figma are the
-words in the code:
-
-- Every component is **synced to its Figma source node** (see the table in
-  **[README.md](../README.md)**).
-- **Prop names match the Figma component properties** — Figma's `appearance`, `size`,
-  `isSelected` are literally the props engineers set.
-- The Figma **`state`** (default / hover / press / focus) is expressed as real CSS
-  states, never a separate option — so what you spec in Figma is what ships.
-
-### Tokens are the shared source of truth
-
-Colors, type, spacing, and radii are **design tokens**, defined once and mirrored on
-both sides:
-
-- **`tokens.json`** — primitive scales in **Tokens Studio** format (the Figma side).
-- **`src/tokens/tokens.css`** — the same values as CSS variables (the code side).
-
-Change a token in the design source and it flows to the components. The full design
-language — color rules, the type ramp, spacing grid, and accessibility requirements —
-is written for both people and tools in **[DESIGN.md](../DESIGN.md)**.
-
-### The non-negotiables (so specs match reality)
-
-- **Sentence case** everywhere.
-- **Sharp corners** on interactive containers (pills only for toggles / spinner /
-  progress).
-- **One forest-green moment per view** — a single primary button or the active nav,
-  never two competing greens.
-- A unified **2px forest focus ring** on every interactive element.
-- Accessibility is a **build gate**: a WCAG AA contrast or markup violation fails the
-  test suite, so designs need to clear AA from the start.
-
-### Where to look
-
 | You want to… | Open |
 |---|---|
-| Browse components & play with props | Storybook → **Components** (or the Chromatic link) |
-| Understand the full design language | **[DESIGN.md](../DESIGN.md)** |
-| See the Figma node for a component | **[README.md](../README.md)** → Components tables |
-| Find a token's value | `tokens.json` (Figma side) / `src/tokens/tokens.css` (code side) |
+| Understand the design language (color, type, spacing, a11y) | **[DESIGN.md](../DESIGN.md)** |
+| Know *when & how* to use a component | **[metadata/](../metadata/)** (one JSON per component) |
+| See the component catalogue & Figma nodes | **[README.md](../README.md)** → Components |
+| Find or change a token | `tokens.json` (Figma side) / `src/tokens/tokens.css` (code side) |
+
+Give the agent the context, describe the screen, run the checks — that's the loop.

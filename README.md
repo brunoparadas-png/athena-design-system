@@ -7,8 +7,8 @@ otherwise white/neutral canvas.
 
 Storybook is the development surface and the living documentation.
 
-New here? Start with the **[Onboarding guide](docs/ONBOARDING.md)** — clone to first
-component in a few minutes.
+New here? Start with the **[Onboarding guide](docs/ONBOARDING.md)** — how to build a
+screen with Athena and an AI agent.
 
 ## Quick start
 
@@ -29,7 +29,7 @@ npm run storybook        # dev surface at http://localhost:6006
 ## What's in here
 
 ```
-docs/ONBOARDING.md            # Getting-started guide: install, use, and ship a component
+docs/ONBOARDING.md            # Getting started: build a screen with Athena + an AI agent
 DESIGN.md                     # The design system spec (tokens + rules) — source of truth for AI tools
 tokens.json                   # Primitive color/type/spacing tokens (Tokens Studio format)
 component-metadata-template.json  # Blank schema for AI-consumable component metadata
