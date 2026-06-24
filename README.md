@@ -7,6 +7,9 @@ otherwise white/neutral canvas.
 
 Storybook is the development surface and the living documentation.
 
+New here? Start with the **[Onboarding guide](docs/ONBOARDING.md)** — clone to first
+component in a few minutes.
+
 ## Quick start
 
 ```bash
@@ -26,6 +29,7 @@ npm run storybook        # dev surface at http://localhost:6006
 ## What's in here
 
 ```
+docs/ONBOARDING.md            # Getting-started guide: install, use, and ship a component
 DESIGN.md                     # The design system spec (tokens + rules) — source of truth for AI tools
 tokens.json                   # Primitive color/type/spacing tokens (Tokens Studio format)
 component-metadata-template.json  # Blank schema for AI-consumable component metadata
