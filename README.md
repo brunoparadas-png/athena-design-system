@@ -75,49 +75,28 @@ src/
 
 ## Components
 
-Every component is **synced to its Figma source**, names its props after the Figma
-component properties, consumes the **semantic token layer**, and ships a Storybook story
-set (including a `CssCheck` story) plus an AI-metadata file. Interactive components are
-built on native elements for accessibility, and the Figma `state` property
-(default/hover/press/focus) is always expressed as real CSS pseudo-states rather than a
-prop.
+Athena ships a set of accessible, Figma-synced React components — actions (Button,
+Icon), form controls (Checkbox, Radio, Toggle, TextField…), and composites (Banner,
+Tabs, Modal, Table…). Rather than list them here, let the source of truth drive you:
 
-### Atoms
-
-| Component | Figma node | Summary |
-|---|---|---|
-| **[Button](src/components/Button)** | `31:2137` | `appearance` primary/neutral/text/danger × `size` default/small; icons, `isSelected`, `loading`. One forest moment per view. |
-| **[Icon](src/components/Icon)** | `391:3458` | Normalized 24×24 SVG set, `currentColor`, `size` prop. Curated ~20-icon starter subset. |
-| **[Checkbox](src/components/Checkbox)** | `507:90021` | 14px sharp box, forest fill, white check. `isChecked`/`isIndeterminate`/`isInvalid`/`isDisabled`/`isRequired`. Native `:indeterminate`. |
-| **[Radio](src/components/Radio)** | `514:2154` | 14px circular dial, forest fill + white **check** (not a dot). Checked+invalid → danger fill. |
-| **[Toggle](src/components/Toggle)** | `671:5884` | Slide switch, `size` default/large. `role="switch"`, white dot, instant on/off. |
-| **[Tag](src/components/Tag)** | `410:10023` | 6 appearances (gray/green/red/purple/blue/orange), `onRemove` (removable), `href` (link). |
-| **[Link](src/components/Link)** | `76:1252` | `appearance` default/subtle/inverse; `isExternal` adds the icon + new-tab behaviour. |
-| **[Spinner](src/components/Spinner)** | `832:4816` | Animated arc, 5 sizes (12–96px), `currentColor`, `role="status"`. |
-| **[ProgressBar](src/components/ProgressBar)** | `703:13482` | Determinate `value` 0–1; `appearance` default/inverse/success; `role="progressbar"`. |
-
-### Molecules
-
-| Component | Figma node | Summary |
-|---|---|---|
-| **[RadioGroup](src/components/RadioGroup)** | `514:2212` | Wraps Radio; declarative `options`, shared name, single selection, group-level `isInvalid`/`isRequired`, vertical/horizontal. |
-| **[Banner](src/components/Banner)** | `679:1301` | Full-width message strip; `appearance` info/error (error = danger.700 + warning icon). `role` alert/status. |
-| **[Breadcrumbs](src/components/Breadcrumbs)** | `515:9126` | `nav > ol` trail; declarative `items`, last = current page (`aria-current`), optional truncation. |
-| **[Tabs](src/components/Tabs)** | `183:3466` | tablist/tabpanel; declarative `tabs`, forest underline indicator, roving-tabindex arrow-key nav, controlled + uncontrolled. |
+- **Browse & try them** in Storybook (`npm run storybook`) → **Components**.
+- **Know when & how to use each** from its **[metadata/](metadata/)** JSON — variants,
+  patterns, anti-patterns, and accessibility.
+- **Import** any of them from the barrel:
 
 ```tsx
-<Button appearance="primary" label="Save changes" />
-<Checkbox label="Email me updates" isChecked onChange={…} />
-<RadioGroup label="Plan" options={plans} defaultValue="free" />
-<Toggle label="Autosave" size="large" defaultChecked />
-<Tag appearance="green" onRemove={removeFilter}>Sports</Tag>
-<Link href="https://example.com" isExternal>Documentation</Link>
-<Spinner size="medium" />
-<ProgressBar value={0.4} label="Upload progress" />
+import { Button, TextField, Banner } from './src/components';
+
+<Button appearance="primary">Save changes</Button>
+<TextField label="Headline" />
 <Banner appearance="error">Payment failed. Update your billing details.</Banner>
-<Breadcrumbs items={[{label:'Home',href:'/'},{label:'Articles'}]} />
-<Tabs tabs={[{id:'a',label:'Overview',content:<Overview/>}]} />
 ```
+
+Every component is **synced to its Figma source**, names its props after the Figma
+component properties, consumes the **semantic token layer**, and ships a Storybook story
+plus an AI-metadata file. Interactive components are built on native elements, and the
+Figma `state` (default/hover/press/focus) is expressed as real CSS pseudo-states, never
+a prop.
 
 ## Design tokens
 
